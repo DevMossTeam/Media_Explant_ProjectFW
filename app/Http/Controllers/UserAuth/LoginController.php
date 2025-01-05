@@ -22,30 +22,39 @@ class LoginController extends Controller
      * Proses login pengguna.
      */
     public function login(Request $request)
-    {
-        // Validasi inputan
-        $request->validate([
-            'nama_pengguna' => 'required',
-            'password' => 'required',
-        ]);
+{
+    // Validasi inputan
+    $request->validate([
+        'nama_pengguna' => 'required',
+        'password' => 'required',
+    ]);
 
-        // Cari pengguna berdasarkan nama pengguna
-        $user = User::where('nama_pengguna', $request->nama_pengguna)->first();
+    // Cari pengguna berdasarkan nama pengguna
+    $user = User::where('nama_pengguna', $request->nama_pengguna)->first();
 
-        // Cek apakah pengguna ada dan password sesuai
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return back()->withErrors(['message' => 'Nama pengguna atau password salah.']);
-        }
-
-        // Set cookie untuk menyimpan UID pengguna
-        Cookie::queue('user_uid', $user->uid, 60 * 24 * 30); // Cookie disimpan selama 30 hari
-
-        // Set data pengguna ke session untuk akses di view
-        session(['user' => $user]);
-
-        // Redirect ke halaman utama setelah login berhasil
-        return redirect('/')->with('success', 'Login berhasil!');
+    // Cek apakah pengguna ada dan password sesuai
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return back()->withErrors(['message' => 'Nama pengguna atau password salah.']);
     }
+
+    // Set cookie untuk menyimpan UID pengguna
+    Cookie::queue('user_uid', $user->uid, 60 * 24 * 30); // Cookie disimpan selama 30 hari
+
+    // Set data pengguna ke session untuk akses di view
+    session(['user' => $user]);
+
+    // Cek role pengguna dan arahkan ke halaman sesuai
+    if ($user->role === 'Admin') {
+        // Jika pengguna adalah Admin
+        return redirect()->route('dashboard-admin')->with('success', 'Selamat datang, Admin!');
+    } elseif (in_array($user->role, ['Penulis', 'Pembaca'])) {
+        // Jika pengguna adalah Penulis atau Pembaca
+        return redirect('/')->with('success', 'Login berhasil!');
+    } else {
+        // Jika role tidak dikenali
+        return back()->withErrors(['message' => 'Role pengguna tidak dikenali.']);
+    }
+}
 
     /**
      * Proses logout pengguna.

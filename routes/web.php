@@ -72,3 +72,25 @@ Route::get('/authors/draft', function () {
 Route::get('/kategori/article-detail/{id}', function ($id) {
     return view('kategori.article-detail', compact('id'));
 })->name('article.detail');
+
+Route::get('/dashboard-admin', function () {
+    return view('dashboard-admin.index'); // View untuk dashboard Admin
+})->name('dashboard-admin');
+
+Route::prefix('dashboard-admin')->group(function () {
+    Route::get('/', function () {
+        return view('dashboard-admin.index');
+    })->name('dashboard-admin');
+
+    Route::get('/articles', function () {
+        return view('dashboard-admin.articles');
+    })->name('dashboard-admin.articles');
+
+    Route::get('/members', function () {
+        return view('dashboard-admin.members');
+    })->name('dashboard-admin.members');
+
+    Route::get('/events', function () {
+        return view('dashboard-admin.events');
+    })->name('dashboard-admin.events');
+});
