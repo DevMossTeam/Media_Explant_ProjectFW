@@ -31,15 +31,15 @@
                 <h3 class="text-red-600 text-lg font-bold mb-4">IKUTI KAMI</h3>
                 <div class="flex space-x-4">
                     <!-- Facebook -->
-                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl">
+                    <a href="https://www.facebook.com/ukmexplant" class="text-red-600 hover:text-red-800 text-2xl">
                         <i class="fab fa-facebook"></i>
                     </a>
                     <!-- Instagram -->
-                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl">
+                    <a href="https://www.instagram.com/ukpmexplant" class="text-red-600 hover:text-red-800 text-2xl">
                         <i class="fab fa-instagram"></i>
                     </a>
                     <!-- YouTube -->
-                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl">
+                    <a href="https://www.youtube.com/@explantchannel1393" class="text-red-600 hover:text-red-800 text-2xl">
                         <i class="fab fa-youtube"></i>
                     </a>
                 </div>

@@ -19,19 +19,19 @@
             </div>
         </div>
         <!-- Profil Dropdown -->
-        <div class="relative ml-4">
+        <div class="relative ml-4 z-50"> <!-- Tambahkan z-index di sini -->
             @php
-                $userUid = Cookie::get('user_uid');
-                $user = $userUid ? \App\Models\User::where('uid', $userUid)->first() : null;
+            $userUid = Cookie::get('user_uid');
+            $user = $userUid ? \App\Models\User::where('uid', $userUid)->first() : null;
             @endphp
             <button id="profileButton" class="flex items-center space-x-2 focus:outline-none">
                 @if($user && $user->profile_pic)
-                    <img src="{{ asset($user->profile_pic) }}" alt="Profil" class="w-8 h-8 rounded-full">
+                <img src="{{ asset($user->profile_pic) }}" alt="Profil" class="w-8 h-8 rounded-full">
                 @else
-                    <i class="fa-solid fa-user-circle text-2xl"></i>
+                <i class="fa-solid fa-user-circle text-2xl"></i>
                 @endif
                 @if($user)
-                    <span class="text-sm">{{ $user->nama_pengguna }}</span>
+                <span class="text-sm">{{ $user->nama_pengguna }}</span>
                 @endif
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
                     <path d="M7 10l5 5 5-5H7z" />
@@ -39,13 +39,14 @@
             </button>
             <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
                 @if($user)
-                    <a href="{{ route('settings') }}" class="block px-4 py-2 hover:bg-gray-100">Pengaturan</a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Keluar</button>
-                    </form>
+                <a href="{{ route('profile', ['path' => 'mainProfile.blade.php']) }}" class="block px-4 py-2 hover:bg-gray-100">Profil</a>
+                <a href="{{ route('settings') }}" class="block px-4 py-2 hover:bg-gray-100">Pengaturan</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Keluar</button>
+                </form>
                 @else
-                    <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-gray-100">Login</a>
+                <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-gray-100">Login</a>
                 @endif
             </div>
         </div>
@@ -61,6 +62,8 @@
             <li><a href="{{ route('wawancara') }}" class="hover:text-red-500">Wawancara</a></li>
             <li><a href="{{ route('diskusi') }}" class="hover:text-red-500">Diskusi</a></li>
             <li><a href="{{ route('agenda') }}" class="hover:text-red-500">Agenda</a></li>
+            <li><a href="{{ route('sastra') }}" class="hover:text-red-500">Sastra</a></li>
+            <li><a href="{{ route('opini') }}" class="hover:text-red-500">Opini</a></li>
         </ul>
     </div>
 </nav>

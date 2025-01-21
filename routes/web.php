@@ -5,6 +5,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserAuth\LoginController;
 use App\Http\Controllers\UserAuth\RegisterController;
 use App\Http\Controllers\UserAuth\LogoutController;
+use App\Http\Controllers\Author\ArtikelController;
+use App\Http\Controllers\Author\DraftController;
+use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\Setting\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +44,16 @@ Route::get('/kategori/agenda', function () {
     return view('kategori.agenda');
 })->name('agenda');
 
+// Route untuk halaman Sastra
+Route::get('/kategori/sastra', function () {
+    return view('kategori.sastra');
+})->name('sastra');
+
+// Route untuk halaman Opini
+Route::get('/kategori/opini', function () {
+    return view('kategori.opini');
+})->name('opini');
+
 // Route untuk login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -61,18 +75,22 @@ Route::fallback(function () {
     return view('404'); // Pastikan Anda membuat file view '404.blade.php'
 });
 
+// Route untuk membuat artikel
 Route::get('/authors/create', function () {
     return view('authors.create');
 })->name('create-article');
 
+// Route untuk draf artikel
 Route::get('/authors/draft', function () {
     return view('authors.draft');
 })->name('draft-article');
 
+// Route untuk detail artikel
 Route::get('/kategori/article-detail/{id}', function ($id) {
     return view('kategori.article-detail', compact('id'));
 })->name('article.detail');
 
+// Route untuk dashboard Admin
 Route::get('/dashboard-admin', function () {
     return view('dashboard-admin.index'); // View untuk dashboard Admin
 })->name('dashboard-admin');
@@ -94,3 +112,16 @@ Route::prefix('dashboard-admin')->group(function () {
         return view('dashboard-admin.events');
     })->name('dashboard-admin.events');
 });
+
+// Route untuk menyimpan artikel
+Route::post('/author/artikel/store', [ArtikelController::class, 'store'])->name('author.artikel.store');
+
+// Route untuk pengelolaan draft oleh author
+Route::prefix('authors')->middleware('auth')->group(function () {
+    Route::get('drafts', [DraftController::class, 'index'])->name('author.draft.index');
+    Route::delete('drafts/{id}', [DraftController::class, 'destroy'])->name('author.draft.destroy');
+});
+
+Route::get('/profile', [ProfileController::class, 'mainProfile'])->name('profile');
+
+Route::get('/settings/umum', [SettingController::class, 'umumSettings'])->name('settings.umum');
