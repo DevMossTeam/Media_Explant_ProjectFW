@@ -14,7 +14,7 @@ class ArtikelController extends Controller
     {
         // Validasi input
         $request->validate([
-            'judul' => 'required|max:100',
+            'judul' => 'required|max:200',
             'konten_artikel' => 'required|max:65535',
             'kategori' => 'required',
             'visibilitas' => 'required|in:public,private',

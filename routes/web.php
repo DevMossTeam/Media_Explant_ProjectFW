@@ -9,6 +9,7 @@ use App\Http\Controllers\Author\ArtikelController;
 use App\Http\Controllers\Author\DraftController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Setting\SettingController;
+use App\Http\Controllers\UserAuth\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -125,3 +126,6 @@ Route::prefix('authors')->middleware('auth')->group(function () {
 Route::get('/profile', [ProfileController::class, 'mainProfile'])->name('profile');
 
 Route::get('/settings/umum', [SettingController::class, 'umumSettings'])->name('settings.umum');
+
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.sendOtp');

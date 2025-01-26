@@ -13,7 +13,7 @@
                 <!-- Judul -->
                 <div class="mb-6">
                     <label for="judul" class="block text-sm font-bold text-gray-700">Judul</label>
-                    <input type="text" id="judul" name="judul" maxlength="100" required
+                    <input type="text" id="judul" name="judul" maxlength="200" required
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
                         placeholder="Masukkan judul artikel...">
                 </div>

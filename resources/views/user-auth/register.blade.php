@@ -1,3 +1,4 @@
+<link rel="shortcut icon" href="{{ asset('assets/dev-64.png') }}" type="image/png">
 @extends('layouts.auth-layout')
 
 @section('content')

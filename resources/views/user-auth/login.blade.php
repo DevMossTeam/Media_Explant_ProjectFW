@@ -1,3 +1,4 @@
+<link rel="shortcut icon" href="{{ asset('assets/dev-64.png') }}" type="image/png">
 @extends('layouts.auth-layout')
 
 @section('content')
@@ -33,7 +34,10 @@
         </form>
 
         <div class="mt-6 text-center">
-            <p class="text-sm">Belum punya akun? <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Daftar</a></p>
+            <p class="text-sm">
+                <a href="{{ route('password.request') }}" class="text-blue-600 hover:underline">Lupa Password?</a>
+            </p>
+            <p class="text-sm mt-4">Belum punya akun? <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Daftar</a></p>
         </div>
     </div>
 </div>
