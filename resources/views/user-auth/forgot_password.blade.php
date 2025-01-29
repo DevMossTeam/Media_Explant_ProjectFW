@@ -31,10 +31,6 @@
 
             <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 focus:outline-none">Kirim OTP</button>
         </form>
-
-        <div class="mt-6 text-center">
-            <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Kembali ke Login</a>
-        </div>
     </div>
 </div>
 @endsection

@@ -10,6 +10,7 @@ use App\Http\Controllers\Author\DraftController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Setting\SettingController;
 use App\Http\Controllers\UserAuth\ForgotPasswordController;
+use App\Http\Controllers\UserAuth\ChangePasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -127,5 +128,9 @@ Route::get('/profile', [ProfileController::class, 'mainProfile'])->name('profile
 
 Route::get('/settings/umum', [SettingController::class, 'umumSettings'])->name('settings.umum');
 
-Route::get('/forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
-Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.sendOtp');
+Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.sendOtp');
+Route::get('verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.verifyOtpForm');
+Route::post('verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verifyOtp');
+Route::get('change-password', [ForgotPasswordController::class, 'showChangePasswordForm'])->name('password.changePasswordForm');
+Route::post('change-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
