@@ -1,7 +1,7 @@
 <header class="bg-red-600 text-white p-4">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold">Persma.id</h1>
+            <h1 class="text-3xl font-bold">Media Explant</h1>
             <p class="text-sm">Rawat ingatan, diskusi, dan menulis</p>
         </div>
         <!-- Artikel Dropdown -->

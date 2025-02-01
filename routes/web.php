@@ -10,7 +10,8 @@ use App\Http\Controllers\Author\DraftController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Setting\SettingController;
 use App\Http\Controllers\UserAuth\ForgotPasswordController;
-use App\Http\Controllers\UserAuth\ChangePasswordController;
+use App\Http\Controllers\UserAuth\CreatePasswordController;
+use App\Http\Controllers\UserAuth\VerifikasiAkunController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +64,13 @@ Route::post('/login', [LoginController::class, 'login']);
 // Route untuk register
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+
+Route::get('/verifikasi-akun', [VerifikasiAkunController::class, 'showVerifikasiForm'])->name('verifikasi-akun');
+Route::post('/verifikasi-akun', [VerifikasiAkunController::class, 'verifyOtp'])->name('verify-otp'); // Tambahkan ini
+
+Route::get('/buat-password', [CreatePasswordController::class, 'showCreatePasswordForm'])->name('buat-password');
+Route::post('/buat-password', [CreatePasswordController::class, 'storePassword']);
+Route::post('/store-password', [CreatePasswordController::class, 'storePassword'])->name('store-password');
 
 // Route untuk logout
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');

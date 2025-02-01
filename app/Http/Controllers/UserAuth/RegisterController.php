@@ -5,8 +5,11 @@ namespace App\Http\Controllers\UserAuth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class RegisterController extends Controller
 {
@@ -17,26 +20,128 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
+        // Validasi input
         $request->validate([
             'nama_pengguna' => 'required|unique:user,nama_pengguna|max:60',
-            'password' => 'required|min:6',
             'email' => 'required|email|max:100|unique:user,email',
             'nama_lengkap' => 'required|max:100',
+        ], [
+            'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain.',
         ]);
 
-        // Membuat UID 28 karakter dari UUID
+        // Simpan data ke sesi sebelum verifikasi OTP
         $uid = substr(str_replace('-', '', Str::uuid()->toString()), 0, 28);
+        $otp = rand(100000, 999999);
 
-        // Membuat pengguna baru
-        $user = User::create([
+        Session::put('register_data', [
             'uid' => $uid,
             'nama_pengguna' => $request->nama_pengguna,
-            'password' => Hash::make($request->password),
             'email' => $request->email,
-            'role' => 'Pembaca',
             'nama_lengkap' => $request->nama_lengkap,
+            'otp' => $otp,
         ]);
 
-        return redirect('/login')->with('success', 'Registrasi berhasil, silakan login.');
+        // Kirim OTP via email
+        $this->sendOtpEmail($request->email, $otp);
+
+        return redirect()->route('verifikasi-akun')->with('success', 'Kode OTP telah dikirim ke email Anda.');
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate(['otp' => 'required|digits:6']);
+
+        $registerData = Session::get('register_data');
+
+        if (!$registerData || $request->otp != $registerData['otp']) {
+            return back()->withErrors(['otp' => 'Kode OTP salah atau sudah kadaluarsa.']);
+        }
+
+        return redirect()->route('create-password');
+    }
+
+    public function showCreatePasswordForm()
+    {
+        return view('user-auth.create_password');
+    }
+
+    public function storePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $registerData = Session::get('register_data');
+        if (!$registerData) {
+            return redirect()->route('register')->withErrors(['error' => 'Data registrasi tidak ditemukan.']);
+        }
+
+        User::create([
+            'uid' => $registerData['uid'],
+            'nama_pengguna' => $registerData['nama_pengguna'],
+            'email' => $registerData['email'],
+            'nama_lengkap' => $registerData['nama_lengkap'],
+            'password' => Hash::make($request->password),
+            'role' => 'Pembaca',
+        ]);
+
+        Session::forget('register_data');
+
+        return redirect('/login')->with('success', 'Akun berhasil dibuat, silakan login.');
+    }
+
+    private function sendOtpEmail($email, $otp)
+    {
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'devmossteam@gmail.com'; // Ganti dengan email Anda
+            $mail->Password = 'auarutsuzgpwtriy'; // Ganti dengan password email Anda
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            $mail->setFrom('devmossteam@gmail.com', 'Media Explant');
+            $mail->addAddress($email);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Kode OTP Anda';
+            $mail->Body = "
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; }
+                        .email-container { background-color: #ffffff; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+                        .header { background-color: #ff4b5c; color: white; padding: 10px; text-align: center; border-radius: 8px 8px 0 0; }
+                        .content { padding: 20px; }
+                        .otp-box { background-color: #f3f3f3; border: 1px solid #dcdcdc; padding: 10px; text-align: center; font-size: 24px; font-weight: bold; margin: 20px 0; }
+                        .footer { text-align: center; font-size: 14px; color: #777; margin-top: 30px; }
+                        .footer a { color: #ff4b5c; text-decoration: none; }
+                    </style>
+                </head>
+                <body>
+                    <div class='email-container'>
+                        <div class='header'>
+                            <h2>Kode OTP Anda</h2>
+                        </div>
+                        <div class='content'>
+                            <p>Halo,</p>
+                            <p>Berikut adalah kode OTP Anda:</p>
+                            <div class='otp-box'>$otp</div>
+                            <p><strong>Catatan:</strong> Kode OTP ini hanya berlaku selama 10 menit.</p>
+                        </div>
+                        <div class='footer'>
+                            <p>Tim Media Explant</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            ";
+            
+            $mail->send();
+        } catch (Exception $e) {
+            return back()->withErrors(['email' => 'Gagal mengirim email. Error: ' . $mail->ErrorInfo]);
+        }
     }
 }
