@@ -12,6 +12,7 @@ use App\Http\Controllers\Setting\SettingController;
 use App\Http\Controllers\UserAuth\ForgotPasswordController;
 use App\Http\Controllers\UserAuth\CreatePasswordController;
 use App\Http\Controllers\UserAuth\VerifikasiAkunController;
+use App\Http\Controllers\Article\OpiniArticleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -142,3 +143,6 @@ Route::get('verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])
 Route::post('verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verifyOtp');
 Route::get('change-password', [ForgotPasswordController::class, 'showChangePasswordForm'])->name('password.changePasswordForm');
 Route::post('change-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
+
+Route::get('/opini', [OpiniArticleController::class, 'index'])->name('opini');
+Route::get('/artikel/{id}', [OpiniArticleController::class, 'show'])->name('article.detail');
