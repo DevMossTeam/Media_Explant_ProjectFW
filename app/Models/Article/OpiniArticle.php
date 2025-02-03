@@ -19,4 +19,13 @@ class OpiniArticle extends Model
         'visibilitas',
         'gambar'
     ];
+
+    // Method untuk mengambil gambar pertama dari konten_artikel
+    public function getFirstImageAttribute()
+    {
+        if (preg_match('/<img[^>]+src="([^">]+)"/i', $this->konten_artikel, $matches)) {
+            return $matches[1]; // Mengembalikan URL gambar pertama
+        }
+        return 'https://via.placeholder.com/400x200'; // Placeholder jika tidak ada gambar
+    }
 }

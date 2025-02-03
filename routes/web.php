@@ -13,6 +13,7 @@ use App\Http\Controllers\UserAuth\ForgotPasswordController;
 use App\Http\Controllers\UserAuth\CreatePasswordController;
 use App\Http\Controllers\UserAuth\VerifikasiAkunController;
 use App\Http\Controllers\Article\OpiniArticleController;
+use App\Http\Controllers\Article\HomeArticleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -146,3 +147,4 @@ Route::post('change-password', [ForgotPasswordController::class, 'updatePassword
 
 Route::get('/opini', [OpiniArticleController::class, 'index'])->name('opini');
 Route::get('/artikel/{id}', [OpiniArticleController::class, 'show'])->name('article.detail');
+Route::get('/', [HomeArticleController::class, 'index'])->name('home');

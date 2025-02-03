@@ -11,9 +11,9 @@ class OpiniArticleController extends Controller
     public function index()
     {
         $articles = OpiniArticle::where('kategori', 'Opini')
-                                ->where('visibilitas', 'public')
-                                ->orderBy('tanggal_diterbitkan', 'desc')
-                                ->paginate(10); // Pastikan menggunakan paginate
+            ->where('visibilitas', 'public')
+            ->orderBy('tanggal_diterbitkan', 'desc')
+            ->paginate(10);
 
         return view('kategori.opini', compact('articles'));
     }
