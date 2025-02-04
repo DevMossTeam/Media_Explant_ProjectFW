@@ -8,19 +8,25 @@ use Illuminate\Http\Request;
 
 class OpiniArticleController extends Controller
 {
+    /**
+     * Tampilkan daftar artikel Opini.
+     */
     public function index()
     {
+        // Ambil artikel dengan kategori 'Opini' dan visibilitas 'public'
         $articles = OpiniArticle::where('kategori', 'Opini')
             ->where('visibilitas', 'public')
-            ->orderBy('tanggal_diterbitkan', 'desc')
+            ->latest('tanggal_diterbitkan') // Alternatif dari orderBy('tanggal_diterbitkan', 'desc')
             ->paginate(10);
 
         return view('kategori.opini', compact('articles'));
     }
 
-    public function show($id)
+    /**
+     * Tampilkan detail artikel berdasarkan model binding.
+     */
+    public function show(OpiniArticle $article)
     {
-        $article = OpiniArticle::findOrFail($id);
-        return view('artikel.detail', compact('article'));
+        return view('kategori.article-detail', compact('article'));
     }
 }

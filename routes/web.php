@@ -145,6 +145,6 @@ Route::post('verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name(
 Route::get('change-password', [ForgotPasswordController::class, 'showChangePasswordForm'])->name('password.changePasswordForm');
 Route::post('change-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
 
-Route::get('/opini', [OpiniArticleController::class, 'index'])->name('opini');
-Route::get('/artikel/{id}', [OpiniArticleController::class, 'show'])->name('article.detail');
+Route::get('/kategori/opini', [OpiniArticleController::class, 'index'])->name('opini');
+Route::get('/kategori/opini/{article}', [OpiniArticleController::class, 'show'])->name('opini.detail');
 Route::get('/', [HomeArticleController::class, 'index'])->name('home');
