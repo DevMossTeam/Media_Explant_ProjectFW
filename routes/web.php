@@ -146,5 +146,5 @@ Route::get('change-password', [ForgotPasswordController::class, 'showChangePassw
 Route::post('change-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
 
 Route::get('/kategori/opini', [OpiniArticleController::class, 'index'])->name('opini');
-Route::get('/kategori/opini/{article}', [OpiniArticleController::class, 'show'])->name('opini.detail');
+Route::get('/kategori/opini/read', [OpiniArticleController::class, 'show'])->name('opini.detail');
 Route::get('/', [HomeArticleController::class, 'index'])->name('home');

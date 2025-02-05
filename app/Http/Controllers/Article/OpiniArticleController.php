@@ -16,17 +16,21 @@ class OpiniArticleController extends Controller
         // Ambil artikel dengan kategori 'Opini' dan visibilitas 'public'
         $articles = OpiniArticle::where('kategori', 'Opini')
             ->where('visibilitas', 'public')
-            ->latest('tanggal_diterbitkan') // Alternatif dari orderBy('tanggal_diterbitkan', 'desc')
+            ->latest('tanggal_diterbitkan')
             ->paginate(10);
 
         return view('kategori.opini', compact('articles'));
     }
 
     /**
-     * Tampilkan detail artikel berdasarkan model binding.
+     * Tampilkan detail artikel berdasarkan query parameter.
      */
-    public function show(OpiniArticle $article)
+    public function show(Request $request)
     {
+        // Ambil ID dari query string ?a=id
+        $articleId = $request->query('a');
+        $article = OpiniArticle::where('id', $articleId)->firstOrFail();
+
         return view('kategori.article-detail', compact('article'));
     }
 }

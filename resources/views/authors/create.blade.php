@@ -124,6 +124,24 @@
 <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
 
+<style>
+    .ql-editor img {
+            max-width: 80%;
+            max-height: 300px;
+            height: auto;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .ql-editor iframe {
+            max-width: 80%;
+            height: 300px;
+            display: block;
+            margin: 0 auto;
+            background-color: #f0f0f0;
+        }
+</style>
+
 <script>
     // Inisialisasi Quill
     const quill = new Quill('#quillEditor', {
