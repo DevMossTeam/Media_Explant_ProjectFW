@@ -13,6 +13,12 @@ use App\Http\Controllers\UserAuth\ForgotPasswordController;
 use App\Http\Controllers\UserAuth\CreatePasswordController;
 use App\Http\Controllers\UserAuth\VerifikasiAkunController;
 use App\Http\Controllers\Article\OpiniArticleController;
+use App\Http\Controllers\Article\DiskusiArticleController;
+use App\Http\Controllers\Article\WawancaraArticleController;
+use App\Http\Controllers\Article\RisetArticleController;
+use App\Http\Controllers\Article\SiaranPersArticleController;
+use App\Http\Controllers\Article\AgendaArticleController;
+use App\Http\Controllers\Article\SastraArticleController;
 use App\Http\Controllers\Article\HomeArticleController;
 
 /*
@@ -147,4 +153,16 @@ Route::post('change-password', [ForgotPasswordController::class, 'updatePassword
 
 Route::get('/kategori/opini', [OpiniArticleController::class, 'index'])->name('opini');
 Route::get('/kategori/opini/read', [OpiniArticleController::class, 'show'])->name('opini.detail');
+Route::get('/kategori/diskusi', [DiskusiArticleController::class, 'index'])->name('diskusi');
+Route::get('/kategori/diskusi/read', [DiskusiArticleController::class, 'show'])->name('diskusi.detail');
+Route::get('/kategori/wawancara', [WawancaraArticleController::class, 'index'])->name('wawancara');
+Route::get('/kategori/wawancara/read', [WawancaraArticleController::class, 'show'])->name('wawancara.detail');
+Route::get('/kategori/riset', [RisetArticleController::class, 'index'])->name('riset');
+Route::get('/kategori/riset/read', [RisetArticleController::class, 'show'])->name('riset.detail');
+Route::get('/kategori/siaran-pers', [SiaranPersArticleController::class, 'index'])->name('siaran-pers');
+Route::get('/kategori/siaran-pers/read', [SiaranPersArticleController::class, 'show'])->name('agenda.detail');
+Route::get('/kategori/agenda', [AgendaArticleController::class, 'index'])->name('agenda');
+Route::get('/kategori/agenda/read', [AgendaArticleController::class, 'show'])->name('agenda.detail');
+Route::get('/kategori/sastra', [SastraArticleController::class, 'index'])->name('sastra');
+Route::get('/kategori/sastra/read', [SastraArticleController::class, 'show'])->name('sastra.detail');
 Route::get('/', [HomeArticleController::class, 'index'])->name('home');
