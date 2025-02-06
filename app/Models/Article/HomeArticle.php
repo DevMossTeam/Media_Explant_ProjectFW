@@ -11,6 +11,9 @@ class HomeArticle extends Model
     use HasFactory;
 
     protected $table = 'artikel';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'judul',
@@ -21,22 +24,41 @@ class HomeArticle extends Model
         'gambar'
     ];
 
-    // Mengambil gambar pertama dari konten_artikel atau menggunakan gambar utama
     public function getFirstImageAttribute()
     {
         if (preg_match('/<img[^>]+src="([^">]+)"/i', $this->konten_artikel, $matches)) {
-            return $matches[1]; // Mengembalikan URL gambar pertama
+            return $matches[1];
         }
-        return $this->gambar ?? 'https://via.placeholder.com/400x200'; // Placeholder jika tidak ada gambar
+        return $this->gambar ?? 'https://via.placeholder.com/400x200';
     }
 
-    // Mengambil deskripsi singkat dari konten_artikel (150 karakter pertama)
+    public function getCategorySlugAttribute()
+    {
+        $mapping = [
+            'Siaran Pers' => 'siaran-pers',
+            'Riset' => 'riset',
+            'Wawancara' => 'wawancara',
+            'Diskusi' => 'diskusi',
+            'Agenda' => 'agenda',
+            'Sastra' => 'sastra',
+            'Opini' => 'opini'
+        ];
+
+        return $mapping[$this->kategori] ?? 'lainnya';
+    }
+
+    public function getArticleUrlAttribute()
+    {
+        return url("/kategori/{$this->category_slug}/read?a={$this->id}");
+    }
+
+    /**
+     * Ambil ringkasan artikel (150 karakter pertama tanpa memotong kata dan menghilangkan entitas HTML seperti &nbsp;)
+     */
     public function getExcerptAttribute()
     {
-        // Menghapus tag HTML dari konten_artikel
-        $plainText = strip_tags($this->konten_artikel);
-
-        // Ambil hanya 150 karakter pertama tanpa memotong kata
-        return Str::words($plainText, 25); // 25 kata pertama dari konten
+        // Hilangkan entitas HTML seperti &nbsp;
+        $cleanedContent = preg_replace('/&nbsp;/i', ' ', strip_tags($this->konten_artikel));
+        return Str::limit($cleanedContent, 150);
     }
 }

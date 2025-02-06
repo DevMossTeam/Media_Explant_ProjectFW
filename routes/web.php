@@ -160,9 +160,14 @@ Route::get('/kategori/wawancara/read', [WawancaraArticleController::class, 'show
 Route::get('/kategori/riset', [RisetArticleController::class, 'index'])->name('riset');
 Route::get('/kategori/riset/read', [RisetArticleController::class, 'show'])->name('riset.detail');
 Route::get('/kategori/siaran-pers', [SiaranPersArticleController::class, 'index'])->name('siaran-pers');
-Route::get('/kategori/siaran-pers/read', [SiaranPersArticleController::class, 'show'])->name('agenda.detail');
+Route::get('/kategori/siaran-pers/read', [SiaranPersArticleController::class, 'show'])->name('siaran-pers.detail');
 Route::get('/kategori/agenda', [AgendaArticleController::class, 'index'])->name('agenda');
 Route::get('/kategori/agenda/read', [AgendaArticleController::class, 'show'])->name('agenda.detail');
 Route::get('/kategori/sastra', [SastraArticleController::class, 'index'])->name('sastra');
 Route::get('/kategori/sastra/read', [SastraArticleController::class, 'show'])->name('sastra.detail');
+
 Route::get('/', [HomeArticleController::class, 'index'])->name('home');
+
+// Rute untuk kategori artikel
+Route::get('/kategori/{category}', [HomeArticleController::class, 'index'])->name('category');
+Route::get('/kategori/{category}/read/{slug}', [HomeArticleController::class, 'show'])->name('article.detail');
