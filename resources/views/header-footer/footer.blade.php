@@ -20,7 +20,7 @@
                         Persmahasiswa.id lahir atas kebutuhan seluruh awak pers mahasiswa yang terbatas jarak, waktu, dan tempat untuk bertemu dan saling berinteraksi. Ruang Pengawalan Isu, Ruang Diskusi, Sindikasi Berita Pers Mahasiswa, dan Pusat Sirkulasi Data PPMI diharapkan bisa jadi benang merah untuk mengatasi segala keterbatasan itu.
                     </p>
                     <p class="text-sm mt-4">
-                        Hubungi kami: 
+                        Hubungi kami:
                         <a href="mailto:ppminasional1992@gmail.com" class="text-red-500">ppminasional1992@gmail.com</a>
                     </p>
                 </div>
@@ -41,6 +41,10 @@
                     <!-- YouTube -->
                     <a href="https://www.youtube.com/@explantchannel1393" class="text-red-600 hover:text-red-800 text-2xl">
                         <i class="fab fa-youtube"></i>
+                    </a>
+                    <!-- LinkedIn -->
+                    <a href="https://id.linkedin.com/company/ukpmexplantpolije" class="text-red-600 hover:text-red-800 text-2xl">
+                        <i class="fab fa-linkedin"></i>
                     </a>
                 </div>
             </div>
