@@ -171,3 +171,8 @@ Route::get('/', [HomeArticleController::class, 'index'])->name('home');
 // Rute untuk kategori artikel
 Route::get('/kategori/{category}', [HomeArticleController::class, 'index'])->name('category');
 Route::get('/kategori/{category}/read/{slug}', [HomeArticleController::class, 'show'])->name('article.detail');
+
+Route::view('/tentang-kami', 'header-footer.footer-menu.tentangKami');
+Route::view('/explant-contributor', 'header-footer.footer-menu.explantContributor');
+Route::view('/kode-etik', 'header-footer.footer-menu.kode-etik');
+Route::view('/struktur-organisasi', 'header-footer.footer-menu.strukturOrganisasi');
