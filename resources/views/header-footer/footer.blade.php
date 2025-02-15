@@ -24,7 +24,7 @@
                     </p>
                     <p class="text-sm mt-4">
                         Hubungi kami:
-                        <a href="mailto:ppminasional1992@gmail.com" class="text-red-500">ppminasional1992@gmail.com</a>
+                        <a href="mailto:ppminasional1992@gmail.com" class="text-red-500">persmaexplant@gmail.com</a>
                     </p>
                 </div>
             </div>
