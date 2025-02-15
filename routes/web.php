@@ -55,15 +55,35 @@ Route::get('/kategori/agenda', function () {
     return view('kategori.agenda');
 })->name('agenda');
 
-// Route untuk halaman Sastra
-Route::get('/kategori/sastra', function () {
-    return view('kategori.sastra');
-})->name('sastra');
-
 // Route untuk halaman Opini
 Route::get('/kategori/opini', function () {
     return view('kategori.opini');
 })->name('opini');
+
+// Rute untuk halaman Buletin
+Route::get('/kategori/buletin', function () {
+    return view('kategori.buletin');
+})->name('buletin');
+
+// Rute untuk halaman Majalah
+Route::get('/kategori/majalah', function () {
+    return view('kategori.majalah');
+})->name('majalah');
+
+// Rute untuk halaman Sastra
+Route::get('/kategori/sastra', function () {
+    return view('kategori.sastra');
+})->name('sastra');
+
+// Rute untuk halaman Karikatur
+Route::get('/kategori/karikatur', function () {
+    return view('kategori.karikatur');
+})->name('karikatur');
+
+// Rute untuk halaman Desain Grafis
+Route::get('/kategori/desain-grafis', function () {
+    return view('kategori.desain-grafis');
+})->name('desain-grafis');
 
 // Route untuk login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
