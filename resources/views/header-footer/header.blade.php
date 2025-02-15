@@ -19,7 +19,7 @@
             </div>
         </div>
         <!-- Profil Dropdown -->
-        <div class="relative ml-4 z-50"> <!-- Tambahkan z-index di sini -->
+        <div class="relative ml-4 z-50">
             @php
             $userUid = Cookie::get('user_uid');
             $user = $userUid ? \App\Models\User::where('uid', $userUid)->first() : null;
@@ -39,7 +39,7 @@
             </button>
             <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
                 @if($user)
-                <a href="{{ route('profile', ['path' => 'mainProfile.blade.php']) }}" class="block px-4 py-2 hover:bg-gray-100">Profil</a>
+                <a href="{{ route('profile') }}" class="block px-4 py-2 hover:bg-gray-100">Profil</a>
                 <a href="{{ route('settings') }}" class="block px-4 py-2 hover:bg-gray-100">Pengaturan</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -54,16 +54,42 @@
 </header>
 
 <nav class="bg-gray-800 text-white">
-    <div class="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-2">
-        <ul class="flex space-x-4">
-            <li><a href="{{ route('home') }}" class="hover:text-red-500">Beranda</a></li>
-            <li><a href="{{ route('siaran-pers') }}" class="hover:text-red-500">Siaran Pers</a></li>
-            <li><a href="{{ route('riset') }}" class="hover:text-red-500">Riset</a></li>
-            <li><a href="{{ route('wawancara') }}" class="hover:text-red-500">Wawancara</a></li>
-            <li><a href="{{ route('diskusi') }}" class="hover:text-red-500">Diskusi</a></li>
-            <li><a href="{{ route('agenda') }}" class="hover:text-red-500">Agenda</a></li>
-            <li><a href="{{ route('sastra') }}" class="hover:text-red-500">Sastra</a></li>
-            <li><a href="{{ route('opini') }}" class="hover:text-red-500">Opini</a></li>
+    <div class="container mx-auto flex justify-center items-center px-4 sm:px-6 lg:px-8 py-2">
+        <ul class="flex space-x-8">
+            <!-- Beranda (Diturunkan agar sejajar) -->
+            <li><a href="{{ route('home') }}" class="hover:text-red-500 px-4 py-2 relative top-[8px]">Beranda</a></li>
+
+            <!-- Berita -->
+            <li class="relative group">
+                <button class="hover:bg-red-700 px-4 py-2 rounded-md transition duration-300">Berita</button>
+                <ul class="absolute left-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                    <li><a href="{{ route('siaran-pers') }}" class="block px-4 py-2 hover:bg-gray-100">Siaran Pers</a></li>
+                    <li><a href="{{ route('riset') }}" class="block px-4 py-2 hover:bg-gray-100">Riset</a></li>
+                    <li><a href="{{ route('wawancara') }}" class="block px-4 py-2 hover:bg-gray-100">Wawancara</a></li>
+                    <li><a href="{{ route('diskusi') }}" class="block px-4 py-2 hover:bg-gray-100">Diskusi</a></li>
+                    <li><a href="{{ route('agenda') }}" class="block px-4 py-2 hover:bg-gray-100">Agenda</a></li>
+                    <li><a href="{{ route('opini') }}" class="block px-4 py-2 hover:bg-gray-100">Opini</a></li>
+                </ul>
+            </li>
+
+            <!-- Produk -->
+            <li class="relative group">
+                <button class="hover:bg-red-700 px-4 py-2 rounded-md transition duration-300">Produk</button>
+                <ul class="absolute left-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                    <li><a href="{{ route('buletin') }}" class="block px-4 py-2 hover:bg-gray-100">Buletin</a></li>
+                    <li><a href="{{ route('majalah') }}" class="block px-4 py-2 hover:bg-gray-100">Majalah</a></li>
+                </ul>
+            </li>
+
+            <!-- Karya -->
+            <li class="relative group">
+                <button class="hover:bg-red-700 px-4 py-2 rounded-md transition duration-300">Karya</button>
+                <ul class="absolute left-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                    <li><a href="{{ route('sastra') }}" class="block px-4 py-2 hover:bg-gray-100">Sastra</a></li>
+                    <li><a href="{{ route('karikatur') }}" class="block px-4 py-2 hover:bg-gray-100">Karikatur</a></li>
+                    <li><a href="{{ route('desain-grafis') }}" class="block px-4 py-2 hover:bg-gray-100">Desain Grafis</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
 </nav>

@@ -19,7 +19,7 @@
                 <div class="text-left">
                     <h3 class="text-red-600 text-lg font-bold mb-4">TENTANG KITA</h3>
                     <p class="text-sm leading-relaxed">
-                        Persmahasiswa.id lahir atas kebutuhan seluruh awak pers mahasiswa yang terbatas jarak, waktu,
+                        UKPM Explant lahir atas kebutuhan seluruh awak pers mahasiswa yang terbatas jarak, waktu,
                         dan tempat untuk bertemu dan saling berinteraksi.
                     </p>
                     <p class="text-sm mt-4">
@@ -60,7 +60,7 @@
 
         <!-- Copyright -->
         <div class="text-center text-sm mt-8 px-4 sm:px-6 lg:px-8">
-            &copy; Oleh solidaritas Pers Mahasiswa
+            Copyright &copy; 2025 UKPM EXPLANT All Right Reserved
         </div>
     </footer>
 </body>
