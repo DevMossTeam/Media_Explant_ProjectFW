@@ -12,14 +12,14 @@ use App\Http\Controllers\Setting\SettingController;
 use App\Http\Controllers\UserAuth\ForgotPasswordController;
 use App\Http\Controllers\UserAuth\CreatePasswordController;
 use App\Http\Controllers\UserAuth\VerifikasiAkunController;
-use App\Http\Controllers\Article\OpiniArticleController;
-use App\Http\Controllers\Article\DiskusiArticleController;
-use App\Http\Controllers\Article\WawancaraArticleController;
-use App\Http\Controllers\Article\RisetArticleController;
-use App\Http\Controllers\Article\SiaranPersArticleController;
-use App\Http\Controllers\Article\AgendaArticleController;
-use App\Http\Controllers\Article\SastraArticleController;
-use App\Http\Controllers\Article\HomeArticleController;
+use App\Http\Controllers\News\HomeNewsController;
+use App\Http\Controllers\News\OpiniNewsController;
+use App\Http\Controllers\News\DiskusiNewsController;
+use App\Http\Controllers\News\WawancaraNewsController;
+use App\Http\Controllers\News\RisetNewsController;
+use App\Http\Controllers\News\SiaranPersNewsController;
+use App\Http\Controllers\News\AgendaNewsController;
+use App\Http\Controllers\News\SastraNewsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -171,26 +171,26 @@ Route::post('verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name(
 Route::get('change-password', [ForgotPasswordController::class, 'showChangePasswordForm'])->name('password.changePasswordForm');
 Route::post('change-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
 
-Route::get('/kategori/opini', [OpiniArticleController::class, 'index'])->name('opini');
-Route::get('/kategori/opini/read', [OpiniArticleController::class, 'show'])->name('opini.detail');
-Route::get('/kategori/diskusi', [DiskusiArticleController::class, 'index'])->name('diskusi');
-Route::get('/kategori/diskusi/read', [DiskusiArticleController::class, 'show'])->name('diskusi.detail');
-Route::get('/kategori/wawancara', [WawancaraArticleController::class, 'index'])->name('wawancara');
-Route::get('/kategori/wawancara/read', [WawancaraArticleController::class, 'show'])->name('wawancara.detail');
-Route::get('/kategori/riset', [RisetArticleController::class, 'index'])->name('riset');
-Route::get('/kategori/riset/read', [RisetArticleController::class, 'show'])->name('riset.detail');
-Route::get('/kategori/siaran-pers', [SiaranPersArticleController::class, 'index'])->name('siaran-pers');
-Route::get('/kategori/siaran-pers/read', [SiaranPersArticleController::class, 'show'])->name('siaran-pers.detail');
-Route::get('/kategori/agenda', [AgendaArticleController::class, 'index'])->name('agenda');
-Route::get('/kategori/agenda/read', [AgendaArticleController::class, 'show'])->name('agenda.detail');
-Route::get('/kategori/sastra', [SastraArticleController::class, 'index'])->name('sastra');
-Route::get('/kategori/sastra/read', [SastraArticleController::class, 'show'])->name('sastra.detail');
+Route::get('/kategori/opini', [OpiniNewsController::class, 'index'])->name('opini');
+Route::get('/kategori/opini/read', [OpiniNewsController::class, 'show'])->name('opini.detail');
+Route::get('/kategori/diskusi', [DiskusiNewsController::class, 'index'])->name('diskusi');
+Route::get('/kategori/diskusi/read', [DiskusiNewsController::class, 'show'])->name('diskusi.detail');
+Route::get('/kategori/wawancara', [WawancaraNewsController::class, 'index'])->name('wawancara');
+Route::get('/kategori/wawancara/read', [WawancaraNewsController::class, 'show'])->name('wawancara.detail');
+Route::get('/kategori/riset', [RisetNewsController::class, 'index'])->name('riset');
+Route::get('/kategori/riset/read', [RisetNewsController::class, 'show'])->name('riset.detail');
+Route::get('/kategori/siaran-pers', [SiaranPersNewsController::class, 'index'])->name('siaran-pers');
+Route::get('/kategori/siaran-pers/read', [SiaranPersNewsController::class, 'show'])->name('siaran-pers.detail');
+Route::get('/kategori/agenda', [AgendaNewsController::class, 'index'])->name('agenda');
+Route::get('/kategori/agenda/read', [AgendaNewsController::class, 'show'])->name('agenda.detail');
+Route::get('/kategori/sastra', [SastraNewsController::class, 'index'])->name('sastra');
+Route::get('/kategori/sastra/read', [SastraNewsController::class, 'show'])->name('sastra.detail');
 
-Route::get('/', [HomeArticleController::class, 'index'])->name('home');
+Route::get('/', [HomeNewsController::class, 'index'])->name('home');
 
 // Rute untuk kategori artikel
-Route::get('/kategori/{category}', [HomeArticleController::class, 'index'])->name('category');
-Route::get('/kategori/{category}/read/{slug}', [HomeArticleController::class, 'show'])->name('article.detail');
+Route::get('/kategori/{category}', [HomeNewsController::class, 'index'])->name('category');
+Route::get('/kategori/{category}/read', [HomeNewsController::class, 'show'])->name('kategori.detail');
 
 Route::view('/tentang-kami', 'header-footer.footer-menu.tentangKami');
 Route::view('/explant-contributor', 'header-footer.footer-menu.explantContributor');

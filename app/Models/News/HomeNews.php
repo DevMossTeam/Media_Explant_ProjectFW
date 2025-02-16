@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Models\Article;
+namespace App\Models\News;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class HomeArticle extends Model
+class HomeNews extends Model
 {
     use HasFactory;
 
-    protected $table = 'artikel';
+    protected $table = 'berita';
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
         'judul',
-        'konten_artikel',
+        'konten_berita',
         'tanggal_diterbitkan',
         'kategori',
         'visibilitas',
@@ -26,7 +26,7 @@ class HomeArticle extends Model
 
     public function getFirstImageAttribute()
     {
-        if (preg_match('/<img[^>]+src="([^">]+)"/i', $this->konten_artikel, $matches)) {
+        if (preg_match('/<img[^>]+src="([^">]+)"/i', $this->konten_berita, $matches)) {
             return $matches[1];
         }
         return $this->gambar ?? 'https://via.placeholder.com/400x200';
@@ -53,12 +53,12 @@ class HomeArticle extends Model
     }
 
     /**
-     * Ambil ringkasan artikel (150 karakter pertama tanpa memotong kata dan menghilangkan entitas HTML seperti &nbsp;)
+     * Ambil ringkasan berita (150 karakter pertama tanpa memotong kata dan menghilangkan entitas HTML seperti &nbsp;)
      */
     public function getExcerptAttribute()
     {
         // Hilangkan entitas HTML seperti &nbsp;
-        $cleanedContent = preg_replace('/&nbsp;/i', ' ', strip_tags($this->konten_artikel));
+        $cleanedContent = preg_replace('/&nbsp;/i', ' ', strip_tags($this->konten_berita));
         return Str::limit($cleanedContent, 150);
     }
 }
