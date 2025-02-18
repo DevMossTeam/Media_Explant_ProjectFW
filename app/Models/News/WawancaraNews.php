@@ -5,6 +5,7 @@ namespace App\Models\News;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\User;
 
 class WawancaraNews extends Model
 {
@@ -38,5 +39,10 @@ class WawancaraNews extends Model
             return $matches[1];
         }
         return 'https://via.placeholder.com/400x200';
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'uid');
     }
 }

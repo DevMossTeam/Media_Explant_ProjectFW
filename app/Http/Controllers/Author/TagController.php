@@ -17,7 +17,7 @@ class TagController extends Controller
         // Validasi data
         $request->validate([
             'nama_tag' => 'required|string|max:15',
-            'artikel_id' => 'required|string|exists:artikel,id', // Pastikan artikel_id valid
+            'berita_id' => 'required|string|exists:berita,id', // Pastikan berita_id valid
         ]);
 
         // Buat ID untuk tag
@@ -27,7 +27,7 @@ class TagController extends Controller
         $tag = Tag::create([
             'id' => $tagId,
             'nama_tag' => $request->nama_tag,
-            'artikel_id' => $request->artikel_id,
+            'berita_id' => $request->berita_id,
         ]);
 
         return response()->json([

@@ -5,7 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserAuth\LoginController;
 use App\Http\Controllers\UserAuth\RegisterController;
 use App\Http\Controllers\UserAuth\LogoutController;
-use App\Http\Controllers\Author\ArtikelController;
+use App\Http\Controllers\Author\BeritaController;
 use App\Http\Controllers\Author\DraftController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Setting\SettingController;
@@ -113,20 +113,28 @@ Route::fallback(function () {
     return view('404'); // Pastikan Anda membuat file view '404.blade.php'
 });
 
-// Route untuk membuat artikel
+// Route untuk membuat berita
 Route::get('/authors/create', function () {
     return view('authors.create');
-})->name('create-article');
+})->name('create-news');
 
-// Route untuk draf artikel
+// Route untuk draf berita
 Route::get('/authors/draft', function () {
     return view('authors.draft');
-})->name('draft-article');
+})->name('draft-media');
 
-// Route untuk detail artikel
-Route::get('/kategori/article-detail/{id}', function ($id) {
-    return view('kategori.article-detail', compact('id'));
-})->name('article.detail');
+Route::get('/authors/create-product', function () {
+    return view('authors.create-product');
+})->name('create-product');
+
+Route::get('/authors/creation', function () {
+    return view('authors.creation');
+})->name('creation');
+
+// Route untuk detail berita
+Route::get('/kategori/news-detail/{id}', function ($id) {
+    return view('kategori.news-detail', compact('id'));
+})->name('news.detail');
 
 // Route untuk dashboard Admin
 Route::get('/dashboard-admin', function () {
@@ -151,8 +159,8 @@ Route::prefix('dashboard-admin')->group(function () {
     })->name('dashboard-admin.events');
 });
 
-// Route untuk menyimpan artikel
-Route::post('/author/artikel/store', [ArtikelController::class, 'store'])->name('author.artikel.store');
+// Route untuk menyimpan berita
+Route::post('/author/berita/store', [BeritaController::class, 'store'])->name('author.berita.store');
 
 // Route untuk pengelolaan draft oleh author
 Route::prefix('authors')->middleware('auth')->group(function () {
@@ -188,7 +196,7 @@ Route::get('/kategori/sastra/read', [SastraNewsController::class, 'show'])->name
 
 Route::get('/', [HomeNewsController::class, 'index'])->name('home');
 
-// Rute untuk kategori artikel
+// Rute untuk kategori berita
 Route::get('/kategori/{category}', [HomeNewsController::class, 'index'])->name('category');
 Route::get('/kategori/{category}/read', [HomeNewsController::class, 'show'])->name('kategori.detail');
 

@@ -4,10 +4,10 @@ namespace App\Models\Author;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DraftArtikel extends Model
+class DraftMedia extends Model
 {
-    protected $table = 'artikel'; // Nama tabel
-    protected $fillable = ['judul', 'konten_artikel', 'tanggal_diterbitkan', 'visibilitas', 'user_id'];
+    protected $table = 'berita'; // Nama tabel
+    protected $fillable = ['judul', 'konten_berita', 'tanggal_diterbitkan', 'visibilitas', 'user_id'];
 
     public function user()
     {

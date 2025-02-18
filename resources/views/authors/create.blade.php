@@ -2,27 +2,27 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8 lg:px-16">
-    <!-- Form Penulisan Artikel dan Pengaturan Publikasi -->
-    <form id="createArticleForm" method="POST" action="{{ route('author.artikel.store') }}" enctype="multipart/form-data">
+    <!-- Form Penulisan berita dan Pengaturan Publikasi -->
+    <form id="createArticleForm" method="POST" action="{{ route('author.berita.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="lg:flex lg:space-x-8">
-            <!-- Form Penulisan Artikel -->
+            <!-- Form Penulisan berita -->
             <div class="lg:w-2/3 bg-white shadow-lg rounded-lg p-6 lg:p-8 mb-8 md:mb-10">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6">📝 Form Penulisan Artikel</h2>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">📝 Form Penulisan Berita</h2>
 
                 <!-- Judul -->
                 <div class="mb-6">
                     <label for="judul" class="block text-sm font-bold text-gray-700">Judul</label>
                     <input type="text" id="judul" name="judul" maxlength="200" required
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500"
-                        placeholder="Masukkan judul artikel...">
+                        placeholder="Masukkan judul berita...">
                 </div>
 
-                <!-- Konten Artikel -->
+                <!-- Konten berita -->
                 <div class="mb-6">
-                    <label for="konten_artikel" class="block text-sm font-bold text-gray-700">Konten Artikel</label>
+                    <label for="konten_berita" class="block text-sm font-bold text-gray-700">Konten berita</label>
                     <div id="quillEditor" class="border rounded-md" style="height: 300px;"></div>
-                    <textarea id="konten_artikel" name="konten_artikel" hidden></textarea>
+                    <textarea id="konten_berita" name="konten_berita" hidden></textarea>
                 </div>
             </div>
 
@@ -33,7 +33,7 @@
                 <!-- Kategori -->
                 <div class="mb-6">
                     <label for="kategori" class="block text-sm font-bold text-gray-700">Kategori</label>
-                    <p class="text-sm text-gray-500 mb-2">Menambah kategori untuk mempermudah pencarian artikel.</p>
+                    <p class="text-sm text-gray-500 mb-2">Menambah kategori untuk mempermudah pencarian berita.</p>
                     <select id="kategori" name="kategori" required
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500">
                         <option value="Siaran Pers">Siaran Pers</option>
@@ -49,7 +49,7 @@
                 <!-- Tag -->
                 <div class="mb-6">
                     <label for="tags" class="block text-sm font-bold text-gray-700">Tambahkan Tag</label>
-                    <p class="text-sm text-gray-500 mb-2">Tambahkan tag untuk membantu pembaca menemukan artikel.</p>
+                    <p class="text-sm text-gray-500 mb-2">Tambahkan tag untuk membantu pembaca menemukan berita.</p>
                     <div id="tagContainer" class="flex flex-wrap border rounded-md p-2 gap-2 bg-white shadow-inner">
                         <input type="text" id="tagInput"
                             class="flex-grow focus:outline-none px-2 py-1 rounded-md focus:ring-red-500 focus:border-red-500"
@@ -61,7 +61,7 @@
                 <!-- Visibilitas -->
                 <div class="mb-6">
                     <span class="block text-sm font-bold text-gray-700">Visibilitas</span>
-                    <p class="text-sm text-gray-500 mb-2">Atur visibilitas artikel agar dapat dilihat oleh kelompok yang diinginkan.</p>
+                    <p class="text-sm text-gray-500 mb-2">Atur visibilitas berita agar dapat dilihat oleh kelompok yang diinginkan.</p>
                     <div class="mt-3 flex items-center space-x-4">
                         <label class="flex items-center text-gray-700">
                             <input type="radio" id="public" name="visibilitas" value="public" required
@@ -159,7 +159,7 @@
                 ['clean']
             ]
         },
-        placeholder: 'Tulis konten artikel di sini...',
+        placeholder: 'Tulis konten berita di sini...',
     });
 
     const modal = document.getElementById('modalAlert');
@@ -178,7 +178,7 @@
     // Simpan data Quill ke textarea sebelum submit
     document.getElementById('submitArticle').addEventListener('click', () => {
         const konten = quill.root.innerHTML;
-        document.getElementById('konten_artikel').value = konten;
+        document.getElementById('konten_berita').value = konten;
 
         if (konten.trim() === '' || konten.length > 65535) {
             showModal('Konten tidak boleh kosong dan harus kurang dari 65535 karakter.');

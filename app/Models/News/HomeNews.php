@@ -5,6 +5,7 @@ namespace App\Models\News;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\User;
 
 class HomeNews extends Model
 {
@@ -60,5 +61,10 @@ class HomeNews extends Model
         // Hilangkan entitas HTML seperti &nbsp;
         $cleanedContent = preg_replace('/&nbsp;/i', ' ', strip_tags($this->konten_berita));
         return Str::limit($cleanedContent, 150);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'uid');
     }
 }

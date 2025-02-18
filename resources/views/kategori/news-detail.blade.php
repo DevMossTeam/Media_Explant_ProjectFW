@@ -7,8 +7,11 @@
 
             <!-- Judul Berita -->
             <h1 class="text-3xl font-bold text-gray-800 mb-4 text-center">{{ $news->judul }}</h1>
+
+            <!-- Menampilkan Nama Penulis Berdasarkan Relasi User -->
             <p class="text-gray-600 text-sm mb-4 text-center">
-                Anonym - {{ \Carbon\Carbon::parse($news->tanggal_diterbitkan)->format('d M Y') }} |
+                {{ $news->user->nama_lengkap ?? 'Tidak Diketahui' }} -
+                {{ \Carbon\Carbon::parse($news->tanggal_diterbitkan)->format('d M Y') }} |
                 Kategori: {{ $news->kategori }}
             </p>
 
@@ -20,14 +23,14 @@
                 </div>
             @endif
 
-            <!-- Konten Berita dengan gambar diposisikan di tengah & tidak bisa diklik -->
-            <div class="content text-gray-800 text-justify leading-relaxed">
+            <!-- Konten Berita: Hanya gambar yang diposisikan di tengah, teks tetap sesuai format asli -->
+            <div class="content text-gray-800 leading-relaxed">
                 {!! preg_replace([
                     '/<a[^>]*>\s*(<img[^>]*>)\s*<\/a>/i', // Menghapus <a> di sekitar <img>
-                    '/<img(.*?)>/i' // Memodifikasi <img> agar tidak bisa diklik dan di tengah
+                    '/<img(.*?)>/i' // Memodifikasi <img> agar tidak bisa diklik dan selalu di tengah
                 ], [
                     '$1', // Menghilangkan tag <a> di sekitar gambar
-                    '<img$1 class="mx-auto pointer-events-none select-none">' // Tambahkan class untuk gambar
+                    '<img$1 class="mx-auto pointer-events-none select-none">' // Tambahkan class agar gambar di tengah
                 ], $news->konten_berita) !!}
             </div>
         </div>

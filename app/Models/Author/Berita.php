@@ -5,10 +5,10 @@ namespace App\Models\Author;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Artikel extends Model
+class Berita extends Model
 {
     use HasFactory;
-    protected $table = 'artikel';
+    protected $table = 'berita';
     protected $primaryKey = 'id';
     public $incrementing = false; // Karena ID berupa UUID
     protected $keyType = 'string';
@@ -20,11 +20,11 @@ class Artikel extends Model
         'tanggal_diterbitkan',
         'user_id',
         'kategori',
-        'konten_artikel',
+        'konten_berita',
         'visibilitas',
     ];
     public function tags()
     {
-        return $this->hasMany(Tag::class, 'artikel_id');
+        return $this->hasMany(Tag::class, 'berita_id');
     }
 }

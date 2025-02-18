@@ -16,6 +16,6 @@ class Tag extends Model
     protected $fillable = [
         'id',
         'nama_tag',
-        'artikel_id',
+        'berita_id',
     ];
 }

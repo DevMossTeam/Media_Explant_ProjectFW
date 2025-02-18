@@ -4,18 +4,20 @@
             <h1 class="text-3xl font-bold">Media Explant</h1>
             <p class="text-sm">Rawat ingatan, diskusi, dan menulis</p>
         </div>
-        <!-- Artikel Dropdown -->
+        <!-- Media Dropdown -->
         <div class="relative ml-auto mr-4">
             <button id="articleButton" class="flex items-center space-x-2 focus:outline-none">
-                <i class="fa-solid fa-file-alt text-2xl"></i>
-                <span class="text-sm">Artikel</span>
+                <i class="fa-solid fa-square-plus text-2xl"></i>
+                <span class="text-sm">Buat</span>
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
                     <path d="M7 10l5 5 5-5H7z" />
                 </svg>
             </button>
             <div id="articleDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
-                <a href="{{ route('create-article') }}" class="block px-4 py-2 hover:bg-gray-100">Buat Artikel</a>
-                <a href="{{ route('draft-article') }}" class="block px-4 py-2 hover:bg-gray-100">Draf</a>
+                <a href="{{ route('create-news') }}" class="block px-4 py-2 hover:bg-gray-100">Buat Berita</a>
+                <a href="{{ route('create-product') }}" class="block px-4 py-2 hover:bg-gray-100">Buat Produk</a>
+                <a href="{{ route('creation') }}" class="block px-4 py-2 hover:bg-gray-100">Buat Karya</a>
+                <a href="{{ route('draft-media') }}" class="block px-4 py-2 hover:bg-gray-100">Draf</a>
             </div>
         </div>
         <!-- Profil Dropdown -->
@@ -95,7 +97,7 @@
 </nav>
 
 <script>
-    // Toggle untuk dropdown artikel
+    // Toggle untuk dropdown media
     const articleButton = document.getElementById('articleButton');
     const articleDropdown = document.getElementById('articleDropdown');
 
