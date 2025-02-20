@@ -12,13 +12,12 @@ class BeritaController extends Controller
 {
     public function store(Request $request)
     {
-        // Validasi input
+        // Validasi input (tags tidak wajib)
         $request->validate([
             'judul' => 'required|max:200',
             'konten_berita' => 'required|max:65535',
             'kategori' => 'required',
             'visibilitas' => 'required|in:public,private',
-            'tags' => 'required',
         ]);
 
         // Ambil uid dari cookie
@@ -30,22 +29,24 @@ class BeritaController extends Controller
             'id' => $articleId,
             'judul' => $request->judul,
             'tanggal_diterbitkan' => $request->tanggal_diterbitkan,
-            'user_id' => $userUid, // Simpan uid langsung ke kolom user_id
+            'user_id' => $userUid,
             'kategori' => $request->kategori,
             'konten_berita' => $request->konten_berita,
             'visibilitas' => $request->visibilitas,
         ]);
 
-        // Simpan tags
-        $tags = explode(',', $request->tags);
-        foreach ($tags as $tag) {
-            Tag::create([
-                'id' => Str::random(12),
-                'nama_tag' => trim($tag),
-                'berita_id' => $articleId,
-            ]);
+        // Simpan tags jika ada
+        if ($request->has('tags') && !empty($request->tags)) {
+            $tags = explode(',', $request->tags);
+            foreach ($tags as $tag) {
+                Tag::create([
+                    'id' => Str::random(12),
+                    'nama_tag' => trim($tag),
+                    'berita_id' => $articleId,
+                ]);
+            }
         }
 
-        return redirect()->back()->with('success', 'berita berhasil dipublikasikan.');
+        return redirect()->back()->with('success', 'Berita berhasil dipublikasikan.');
     }
 }
