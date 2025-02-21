@@ -15,8 +15,8 @@
             </button>
             <div id="articleDropdown" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
                 <a href="{{ route('create-news') }}" class="block px-4 py-2 hover:bg-gray-100">Buat Berita</a>
-                <a href="{{ route('create-product') }}" class="block px-4 py-2 hover:bg-gray-100">Buat Produk</a>
-                <a href="{{ route('creation') }}" class="block px-4 py-2 hover:bg-gray-100">Buat Karya</a>
+                <a href="{{ route('create-product') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan Produk</a>
+                <a href="{{ route('creation') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan Karya</a>
             </div>
         </div>
         <!-- Profil Dropdown -->

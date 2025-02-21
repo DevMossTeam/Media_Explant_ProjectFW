@@ -1,4 +1,4 @@
-<link rel="shortcut icon" href="{{ asset('assets/dev-64.png') }}" type="image/png">
+<link rel="shortcut icon" href="{{ asset('assets/ukpm-explant-ic') }}" type="image/png">
 @extends('layouts.auth-layout')
 
 @section('content')
@@ -26,7 +26,7 @@
             @csrf
             <div class="mb-6">
                 <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="email" id="email" name="email" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-2" required>
+                <input type="email" id="email" name="email" placeholder="Masukkan email Anda" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-2" required>
             </div>
 
             <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 focus:outline-none">Kirim OTP</button>

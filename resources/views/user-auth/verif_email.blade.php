@@ -1,4 +1,4 @@
-<link rel="shortcut icon" href="{{ asset('assets/dev-64.png') }}" type="image/png">
+<link rel="shortcut icon" href="{{ asset('assets/ukpm-explant-ic.png') }}" type="image/png">
 @extends('layouts.auth-layout')
 
 @section('content')

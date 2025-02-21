@@ -94,15 +94,16 @@ class RegisterController extends Controller
     {
         $mail = new PHPMailer(true);
         try {
+            // Konfigurasi SMTP
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
+            $mail->Host = env('MAIL_HOST');
             $mail->SMTPAuth = true;
-            $mail->Username = 'devmossteam@gmail.com'; // Ganti dengan email Anda
-            $mail->Password = 'auarutsuzgpwtriy'; // Ganti dengan password email Anda
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
-
-            $mail->setFrom('devmossteam@gmail.com', 'Media Explant');
+            $mail->Username = env('MAIL_USERNAME');
+            $mail->Password = env('MAIL_PASSWORD');
+            $mail->SMTPSecure = env('MAIL_ENCRYPTION', PHPMailer::ENCRYPTION_STARTTLS);
+            $mail->Port = env('MAIL_PORT');
+            
+            $mail->setFrom(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
             $mail->addAddress($email);
 
             $mail->isHTML(true);
@@ -138,7 +139,7 @@ class RegisterController extends Controller
                 </body>
                 </html>
             ";
-            
+
             $mail->send();
         } catch (Exception $e) {
             return back()->withErrors(['email' => 'Gagal mengirim email. Error: ' . $mail->ErrorInfo]);

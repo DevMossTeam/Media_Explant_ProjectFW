@@ -1,4 +1,6 @@
-<link rel="shortcut icon" href="{{ asset('assets/dev-64.png') }}" type="image/png">
+<link rel="shortcut icon" href="{{ asset('assets/ukpm-explant-ic.png') }}" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 @extends('layouts.auth-layout')
 
 @section('content')
@@ -18,14 +20,20 @@
 
         <form action="{{ route('password.updatePassword') }}" method="POST">
             @csrf
-            <div class="mb-6">
+            <div class="mb-6 relative">
                 <label for="password" class="block text-sm font-medium text-gray-700">Password Baru</label>
-                <input type="password" id="password" name="password" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-2" required>
+                <input type="password" id="password" name="password" placeholder="Masukkan password baru" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-2 pr-10" required>
+                <span class="absolute right-4 top-[70%] transform -translate-y-1/2 cursor-pointer text-gray-600 hover:text-gray-900" onclick="togglePassword('password', 'eyeIcon1')">
+                    <i id="eyeIcon1" class="fa fa-eye"></i>
+                </span>
             </div>
 
-            <div class="mb-6">
+            <div class="mb-6 relative">
                 <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi Password</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-2" required>
+                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Konfirmasi password baru" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-2 pr-10" required>
+                <span class="absolute right-4 top-[70%] transform -translate-y-1/2 cursor-pointer text-gray-600 hover:text-gray-900" onclick="togglePassword('password_confirmation', 'eyeIcon2')">
+                    <i id="eyeIcon2" class="fa fa-eye"></i>
+                </span>
             </div>
 
             <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 focus:outline-none">Ganti Password</button>
@@ -38,4 +46,22 @@
         </div>
     </div>
 </div>
+
+<!-- Script untuk toggle password visibility -->
+<script>
+    function togglePassword(inputId, iconId) {
+        const passwordField = document.getElementById(inputId);
+        const eyeIcon = document.getElementById(iconId);
+
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
+</script>
 @endsection

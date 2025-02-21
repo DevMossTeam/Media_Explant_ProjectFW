@@ -23,15 +23,17 @@ class LoginController extends Controller
      */
     public function login(Request $request)
 {
-    // Validasi inputan
-    $request->validate([
-        'nama_pengguna' => 'required',
+     // Validasi inputan
+     $request->validate([
+        'identifier' => 'required', // Bisa berupa nama_pengguna atau email
         'password' => 'required',
     ]);
 
-    // Cari pengguna berdasarkan nama pengguna
-    $user = User::where('nama_pengguna', $request->nama_pengguna)->first();
-
+    // Cari pengguna berdasarkan nama_pengguna atau email
+    $user = User::where('nama_pengguna', $request->identifier)
+                ->orWhere('email', $request->identifier)
+                ->first();
+                
     // Cek apakah pengguna ada dan password sesuai
     if (!$user || !Hash::check($request->password, $user->password)) {
         return back()->withErrors(['message' => 'Nama pengguna atau password salah.']);
