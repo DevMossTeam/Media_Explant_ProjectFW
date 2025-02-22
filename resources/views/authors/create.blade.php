@@ -44,7 +44,6 @@
                             <option value="Wawancara">Wawancara</option>
                             <option value="Diskusi">Diskusi</option>
                             <option value="Agenda">Agenda</option>
-                            <option value="Sastra">Sastra</option>
                             <option value="Opini">Opini</option>
                         </select>
                     </div>
