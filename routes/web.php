@@ -204,3 +204,4 @@ Route::view('/tentang-kami', 'header-footer.footer-menu.tentangKami');
 Route::view('/explant-contributor', 'header-footer.footer-menu.explantContributor');
 Route::view('/kode-etik', 'header-footer.footer-menu.kode-etik');
 Route::view('/struktur-organisasi', 'header-footer.footer-menu.strukturOrganisasi');
+Route::view('/pusat-bantuan', 'header-footer.footer-menu.pusatBantuan');

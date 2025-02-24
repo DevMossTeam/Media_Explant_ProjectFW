@@ -87,10 +87,10 @@
                         <!-- Pratinjau -->
                         <button type="button" id="previewArticle"
                             class="flex items-center px-6 py-3 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15 10l4.553 2.276A12.042 12.042 0 0115 12m0 0l-4.553 2.276A12.042 12.042 0 009 12m6 0v-4a4 4 0 00-8 0v4m4 10v-4m0-16h0" />
+                            <svg class="w-5 h-5 mr-2 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 12c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5zm0-8c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3z">
+                                </path>
                             </svg>
                             Pratinjau
                         </button>
