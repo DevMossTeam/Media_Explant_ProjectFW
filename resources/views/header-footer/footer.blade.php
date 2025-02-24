@@ -33,14 +33,10 @@
             <div>
                 <h3 class="text-red-600 text-lg font-bold mb-4">IKUTI KAMI</h3>
                 <div class="flex space-x-4">
-                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl"><i
-                            class="fab fa-facebook"></i></a>
-                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl"><i
-                            class="fab fa-instagram"></i></a>
-                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl"><i
-                            class="fab fa-youtube"></i></a>
-                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl"><i
-                            class="fab fa-linkedin"></i></a>
+                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="text-red-600 hover:text-red-800 text-2xl"><i class="fab fa-linkedin"></i></a>
                 </div>
             </div>
 
@@ -54,6 +50,7 @@
                     <li><a href="{{ url('/kode-etik') }}" class="hover:text-red-600 transition">Kode Etik</a></li>
                     <li><a href="{{ url('/struktur-organisasi') }}" class="hover:text-red-600 transition">Struktur
                             Organisasi</a></li>
+                    <li><a href="{{ url('/pusat-bantuan') }}" class="hover:text-red-600 transition">Pusat Bantuan</a></li>
                 </ul>
             </div>
         </div>

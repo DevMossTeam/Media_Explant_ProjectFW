@@ -16,7 +16,7 @@
     <!-- FAQ -->
     <section class="mb-6">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Pertanyaan yang Sering Diajukan</h2>
-        
+
         <details class="mb-4 bg-white rounded-lg p-4 shadow">
             <summary class="cursor-pointer font-medium text-lg text-gray-800">
                 Bagaimana cara mendaftar akun?
