@@ -20,6 +20,7 @@ use App\Http\Controllers\News\RisetNewsController;
 use App\Http\Controllers\News\SiaranPersNewsController;
 use App\Http\Controllers\News\AgendaNewsController;
 use App\Http\Controllers\News\SastraNewsController;
+use App\Http\Controllers\Author\ProdukController;
 
 /*
 |--------------------------------------------------------------------------
@@ -161,6 +162,9 @@ Route::prefix('dashboard-admin')->group(function () {
 
 // Route untuk menyimpan berita
 Route::post('/author/berita/store', [BeritaController::class, 'store'])->name('author.berita.store');
+
+Route::get('/create-product', [ProdukController::class, 'create'])->name('produk.create');
+Route::post('/create-product', [ProdukController::class, 'store'])->name('produk.store');
 
 // Route untuk pengelolaan draft oleh author
 Route::prefix('authors')->middleware('auth')->group(function () {
