@@ -19,7 +19,6 @@ use App\Http\Controllers\News\WawancaraNewsController;
 use App\Http\Controllers\News\RisetNewsController;
 use App\Http\Controllers\News\SiaranPersNewsController;
 use App\Http\Controllers\News\AgendaNewsController;
-use App\Http\Controllers\News\SastraNewsController;
 use App\Http\Controllers\Author\ProdukController;
 
 /*
@@ -71,15 +70,25 @@ Route::get('/kategori/majalah', function () {
     return view('kategori.majalah');
 })->name('majalah');
 
-// Rute untuk halaman Sastra
-Route::get('/kategori/sastra', function () {
-    return view('kategori.sastra');
-})->name('sastra');
+// Rute untuk halaman Puisi
+Route::get('/kategori/puisi', function () {
+    return view('kategori.puisi');
+})->name('puisi');
 
-// Rute untuk halaman Karikatur
-Route::get('/kategori/karikatur', function () {
-    return view('kategori.karikatur');
-})->name('karikatur');
+// Rute untuk halaman Pantun
+Route::get('/kategori/pantun', function () {
+    return view('kategori.pantun');
+})->name('pantun');
+
+// Rute untuk halaman Syair
+Route::get('/kategori/syair', function () {
+    return view('kategori.syair');
+})->name('syair');
+
+// Rute untuk halaman Fotografi
+Route::get('/kategori/fotografi', function () {
+    return view('kategori.fotografi');
+})->name('fotografi');
 
 // Rute untuk halaman Desain Grafis
 Route::get('/kategori/desain-grafis', function () {
@@ -195,8 +204,6 @@ Route::get('/kategori/siaran-pers', [SiaranPersNewsController::class, 'index'])-
 Route::get('/kategori/siaran-pers/read', [SiaranPersNewsController::class, 'show'])->name('siaran-pers.detail');
 Route::get('/kategori/agenda', [AgendaNewsController::class, 'index'])->name('agenda');
 Route::get('/kategori/agenda/read', [AgendaNewsController::class, 'show'])->name('agenda.detail');
-Route::get('/kategori/sastra', [SastraNewsController::class, 'index'])->name('sastra');
-Route::get('/kategori/sastra/read', [SastraNewsController::class, 'show'])->name('sastra.detail');
 
 Route::get('/', [HomeNewsController::class, 'index'])->name('home');
 

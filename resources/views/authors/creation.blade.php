@@ -70,8 +70,10 @@
                     <p class="text-sm text-gray-500 mt-1">Pilih kategori yang paling sesuai dengan karya Anda.</p>
                     <select id="kategori" name="kategori"
                         class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300">
-                        <option value="sastra">Sastra</option>
-                        <option value="karikatur">Karikatur</option>
+                        <option value="puisi">Puisi</option>
+                        <option value="pantun">Pantun</option>
+                        <option value="syair">Syair</option>
+                        <option value="fotografi">Fotografi</option>
                         <option value="desain_grafis">Desain Grafis</option>
                     </select>
                 </div>

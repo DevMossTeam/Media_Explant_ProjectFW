@@ -87,8 +87,10 @@
             <li class="relative group">
                 <button class="hover:bg-red-700 px-4 py-2 rounded-md transition duration-300">Karya</button>
                 <ul class="absolute left-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                    <li><a href="{{ route('sastra') }}" class="block px-4 py-2 hover:bg-gray-100">Sastra</a></li>
-                    <li><a href="{{ route('karikatur') }}" class="block px-4 py-2 hover:bg-gray-100">Karikatur</a></li>
+                    <li><a href="{{ route('puisi') }}" class="block px-4 py-2 hover:bg-gray-100">Puisi</a></li>
+                    <li><a href="{{ route('pantun') }}" class="block px-4 py-2 hover:bg-gray-100">Pantun</a></li>
+                    <li><a href="{{ route('syair') }}" class="block px-4 py-2 hover:bg-gray-100">Syair</a></li>
+                    <li><a href="{{ route('fotografi') }}" class="block px-4 py-2 hover:bg-gray-100">Fotografi</a></li>
                     <li><a href="{{ route('desain-grafis') }}" class="block px-4 py-2 hover:bg-gray-100">Desain Grafis</a></li>
                 </ul>
             </li>
