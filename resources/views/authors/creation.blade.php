@@ -16,8 +16,9 @@
                         placeholder="Masukkan judul karya...">
                 </div>
 
-                <div class="mb-4">
-                    <label for="konten" class="block text-gray-700 font-medium">Konten Karya</label>
+                <!-- Konten Karya -->
+                <div id="konten-container" class="mb-4">
+                    <label for="konten" id="konten-label" class="block text-gray-700 font-medium">Konten Karya</label>
                     <textarea id="konten" name="konten" rows="6"
                         class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
                         placeholder="Tulis konten karya di sini..."></textarea>
@@ -49,6 +50,14 @@
                         <canvas id="pdf-canvas" class="max-w-full rounded-md shadow-md hidden mx-auto"
                             style="max-width: 250px;"></canvas>
                     </div>
+                </div>
+
+                <!-- Caption Karya (Hanya untuk Fotografi & Desain Grafis) -->
+                <div id="caption-container" class="mb-4 hidden">
+                    <label for="caption" class="block text-gray-700 font-medium">Caption Karya</label>
+                    <textarea id="caption" name="caption" rows="3"
+                        class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
+                        placeholder="Tulis caption untuk karya Anda..."></textarea>
                 </div>
 
                 <!-- Nama Penulis -->
@@ -201,6 +210,19 @@
             dropArea.classList.remove("hidden");
             fileInput.value = "";
         });
+    });
+
+    document.getElementById("kategori").addEventListener("change", function() {
+        let kontenContainer = document.getElementById("konten-container");
+        let captionContainer = document.getElementById("caption-container");
+
+        if (this.value === "fotografi" || this.value === "desain_grafis") {
+            kontenContainer.classList.add("hidden");
+            captionContainer.classList.remove("hidden");
+        } else {
+            kontenContainer.classList.remove("hidden");
+            captionContainer.classList.add("hidden");
+        }
     });
 </script>
 
