@@ -12,29 +12,30 @@ class KaryaController extends Controller
 {
     public function store(Request $request)
     {
+        // Validasi Input
         $request->validate([
-            'judul' => 'required|string|max:255',
-            'penulis' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'kategori' => 'required|string|max:255',
-            'file' => 'nullable|file|mimes:pdf,jpg,png,jpeg|max:10240',
-            'visibilitas' => 'required|in:public,private',
+            'penulis' => 'required', // Nama Penulis wajib
+            'judul' => 'required',
+            'deskripsi' => 'required_unless:kategori,fotografi,desain_grafis', // Wajib kecuali kategori Fotografi & Desain Grafis
+            'media' => 'required|file|mimes:jpg,jpeg,png|max:10240', // Pastikan hanya gambar dengan ukuran max 10MB
+            'visibilitas' => 'required|in:public,private'
         ]);
 
+        // Upload File
         $filePath = null;
-
-        if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('karya_media', 'public');
+        if ($request->hasFile('media')) {
+            $filePath = $request->file('media')->store('karya_media', 'public');
         }
 
+        // Simpan ke Database
         Karya::create([
-            'id' => Str::random(12),
+            'id' => Str::random(12), // ID acak unik
             'creator' => $request->penulis,
             'judul' => $request->judul,
-            'deskripsi' => $request->deskripsi,
+            'deskripsi' => $request->deskripsi ?? '', // Default kosong jika tidak diisi
             'kategori' => $request->kategori,
-            'media' => $filePath,
-            'release_date' => now(),
+            'media' => $filePath, // Simpan path, bukan HTML <img>
+            'release_date' => now(), // Otomatis menggunakan waktu sekarang
             'visibilitas' => $request->visibilitas,
         ]);
 
