@@ -9,11 +9,10 @@ class Karya extends Model
 {
     use HasFactory;
 
-    protected $table = 'karya'; // Sesuai dengan nama tabel di database
-
+    protected $table = 'karya';
     protected $primaryKey = 'id';
     public $incrementing = false;
-    protected $keyType = 'string';
+    public $timestamps = false;
 
     protected $fillable = [
         'id',
