@@ -15,7 +15,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('user-auth.login');
+        return $view('user-auth.login');
     }
 
     /**
@@ -33,7 +33,7 @@ class LoginController extends Controller
     $user = User::where('nama_pengguna', $request->identifier)
                 ->orWhere('email', $request->identifier)
                 ->first();
-                
+
     // Cek apakah pengguna ada dan password sesuai
     if (!$user || !Hash::check($request->password, $user->password)) {
         return back()->withErrors(['message' => 'Nama pengguna atau password salah.']);

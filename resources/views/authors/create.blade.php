@@ -168,8 +168,18 @@
         const closeModal = document.getElementById('closeModal');
         const modalContent = document.getElementById('modalContent');
 
+        function hideModal() {
+            modal.classList.add('hidden');
+        }
+
         closeModal.addEventListener('click', () => {
             modal.classList.add('hidden');
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === "Escape") {
+                hideModal();
+            }
         });
 
         modal.addEventListener('click', (event) => {
@@ -273,9 +283,9 @@
             const tagEl = document.createElement('div');
             tagEl.className = 'flex items-center bg-gray-200 px-3 py-1 rounded-full text-sm';
             tagEl.innerHTML = `
-                            <span>${tagValue}</span>
-                            <button type="button" class="ml-2 text-gray-600 focus:outline-none">&times;</button>
-                        `;
+                                        <span>${tagValue}</span>
+                                        <button type="button" class="ml-2 text-gray-600 focus:outline-none">&times;</button>
+                                    `;
             tagEl.querySelector('button').addEventListener('click', () => {
                 removeTag(tagValue);
             });
