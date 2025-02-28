@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Author\Karya;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class KaryaController extends Controller
 {
@@ -21,10 +20,10 @@ class KaryaController extends Controller
             'visibilitas' => 'required|in:public,private'
         ]);
 
-        // Upload File
-        $filePath = null;
+        // Konversi file gambar menjadi base64
+        $fileBase64 = null;
         if ($request->hasFile('media')) {
-            $filePath = $request->file('media')->store('karya_media', 'public');
+            $fileBase64 = base64_encode(file_get_contents($request->file('media')->path()));
         }
 
         // Simpan ke Database
@@ -34,7 +33,7 @@ class KaryaController extends Controller
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi ?? '', // Default kosong jika tidak diisi
             'kategori' => $request->kategori,
-            'media' => $filePath, // Simpan path, bukan HTML <img>
+            'media' => $fileBase64, // Simpan dalam bentuk base64 di kolom mediumtext
             'release_date' => now(), // Otomatis menggunakan waktu sekarang
             'visibilitas' => $request->visibilitas,
         ]);
