@@ -1,13 +1,16 @@
 <?php
 
-use App\Http\Controllers\API\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\SignInController;
+use App\Http\Controllers\API\SignUpController;
+use App\Http\Controllers\API\VerifikasiAkunController;
 
-// Login
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [SignUpController::class, 'register']);
+Route::post('/verify-otp', [VerifikasiAkunController::class, 'verifyOtp']);
+Route::post('/set-password', [SignUpController::class, 'storePassword']);
+Route::post('/login', [SignInController::class, 'login']);
 
-// Middleware Sanctum untuk rute yang memerlukan autentikasi
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me', [AuthController::class, 'me']);
+    Route::get('/me', [SignInController::class, 'me']);
+    Route::post('/logout', [SignInController::class, 'logout']);
 });
