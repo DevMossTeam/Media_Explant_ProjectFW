@@ -26,6 +26,7 @@ class RegisterController extends Controller
             'email' => 'required|email|max:100|unique:user,email',
             'nama_lengkap' => 'required|max:100',
         ], [
+            'nama_pengguna.unique' => 'Nama pengguna sudah terdaftar, silakan gunakan nama lain.',
             'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain.',
         ]);
 
@@ -102,7 +103,7 @@ class RegisterController extends Controller
             $mail->Password = env('MAIL_PASSWORD');
             $mail->SMTPSecure = env('MAIL_ENCRYPTION', PHPMailer::ENCRYPTION_STARTTLS);
             $mail->Port = env('MAIL_PORT');
-            
+
             $mail->setFrom(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
             $mail->addAddress($email);
 

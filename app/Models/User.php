@@ -12,7 +12,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'user';
-    public $timestamps = false; // Karena tidak ada timestamps di tabel user
+    public $timestamps = false; 
 
     protected $fillable = [
         'uid',
