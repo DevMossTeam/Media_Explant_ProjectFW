@@ -29,7 +29,7 @@ class SignUpController extends Controller
         // Kirim OTP ke email
         Mail::raw("Kode OTP Anda: $otp", function ($message) use ($request) {
             $message->to($request->email)
-                    ->subject('Verifikasi OTP');
+                ->subject('Verifikasi OTP');
         });
 
         return response()->json([
@@ -42,10 +42,10 @@ class SignUpController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
+            'nama_pengguna' => 'required|max:60|unique:users,nama_pengguna',
             'password' => 'required|min:6|confirmed',
         ]);
 
-        // Buat akun baru
         $user = User::create([
             'uid' => Str::uuid(),
             'nama_pengguna' => $request->nama_pengguna,
