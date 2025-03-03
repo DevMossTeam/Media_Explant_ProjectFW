@@ -1,33 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 
 class VerifikasiAkunController extends Controller
 {
     public function verifyOtp(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required|numeric|digits:6',
-        ]);
+        $request->validate(['otp' => 'required|numeric']);
 
-        $cachedOtp = Cache::get("otp_{$request->email}");
+        $registerData = Session::get('register_data');
 
-        if (!$cachedOtp || $request->otp != $cachedOtp) {
-            return response()->json([
-                'message' => 'Kode OTP salah atau telah kedaluwarsa.'
-            ], 400);
+        if (!$registerData || $request->otp != $registerData['otp']) {
+            return response()->json(['message' => 'Kode OTP salah atau telah kedaluwarsa.'], 400);
         }
 
-        // Hapus OTP setelah verifikasi
-        Cache::forget("otp_{$request->email}");
-
-        return response()->json([
-            'message' => 'OTP berhasil diverifikasi.'
-        ], 200);
+        return response()->json(['message' => 'OTP berhasil diverifikasi. Silakan buat password.'], 200);
     }
 }
