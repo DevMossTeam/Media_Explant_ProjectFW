@@ -64,3 +64,187 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+```
+.
+├── app
+│   ├── Http
+│   │   └── Controllers
+│   │       ├── API
+│   │       │   ├── SignInController.php
+│   │       │   ├── SignUpController.php
+│   │       │   └── VerifikasiAkunController.php
+│   │       ├── Admin
+│   │       │   └── AdminUserController.php
+│   │       ├── Author
+│   │       │   ├── BeritaController.php
+│   │       │   ├── DraftController.php
+│   │       │   ├── KaryaController.php
+│   │       │   ├── ProdukController.php
+│   │       │   └── TagController.php
+│   │       ├── News
+│   │       │   ├── AgendaNewsController.php
+│   │       │   ├── DiskusiNewsController.php
+│   │       │   ├── HomeNewsController.php
+│   │       │   ├── OpiniNewsController.php
+│   │       │   ├── RisetNewsController.php
+│   │       │   ├── SiaranPersNewsController.php
+│   │       │   └── WawancaraNewsController.php
+│   │       ├── Profile
+│   │       │   └── ProfileController.php
+│   │       ├── Setting
+│   │       │   └── SettingController.php
+│   │       ├── UserAuth
+│   │       │   ├── ChangePasswordController.php
+│   │       │   ├── CreatePasswordController.php
+│   │       │   ├── ForgotPasswordController.php
+│   │       │   ├── LoginController.php
+│   │       │   ├── LogoutController.php
+│   │       │   ├── RegisterController.php
+│   │       │   └── VerifikasiAkunController.php
+│   │       ├── Controller.php
+│   │       └── HomeController.php
+│   └── Models
+│       ├── Admin
+│       │   └── AdminUser.php
+│       ├── Author
+│       │   ├── Berita.php
+│       │   ├── DraftMedia.php
+│       │   ├── Karya.php
+│       │   ├── Produk.php
+│       │   └── Tag.php
+│       ├── News
+│       │   ├── AgendaNews.php
+│       │   ├── DiskusiNews.php
+│       │   ├── HomeNews.php
+│       │   ├── OpiniNews.php
+│       │   ├── RisetNews.php
+│       │   ├── SiaranPersNews.php
+│       │   └── WawancaraNews.php
+│       └── User.php
+├── Providers
+│   └── AppServiceProvider.php
+├── bootstrap
+│   └── cache
+│       ├── app.php
+│       └── providers.php
+├── config
+│   ├── app.php
+│   ├── auth.php
+│   ├── cache.php
+│   ├── database.php
+│   ├── filesystems.php
+│   ├── logging.php
+│   ├── mail.php
+│   ├── queue.php
+│   ├── sanctum.php
+│   ├── services.php
+│   └── session.php
+├── database
+│   ├── factories
+│   ├── migrations
+│   └── seeders
+├── .gitignore
+├── public
+│   ├── assets
+│   │   ├── dev-64.png
+│   │   └── ukpm-explant-ic.png
+│   ├── css
+│   │   └── scrollbar.css
+│   ├── .htaccess
+│   ├── favicon.ico
+│   ├── index.php
+│   └── robots.txt
+├── resources
+│   ├── css
+│   │   └── app.css
+│   ├── js
+│   │   ├── app.js
+│   │   └── bootstrap.js
+│   └── views
+│       ├── authors
+│       │   ├── create-product.blade.php
+│       │   ├── create.blade.php
+│       │   ├── creation.blade.php
+│       │   ├── draft.blade.php
+│       │   └── index.blade.php
+│       ├── dashboard-admin
+│       │   ├── components
+│       │   │   ├── sidebar.blade.php
+│       │   │   ├── stats.blade.php
+│       │   │   ├── events.blade.php
+│       │   │   └── index.blade.php
+│       │   └── header-footer
+│       │       ├── footer-menu
+│       │       │   ├── explantContributor.blade.php
+│       │       │   ├── kode-etik.blade.php
+│       │       │   ├── pusatBantuan.blade.php
+│       │       │   ├── strukturOrganisasi.blade.php
+│       │       │   └── tentangKami.blade.php
+│       │       ├── footer.blade.php
+│       │       └── header.blade.php
+│       ├── kategori
+│       │   ├── agenda.blade.php
+│       │   ├── buletin.blade.php
+│       │   ├── desain-grafis.blade.php
+│       │   ├── diskusi.blade.php
+│       │   ├── fotografi.blade.php
+│       │   ├── majalah.blade.php
+│       │   ├── news-detail.blade.php
+│       │   ├── opini.blade.php
+│       │   ├── pantun.blade.php
+│       │   ├── puisi.blade.php
+│       │   ├── riset.blade.php
+│       │   ├── siaranPers.blade.php
+│       │   ├── syair.blade.php
+│       │   └── wawancara.blade.php
+│       ├── layouts
+│       │   ├── admin-layouts.blade.php
+│       │   ├── app.blade.php
+│       │   └── auth-layout.blade.php
+│       ├── profile
+│       │   └── mainProfile.blade.php
+│       ├── settings
+│       │   └── umum.blade.php
+│       └── user-auth
+│           ├── 404.blade.php
+│           ├── home.blade.php
+│           └── welcome.blade.php
+├── routes
+│   ├── api.php
+│   ├── console.php
+│   └── web.php
+├── storage
+│   ├── app
+│   │   └── .gitignore
+│   ├── framework
+│   │   ├── cache
+│   │   ├── data
+│   │   ├── .gitignore
+│   │   ├── sessions
+│   │   │   └── .gitignore
+│   │   ├── testing
+│   │   │   └── .gitignore
+│   │   └── views
+│   │       └── .gitignore
+│   └── logs
+│       └── .gitignore
+├── tests
+│   ├── Feature
+│   └── Unit
+│       └── TestCase.php
+├── .editorconfig
+├── .env.example
+├── .gitattributes
+├── .gitignore
+├── LICENSE
+├── README.md
+├── artisan
+├── composer.json
+├── composer.lock
+├── package.json
+├── phpunit.xml
+├── postcss.config.js
+├── tailwind.config.js
+└── vite.config.js
+```
