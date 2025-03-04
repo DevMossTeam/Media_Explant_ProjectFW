@@ -181,10 +181,7 @@ Route::post('/create-product', [ProdukController::class, 'store'])->name('produk
 Route::post('/karya/store', [KaryaController::class, 'store'])->name('karya.store');
 
 // Route untuk pengelolaan draft oleh author
-Route::prefix('authors')->middleware('auth')->group(function () {
-    Route::get('drafts', [DraftController::class, 'index'])->name('author.draft.index');
-    Route::delete('drafts/{id}', [DraftController::class, 'destroy'])->name('author.draft.destroy');
-});
+Route::get('/author/drafts', [DraftController::class, 'index'])->name('authors.drafts');
 
 Route::get('/profile', [ProfileController::class, 'mainProfile'])->name('profile');
 
