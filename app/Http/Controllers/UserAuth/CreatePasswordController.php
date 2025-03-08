@@ -5,8 +5,8 @@ namespace App\Http\Controllers\UserAuth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
 
 class CreatePasswordController extends Controller
 {
@@ -17,12 +17,14 @@ class CreatePasswordController extends Controller
 
     public function storePassword(Request $request)
     {
-        $request->validate(['password' => 'required|min:6']);
+        $request->validate([
+            'password' => 'required|min:6|confirmed',
+        ]);
 
         $registerData = Session::get('register_data');
 
         if (!$registerData) {
-            return redirect()->route('register')->withErrors(['error' => 'Terjadi kesalahan. Silakan daftar ulang.']);
+            return redirect()->route('register')->withErrors(['error' => 'Data registrasi tidak ditemukan.']);
         }
 
         User::create([
@@ -36,6 +38,6 @@ class CreatePasswordController extends Controller
 
         Session::forget('register_data');
 
-        return redirect('/login')->with('success', 'Akun berhasil dibuat. Silakan login.');
+        return redirect('/login')->with('success', 'Akun berhasil dibuat, silakan login.');
     }
 }

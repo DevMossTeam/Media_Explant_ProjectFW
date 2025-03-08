@@ -31,16 +31,18 @@ class RegisterController extends Controller
         ]);
 
         // Simpan data ke sesi sebelum verifikasi OTP
-        $uid = substr(str_replace('-', '', Str::uuid()->toString()), 0, 28);
+        $uid = substr(Str::uuid()->toString(), 0, 28);
         $otp = rand(100000, 999999);
 
-        Session::put('register_data', [
+        $registerData = [
             'uid' => $uid,
             'nama_pengguna' => $request->nama_pengguna,
             'email' => $request->email,
             'nama_lengkap' => $request->nama_lengkap,
             'otp' => $otp,
-        ]);
+        ];
+
+        Session::put('register_data', $registerData);
 
         // Kirim OTP via email
         $this->sendOtpEmail($request->email, $otp);
@@ -48,54 +50,10 @@ class RegisterController extends Controller
         return redirect()->route('verifikasi-akun')->with('success', 'Kode OTP telah dikirim ke email Anda.');
     }
 
-    public function verifyOtp(Request $request)
-    {
-        $request->validate(['otp' => 'required|digits:6']);
-
-        $registerData = Session::get('register_data');
-
-        if (!$registerData || $request->otp != $registerData['otp']) {
-            return back()->withErrors(['otp' => 'Kode OTP salah atau sudah kadaluarsa.']);
-        }
-
-        return redirect()->route('create-password');
-    }
-
-    public function showCreatePasswordForm()
-    {
-        return view('user-auth.create_password');
-    }
-
-    public function storePassword(Request $request)
-    {
-        $request->validate([
-            'password' => 'required|min:6|confirmed',
-        ]);
-
-        $registerData = Session::get('register_data');
-        if (!$registerData) {
-            return redirect()->route('register')->withErrors(['error' => 'Data registrasi tidak ditemukan.']);
-        }
-
-        User::create([
-            'uid' => $registerData['uid'],
-            'nama_pengguna' => $registerData['nama_pengguna'],
-            'email' => $registerData['email'],
-            'nama_lengkap' => $registerData['nama_lengkap'],
-            'password' => Hash::make($request->password),
-            'role' => 'Pembaca',
-        ]);
-
-        Session::forget('register_data');
-
-        return redirect('/login')->with('success', 'Akun berhasil dibuat, silakan login.');
-    }
-
     private function sendOtpEmail($email, $otp)
     {
         $mail = new PHPMailer(true);
         try {
-            // Konfigurasi SMTP
             $mail->isSMTP();
             $mail->Host = env('MAIL_HOST');
             $mail->SMTPAuth = true;

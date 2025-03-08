@@ -68,76 +68,37 @@ class ForgotPasswordController extends Controller
             $mail->Subject = 'Kode OTP Anda untuk Reset Password';
 
             // Email Body yang lebih bagus
-            $mail->Body = '
-        <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f4f4f9;
-                    color: #333;
-                }
-                .email-container {
-                    background-color: #ffffff;
-                    padding: 20px;
-                    border-radius: 8px;
-                    width: 100%;
-                    max-width: 600px;
-                    margin: auto;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                }
-                .header {
-                    background-color: #ff4b5c;
-                    color: white;
-                    padding: 10px;
-                    text-align: center;
-                    border-radius: 8px 8px 0 0;
-                }
-                .content {
-                    padding: 20px;
-                }
-                .otp-box {
-                    background-color: #f3f3f3;
-                    border: 1px solid #dcdcdc;
-                    padding: 10px;
-                    text-align: center;
-                    font-size: 24px;
-                    font-weight: bold;
-                    margin: 20px 0;
-                }
-                .footer {
-                    text-align: center;
-                    font-size: 14px;
-                    color: #777;
-                    margin-top: 30px;
-                }
-                .footer a {
-                    color: #ff4b5c;
-                    text-decoration: none;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="email-container">
-                <div class="header">
-                    <h2>Kode OTP Anda</h2>
-                </div>
-                <div class="content">
-                    <p>Halo,</p>
-                    <p>Terima kasih telah melakukan permintaan untuk mereset password Anda. Berikut adalah kode OTP yang dapat Anda gunakan untuk melanjutkan proses reset password:</p>
-                    <div class="otp-box">
-                        ' . $otp . '
-                    </div>
-                    <p><strong>Catatan:</strong> Kode OTP ini hanya berlaku selama 10 menit, setelah itu Anda perlu meminta OTP baru.</p>
-                    <p>Jika Anda merasa tidak melakukan permintaan ini, harap abaikan email ini.</p>
-                </div>
-                <div class="footer">
-                    <p>Terima kasih,<br>Tim Media Explant</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        ';
+        $mail->Body = "
+                <html>
+                        <head>
+                            <style>
+                                body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; }
+                                .email-container { background-color: #ffffff; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+                                .header { background-color: #ff4b5c; color: white; padding: 10px; text-align: center; border-radius: 8px 8px 0 0; }
+                                .content { padding: 20px; }
+                                .otp-box { background-color: #f3f3f3; border: 1px solid #dcdcdc; padding: 10px; text-align: center; font-size: 24px; font-weight: bold; margin: 20px 0; }
+                                .footer { text-align: center; font-size: 14px; color: #777; margin-top: 30px; }
+                                .footer a { color: #ff4b5c; text-decoration: none; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class=\"email-container\">
+                                <div class=\"header\">
+                                    <h2>Kode OTP Anda</h2>
+                                </div>
+                                <div class=\"content\">
+                                    <p>Halo,</p>
+                                    <p>Berikut adalah kode OTP Anda:</p>
+                                    <div class=\"otp-box\">$otp</div>
+                                    <p><strong>Catatan:</strong> Kode OTP ini hanya berlaku selama 10 menit.</p>
+                                </div>
+                                <div class=\"footer\">
+                                    <p>Tim Media Explant</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>
+                ";
 
             $mail->send();
             return true;
@@ -188,7 +149,7 @@ class ForgotPasswordController extends Controller
     {
         // Validasi input password
         $validator = Validator::make($request->all(), [
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {

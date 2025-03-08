@@ -26,7 +26,7 @@ class ChangePasswordController extends Controller
     {
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|min:6|confirmed',
         ]);
 
         if ($validator->fails()) {
