@@ -24,17 +24,16 @@
             <div class="mb-6 relative">
                 <label for="password" class="block text-sm font-medium text-gray-700">Password Baru</label>
                 <input type="password" id="password" name="password" placeholder="Masukkan password baru" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-2 pr-10" required>
-                <span class="absolute right-4 top-[70%] transform -translate-y-1/2 cursor-pointer text-gray-600 hover:text-gray-900" onclick="togglePassword()">
-                    <i id="eyeIcon" class="fa fa-eye"></i>
+                <span class="absolute right-4 top-[70%] transform -translate-y-1/2 cursor-pointer text-gray-600 hover:text-gray-900" onclick="togglePassword('password', 'eyeIcon1')">
+                    <i id="eyeIcon1" class="fa fa-eye"></i>
                 </span>
             </div>
 
-            <!-- Konfirmasi Password -->
             <div class="mb-6 relative">
                 <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi Password</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Konfirmasi password baru" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-2 pr-10" required>
-                <span class="absolute right-4 top-[70%] transform -translate-y-1/2 cursor-pointer text-gray-600 hover:text-gray-900" onclick="togglePassword()">
-                    <i id="eyeIcon" class="fa fa-eye"></i>
+                <span class="absolute right-4 top-[70%] transform -translate-y-1/2 cursor-pointer text-gray-600 hover:text-gray-900" onclick="togglePassword('password_confirmation', 'eyeIcon2')">
+                    <i id="eyeIcon2" class="fa fa-eye"></i>
                 </span>
             </div>
 
@@ -59,7 +58,4 @@
         }
     }
 </script>
-
-<!-- Tambahkan FontAwesome untuk ikon -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 @endsection
