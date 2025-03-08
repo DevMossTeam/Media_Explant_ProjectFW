@@ -110,7 +110,7 @@ Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('
 Route::post('/register', [RegisterController::class, 'register']);
 
 Route::get('/verifikasi-akun', [VerifikasiAkunController::class, 'showVerifikasiForm'])->name('verifikasi-akun');
-Route::post('/verifikasi-akun', [VerifikasiAkunController::class, 'verifyOtp'])->name('verify-otp'); // Tambahkan ini
+Route::post('/verifikasi-akun', [VerifikasiAkunController::class, 'verifyOtp'])->name('verify-otp');
 
 Route::get('/buat-password', [CreatePasswordController::class, 'showCreatePasswordForm'])->name('buat-password');
 Route::post('/buat-password', [CreatePasswordController::class, 'storePassword']);
@@ -196,8 +196,8 @@ Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotPassw
 Route::post('forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.sendOtp');
 Route::get('verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.verifyOtpForm');
 Route::post('verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verifyOtp');
-Route::get('change-password', [ForgotPasswordController::class, 'showChangePasswordForm'])->name('password.changePasswordForm');
-Route::post('change-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
+Route::get('ganti-password', [ForgotPasswordController::class, 'showChangePasswordForm'])->name('password.changePasswordForm');
+Route::post('ganti-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
 
 Route::get('/kategori/opini', [OpiniNewsController::class, 'index'])->name('opini');
 Route::get('/kategori/opini/read', [OpiniNewsController::class, 'show'])->name('opini.detail');
