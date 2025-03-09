@@ -171,7 +171,7 @@ class ForgotPasswordController extends Controller
             // Hapus session terkait
             Session::forget(['otp', 'email', 'otp_expiration']);
 
-            return redirect()->route('password.request')->with('status', 'Password Anda berhasil diubah.');
+            return redirect()->route('login')->with('status', 'Password Anda berhasil diubah. Silakan login.');
         }
 
         return back()->withErrors(['email' => 'Terjadi kesalahan. Silakan coba lagi.']);
