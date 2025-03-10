@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
-use App\Models\User; // Ganti sesuai model user yang digunakan
+use App\Models\User; 
 
 class ChangePasswordController extends Controller
 {

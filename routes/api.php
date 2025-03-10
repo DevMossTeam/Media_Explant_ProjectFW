@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Auth\{
     ForgotPasswordController,
     LogoutController
 };
+use App\Http\Controllers\UserAuth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,3 +41,5 @@ Route::middleware([AuthSanctumMiddleware::class])->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout']);
 });
 
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
