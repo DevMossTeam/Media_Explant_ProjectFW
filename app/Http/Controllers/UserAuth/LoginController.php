@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -15,7 +16,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('user-auth.login');
+        return view('user-auth.login'); // Sesuai struktur `resources/views/user/`
     }
 
     /**
@@ -36,19 +37,19 @@ class LoginController extends Controller
 
         // Cek apakah pengguna ada dan password sesuai
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'message' => 'Nama pengguna atau password salah.'
-            ], 401);
+            return back()->withErrors(['message' => 'Nama pengguna atau password salah.']);
         }
 
-        // Set cookie untuk menyimpan UID pengguna (hanya untuk web)
-        Cookie::queue('user_uid', $user->uid, 60 * 24 * 30); // 30 hari
+        // Gunakan Auth::login untuk menyimpan pengguna di session
+        Auth::login($user);
 
-        // Set data pengguna ke session untuk akses di view (hanya untuk web)
-        session(['user' => $user]);
+        // Set cookie untuk menyimpan UID pengguna
+        Cookie::queue('user_uid', $user->id, 60 * 24 * 30); // 30 hari
 
-        // Cek apakah request dari API atau Web
+        // Jika login dari API, buat token menggunakan Sanctum
         if ($request->wantsJson() || $request->is('api/*')) {
+            $token = $user->createToken('auth_token')->plainTextToken;
+
             return response()->json([
                 'message' => 'Login berhasil!',
                 'user' => [
@@ -57,39 +58,36 @@ class LoginController extends Controller
                     'email' => $user->email,
                     'role' => $user->role
                 ],
-                'token' => '1|xyz123abcTokenSanctum' // Gantilah dengan token autentikasi yang sesuai
+                'token' => $token
             ]);
         }
 
         // Jika dari web, arahkan berdasarkan role
         if ($user->role === 'Admin') {
             return redirect()->route('dashboard-admin')->with('success', 'Selamat datang, Admin!');
-        } elseif (in_array($user->role, ['Penulis', 'Pembaca'])) {
-            return redirect('/')->with('success', 'Login berhasil!');
         } else {
-            return back()->withErrors(['message' => 'Role pengguna tidak dikenali.']);
+            return redirect('/')->with('success', 'Login berhasil!');
         }
     }
 
     /**
-     * Proses logout pengguna (untuk web dan API).
+     * Proses logout pengguna.
      */
     public function logout(Request $request)
     {
+        // Hapus session login
+        Auth::logout();
+
         // Hapus cookie saat pengguna logout
         Cookie::queue(Cookie::forget('user_uid'));
 
-        // Hapus session pengguna
-        session()->forget('user');
-
-        // Jika logout dari API
+        // Jika logout dari API, hapus token pengguna
         if ($request->wantsJson() || $request->is('api/*')) {
             return response()->json([
                 'message' => 'Logout berhasil!'
             ]);
         }
 
-        // Jika logout dari web
         return redirect()->route('login');
     }
 }
