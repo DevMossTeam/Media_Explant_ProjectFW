@@ -23,8 +23,8 @@
         <!-- Profil Dropdown -->
         <div class="relative ml-4 z-50">
             @php
-                // Ambil data pengguna dari session
-                $user = session('user');
+                $userUid = Cookie::get('user_uid');
+                $user = $userUid ? \App\Models\User::where('uid', $userUid)->first() : null;
             @endphp
             <button id="profileButton" class="flex items-center space-x-2 focus:outline-none">
                 @if($user && $user->profile_pic)
@@ -33,7 +33,7 @@
                     <i class="fa-solid fa-user-circle text-2xl"></i>
                 @endif
                 @if($user)
-                    <span class="text-sm">{{ $user['nama_pengguna'] }}</span>
+                    <span class="text-sm">{{ $user->nama_pengguna }}</span>
                 @endif
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
                     <path d="M7 10l5 5 5-5H7z" />
