@@ -4,7 +4,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\SignInController;
 use App\Http\Controllers\API\SignUpController;
-use App\Http\Controllers\API\VerifikasiAkunController;
 
 
 /*
@@ -26,5 +25,5 @@ Route::post('/login', [SignInController::class, 'login']);
 Route::post('/logout', [SignInController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::post('/register', [SignUpController::class, 'register']);
-
-Route::post('/verify-otp', [VerifikasiAkunController::class, 'verifyOtp']);
+Route::get('/user', [SignUpController::class, 'getUsers']);
+Route::get('/user/{uid}', [SignUpController::class, 'getUserByUid']);
