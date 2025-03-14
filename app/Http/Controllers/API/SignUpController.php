@@ -5,15 +5,14 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+use Illuminate\Support\Str;
 
 class SignUpController extends Controller
 {
+    /**
+     * Register User (API)
+     */
     public function register(Request $request)
     {
         // Validasi input
@@ -21,88 +20,57 @@ class SignUpController extends Controller
             'nama_pengguna' => 'required|unique:user,nama_pengguna|max:60',
             'email' => 'required|email|max:100|unique:user,email',
             'nama_lengkap' => 'required|max:100',
-        ], [
-            'nama_pengguna.unique' => 'Nama pengguna sudah terdaftar, silakan gunakan nama lain.',
-            'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain.',
+            'password' => 'required|min:8|confirmed',
         ]);
 
-        // Generate UID dan OTP
+        // Generate UID secara otomatis
         $uid = substr(Str::uuid()->toString(), 0, 28);
-        $otp = rand(100000, 999999);
 
-        // Simpan data ke sesi sebelum verifikasi OTP
-        $registerData = [
+        // Buat user baru dengan role "Pembaca"
+        $user = User::create([
             'uid' => $uid,
             'nama_pengguna' => $request->nama_pengguna,
             'email' => $request->email,
             'nama_lengkap' => $request->nama_lengkap,
-            'otp' => $otp,
-        ];
-        Session::put('register_data', $registerData);
+            'password' => Hash::make($request->password),
+            'role' => 'Pembaca',
+        ]);
 
-        // Kirim OTP via email
-        $emailSent = $this->sendOtpEmail($request->email, $otp);
-
-        if (!$emailSent) {
-            return response()->json(['message' => 'Gagal mengirim OTP. Silakan coba lagi.'], 500);
-        }
-
-        return response()->json(['message' => 'Kode OTP telah dikirim ke email Anda.'], 200);
+        return response()->json([
+            'success' => true,
+            'message' => 'User berhasil didaftarkan!',
+            'user' => [
+                'uid' => $user->uid,
+                'nama_pengguna' => $user->nama_pengguna,
+                'email' => $user->email,
+                'role' => $user->role
+            ]
+        ], 201);
     }
 
-    private function sendOtpEmail($email, $otp)
+    /**
+     * Get All Users (API)
+     */
+    public function getUsers()
     {
-        $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host = env('MAIL_HOST');
-            $mail->SMTPAuth = true;
-            $mail->Username = env('MAIL_USERNAME');
-            $mail->Password = env('MAIL_PASSWORD');
-            $mail->SMTPSecure = env('MAIL_ENCRYPTION', PHPMailer::ENCRYPTION_STARTTLS);
-            $mail->Port = env('MAIL_PORT');
+        $users = User::select('uid', 'nama_pengguna', 'email', 'profile_pic', 'role', 'nama_lengkap')->get();
 
-            $mail->setFrom(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-            $mail->addAddress($email);
+        return response()->json($users);
+    }
 
-            $mail->isHTML(true);
-            $mail->Subject = 'Kode OTP Anda';
-            $mail->Body = "
-                <html>
-                <head>
-                    <style>
-                        body { font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333; }
-                        .email-container { background-color: #ffffff; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
-                        .header { background-color: #ff4b5c; color: white; padding: 10px; text-align: center; border-radius: 8px 8px 0 0; }
-                        .content { padding: 20px; }
-                        .otp-box { background-color: #f3f3f3; border: 1px solid #dcdcdc; padding: 10px; text-align: center; font-size: 24px; font-weight: bold; margin: 20px 0; }
-                        .footer { text-align: center; font-size: 14px; color: #777; margin-top: 30px; }
-                    </style>
-                </head>
-                <body>
-                    <div class='email-container'>
-                        <div class='header'>
-                            <h2>Kode OTP Anda</h2>
-                        </div>
-                        <div class='content'>
-                            <p>Halo,</p>
-                            <p>Berikut adalah kode OTP Anda:</p>
-                            <div class='otp-box'>$otp</div>
-                            <p><strong>Catatan:</strong> Kode OTP ini hanya berlaku selama 10 menit.</p>
-                        </div>
-                        <div class='footer'>
-                            <p>Tim Media Explant</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            ";
+    /**
+     * Get User by UID (API)
+     */
+    public function getUserByUid($uid)
+    {
+        $user = User::select('uid', 'nama_pengguna', 'email', 'profile_pic', 'role', 'nama_lengkap')
+                    ->where('uid', $uid)
+                    ->first();
 
-            $mail->send();
-            return true;
-        } catch (Exception $e) {
-            Log::error("Gagal mengirim email: " . $mail->ErrorInfo);
-            return false;
+        if (!$user) {
+            return response()->json(['message' => 'User tidak ditemukan.'], 404);
         }
+
+        return response()->json($user);
     }
 }
