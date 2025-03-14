@@ -1,49 +1,59 @@
 <?php
 
-namespace App\Http\Controllers\Api\Auth;
+namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class SignInController extends Controller
 {
+    /**
+     * API Login (Mobile)
+     */
     public function login(Request $request)
     {
-        // Validasi input
         $request->validate([
-            'identifier' => 'required', // Bisa berupa email atau nama_pengguna
+            'identifier' => 'required',
             'password' => 'required',
         ]);
 
-        // Cari user berdasarkan email atau nama_pengguna
-        $user = User::where('email', $request->identifier)
-                    ->orWhere('nama_pengguna', $request->identifier)
+        $user = User::where('nama_pengguna', $request->identifier)
+                    ->orWhere('email', $request->identifier)
                     ->first();
 
-        // Cek apakah user ditemukan dan password cocok
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Nama pengguna atau password salah.'], 401);
         }
 
-        // Hapus token lama jika ada
-        $user->tokens()->delete();
-
-        // Buat token baru
+        // Buat token untuk API
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
+            'success' => true,
             'message' => 'Login berhasil!',
-            'user' => $user,
-            'token' => $token,
+            'user' => [
+                'uid' => $user->uid,
+                'nama_pengguna' => $user->nama_pengguna,
+                'email' => $user->email,
+                'role' => $user->role
+            ],
+            'token' => $token
         ]);
     }
 
+    /**
+     * API Logout (Mobile)
+     */
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
 
-        return response()->json(['message' => 'Logout berhasil.']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Logout berhasil!'
+        ]);
     }
 }
