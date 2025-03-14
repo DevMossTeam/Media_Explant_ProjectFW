@@ -2,15 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\AuthSanctumMiddleware;
-use App\Http\Controllers\Api\Auth\{
-    CreatePasswordController,
-    ChangePasswordController,
-    VerifikasiAkunController,
-    ForgotPasswordController,
-    LogoutController
-};
-use App\Http\Controllers\UserAuth\LoginController;
+use App\Http\Controllers\API\SignInController;
+use App\Http\Controllers\API\SignUpController;
+use App\Http\Controllers\API\VerifikasiAkunController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -27,19 +22,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Group route untuk autentikasi
-Route::prefix('auth')->group(function () {
-    Route::post('/verify-otp', [VerifikasiAkunController::class, 'verifyOtp']);
-    Route::post('/create-password', [CreatePasswordController::class, 'storePassword']);
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp']);
-    Route::post('/verify-forgot-otp', [ForgotPasswordController::class, 'verifyOtp']);
-    Route::post('/change-password', [ChangePasswordController::class, 'changePassword']);
-    Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:sanctum');
-});
+Route::post('/login', [SignInController::class, 'login']);
+Route::post('/logout', [SignInController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::middleware([AuthSanctumMiddleware::class])->group(function () {
-    Route::post('/logout', [LogoutController::class, 'logout']);
-});
+Route::post('/register', [SignUpController::class, 'register']);
 
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/verify-otp', [VerifikasiAkunController::class, 'verifyOtp']);
