@@ -68,7 +68,7 @@ class ForgotPasswordController extends Controller
             $mail->Subject = 'Kode OTP Anda untuk Reset Password';
 
             // Email Body yang lebih bagus
-        $mail->Body = "
+            $mail->Body = "
                 <html>
                         <head>
                             <style>
@@ -115,8 +115,12 @@ class ForgotPasswordController extends Controller
 
     public function verifyOtp(Request $request)
     {
+        // Ambil OTP dari input form
+        $inputOtpArray = $request->input('otp'); // Bisa berupa array
+        $inputOtp = is_array($inputOtpArray) ? implode('', $inputOtpArray) : $inputOtpArray;
+
         // Validasi input OTP
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make(['otp' => $inputOtp], [
             'otp' => 'required|digits:6',
         ]);
 
@@ -124,13 +128,11 @@ class ForgotPasswordController extends Controller
             return back()->withErrors($validator);
         }
 
-        $inputOtp = $request->input('otp');
         $sessionOtp = Session::get('otp');
         $otpExpiration = Session::get('otp_expiration');
 
         if ($sessionOtp && $inputOtp == $sessionOtp) {
             if (Carbon::now()->lte($otpExpiration)) {
-                // OTP valid
                 return redirect()->route('password.changePasswordForm')->with('status', 'OTP berhasil diverifikasi. Silakan ganti password Anda.');
             } else {
                 return back()->withErrors(['otp' => 'Kode OTP telah kadaluwarsa.']);

@@ -28,7 +28,7 @@
                 <label for="password" class="block text-xs font-medium text-gray-700 mb-1">PASSWORD BARU</label>
                 <input type="password" id="password" name="password" placeholder="Masukkan password baru"
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D44040] mt-1 pr-12" required>
-                <span class="absolute right-4 top-[60%] transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-900"
+                <span class="absolute right-4 top-[68%] transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-900"
                     onclick="togglePassword('password', 'eyeIcon1')">
                     <i id="eyeIcon1" class="fa fa-eye"></i>
                 </span>
@@ -38,7 +38,7 @@
                 <label for="password_confirmation" class="block text-xs font-medium text-gray-700 mb-1">ULANGI PASSWORD</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Konfirmasi password baru"
                     class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D44040] mt-1 pr-12" required>
-                <span class="absolute right-4 top-[60%] transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-900"
+                <span class="absolute right-4 top-[68%] transform -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-900"
                     onclick="togglePassword('password_confirmation', 'eyeIcon2')">
                     <i id="eyeIcon2" class="fa fa-eye"></i>
                 </span>

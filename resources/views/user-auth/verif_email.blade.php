@@ -9,7 +9,7 @@
         <p class="text-center text-gray-600 mb-4 text-sm">
             Silahkan buka email anda dan konfirmasi <br>
             Kami telah mengirimkan kode OTP ke email <br>
-            <span class="font-bold text-black">ssssss@gmail.com</span>
+            <span class="font-bold text-black">{{ session('email') }}</span>
         </p>
 
         <!-- Notifikasi -->
@@ -78,9 +78,64 @@
         let inputs = document.querySelectorAll('input[name="otp[]"]');
         if (event.key === "Backspace" && index > 0 && inputs[index].value === '') {
             inputs[index - 1].focus();
-            inputs[index - 1].value = ''; 
+            inputs[index - 1].value = '';
         }
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let inputs = document.querySelectorAll('input[name="otp[]"]');
+
+        inputs.forEach((input, index) => {
+            input.addEventListener("input", function (event) {
+                let value = event.target.value;
+
+                // Jika ada lebih dari satu karakter (misalnya saat paste)
+                if (value.length > 1) {
+                    let values = value.split("");
+                    for (let i = 0; i < values.length; i++) {
+                        if (i < inputs.length) {
+                            inputs[i].value = values[i];
+                        }
+                    }
+                    inputs[inputs.length - 1].focus(); // Fokus ke input terakhir
+                } else {
+                    if (value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                }
+
+                // Jika semua input terisi, submit form otomatis
+                if ([...inputs].every(input => input.value.length === 1)) {
+                    document.querySelector('form').submit();
+                }
+            });
+
+            input.addEventListener("paste", function (event) {
+                event.preventDefault();
+                let pastedData = (event.clipboardData || window.clipboardData).getData("text");
+
+                if (/^\d{6}$/.test(pastedData)) { // Pastikan hanya angka 6 digit
+                    let values = pastedData.split("");
+                    values.forEach((char, i) => {
+                        if (i < inputs.length) {
+                            inputs[i].value = char;
+                        }
+                    });
+                    inputs[inputs.length - 1].focus(); // Fokus ke input terakhir
+
+                    // Submit otomatis setelah paste
+                    document.querySelector('form').submit();
+                }
+            });
+
+            input.addEventListener("keydown", function (event) {
+                if (event.key === "Backspace" && index > 0 && input.value === '') {
+                    inputs[index - 1].focus();
+                    inputs[index - 1].value = '';
+                }
+            });
+        });
+    });
 </script>
 
 @endsection
