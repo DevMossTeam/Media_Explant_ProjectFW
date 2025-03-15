@@ -2,61 +2,85 @@
 @extends('layouts.auth-layout')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
-        <h2 class="text-3xl font-bold text-center text-red-600 mb-6">Verifikasi Akun</h2>
+<div class="min-h-screen flex items-center justify-center bg-gray-100 py-12">
+    <div class="max-w-md w-full bg-white p-10 rounded-lg shadow-lg">
+        <!-- Judul -->
+        <h2 class="text-3xl font-bold text-center text-[#D44040] mb-4">Verifikasi OTP</h2>
+        <p class="text-center text-gray-600 mb-4 text-sm">
+            Silahkan buka email anda dan konfirmasi <br>
+            Kami telah mengirimkan kode OTP ke email <br>
+            <span class="font-bold text-black">ssssss@gmail.com</span>
+        </p>
 
+        <!-- Notifikasi -->
         @if (session('status'))
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg">
-            {{ session('status') }}
-        </div>
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-lg">
+                {{ session('status') }}
+            </div>
         @endif
 
         @if (session('error'))
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-lg">
-            {{ session('error') }}
-        </div>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-lg">
+                {{ session('error') }}
+            </div>
         @endif
 
         @if ($errors->any())
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-lg">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-lg">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         @endif
 
-        <p class="text-sm text-gray-600 text-center mb-4">
-            Masukkan kode OTP yang dikirim ke email Anda.
-        </p>
-
+        <!-- OTP Input -->
         <form action="{{ route('password.verifyOtp') }}" method="POST">
             @csrf
-            <div class="mb-6">
-                <label for="otp" class="block text-sm font-medium text-gray-700">Kode OTP</label>
-                <input
-                    type="text"
-                    id="otp"
-                    name="otp"
-                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mt-2 text-center text-xl tracking-widest"
-                    maxlength="6"
-                    pattern="[0-9]{6}"
-                    title="Masukkan kode OTP 6 digit angka"
-                    required>
+            <div class="flex justify-center space-x-2 mb-8 mt-4">
+                @for ($i = 0; $i < 6; $i++)
+                    <input
+                        type="text"
+                        name="otp[]"
+                        class="w-12 h-12 border rounded-lg text-center text-xl focus:outline-none focus:ring-2 focus:ring-[#D44040]"
+                        maxlength="1"
+                        pattern="[0-9]"
+                        required
+                        oninput="moveToNext(this, {{ $i }})"
+                        onkeydown="handleBackspace(event, {{ $i }})">
+                @endfor
             </div>
-
-            <button
-                type="submit"
-                class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition">
-                Verifikasi
-            </button>
         </form>
 
-        <div class="mt-6 text-center">
-            <p class="text-sm">Belum menerima OTP? <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Kirim ulang</a></p>
+        <!-- Kirim Ulang -->
+        <div class="mt-8 text-center">
+            <p class="text-sm text-gray-600 mb-3">Tidak menerima kode OTP?</p>
+            <button class="w-64 bg-[#D44040] text-white py-3 rounded-lg hover:bg-red-700 transition">
+                Kirim Ulang
+            </button>
         </div>
     </div>
 </div>
+
+<script>
+    function moveToNext(element, index) {
+        let inputs = document.querySelectorAll('input[name="otp[]"]');
+        if (element.value.length === 1 && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+        }
+        if (index === inputs.length - 1 && element.value.length === 1) {
+            document.querySelector('form').submit();
+        }
+    }
+
+    function handleBackspace(event, index) {
+        let inputs = document.querySelectorAll('input[name="otp[]"]');
+        if (event.key === "Backspace" && index > 0 && inputs[index].value === '') {
+            inputs[index - 1].focus();
+            inputs[index - 1].value = ''; 
+        }
+    }
+</script>
+
 @endsection
