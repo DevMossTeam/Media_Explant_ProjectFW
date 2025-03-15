@@ -178,4 +178,27 @@ class ForgotPasswordController extends Controller
 
         return back()->withErrors(['email' => 'Terjadi kesalahan. Silakan coba lagi.']);
     }
+
+    public function resendOtp(Request $request)
+    {
+        $email = Session::get('email');
+
+        if (!$email) {
+            return back()->withErrors(['email' => 'Sesi telah berakhir. Silakan masukkan email kembali.']);
+        }
+
+        $otp = rand(100000, 999999); // Generate OTP baru
+        $otpExpiration = Carbon::now()->addMinutes(10); // Batas waktu OTP 10 menit
+
+        // Kirim ulang OTP ke email
+        if ($this->sendOtpEmail($email, $otp)) {
+            // Perbarui OTP di session
+            Session::put('otp', $otp);
+            Session::put('otp_expiration', $otpExpiration);
+
+            return back()->with('status', 'Kode OTP baru telah dikirim ke email Anda.');
+        }
+
+        return back()->withErrors(['email' => 'Gagal mengirim ulang OTP. Silakan coba lagi.']);
+    }
 }

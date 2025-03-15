@@ -104,4 +104,22 @@ class RegisterController extends Controller
             return back()->withErrors(['email' => 'Gagal mengirim email. Error: ' . $mail->ErrorInfo]);
         }
     }
+
+    public function resendOtp(Request $request)
+    {
+        $registerData = Session::get('register_data');
+
+        if (!$registerData || !isset($registerData['email'])) {
+            return back()->withErrors(['email' => 'Sesi telah berakhir. Silakan daftar ulang.']);
+        }
+
+        $otp = rand(100000, 999999); // Generate OTP baru
+        $registerData['otp'] = $otp;
+        Session::put('register_data', $registerData); // Perbarui data di session
+
+        // Kirim ulang OTP ke email
+        $this->sendOtpEmail($registerData['email'], $otp);
+
+        return back()->with('success', 'Kode OTP baru telah dikirim ke email Anda.');
+    }
 }

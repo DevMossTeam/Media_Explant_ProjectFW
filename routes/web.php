@@ -223,3 +223,6 @@ Route::view('/explant-contributor', 'header-footer.footer-menu.explantContributo
 Route::view('/kode-etik', 'header-footer.footer-menu.kode-etik');
 Route::view('/struktur-organisasi', 'header-footer.footer-menu.strukturOrganisasi');
 Route::view('/pusat-bantuan', 'header-footer.footer-menu.pusatBantuan');
+
+Route::post('/password/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->name('password.resendOtp');
+Route::post('/verifikasi-akun/resend-otp', [RegisterController::class, 'resendOtp'])->name('verifikasi-akun.resendOtp');

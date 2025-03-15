@@ -33,9 +33,13 @@
                 <input type="hidden" id="otp" name="otp">
             </div>
         </form>
-
         <p class="text-sm text-center text-gray-600 mt-4">Tidak menerima kode OTP?</p>
-        <button class="w-full bg-[#D44040] text-white py-2 rounded-lg hover:bg-red-600 transition mt-2">Kirim Ulang</button>
+        <form action="{{ route('verifikasi-akun.resendOtp') }}" method="POST">
+            @csrf
+            <button type="submit" class="w-full bg-[#D44040] text-white py-2 rounded-lg hover:bg-red-600 transition mt-2">
+                Kirim Ulang
+            </button>
+        </form>
     </div>
 </div>
 
