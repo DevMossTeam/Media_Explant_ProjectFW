@@ -25,10 +25,10 @@
                     <input type="text" id="judul" name="judul" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300" placeholder="Masukkan judul karya..." required>
                 </div>
 
-                <!-- Konten Karya -->
+                <!-- Caption -->
                 <div class="mb-4">
-                    <label for="deskripsi" class="block text-gray-700 font-medium">Konten Karya</label>
-                    <textarea id="deskripsi" name="deskripsi" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300" placeholder="Tulis konten karya di sini..."></textarea>
+                    <label for="deskripsi" class="block text-gray-700 font-medium">Caption</label>
+                    <textarea id="deskripsi" name="deskripsi" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300" placeholder="Tambahkan caption di sini..."></textarea>
                 </div>
 
                 <!-- Upload File -->
