@@ -50,7 +50,7 @@
     <div class="max-w-7xl mx-auto px-6 md:px-20 grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
         <!-- Logo -->
         <div class="flex justify-center md:justify-start">
-            <img src="assets/ukpm-explant-icF.png" alt="Logo Explant" class="w-44 md:w-52">
+            <img src="{{ asset('assets/ukpm-explant-icF.png') }}" alt="Logo Explant" class="w-44 md:w-52">
         </div>
 
         <!-- Tentang Kami -->
