@@ -23,7 +23,6 @@ class UserSeeder extends Seeder
                 'email'          => 'snowowl035@gmail.com',
                 'profile_pic'    => null,
                 'role'           => 'Penulis',
-                'kredensial'     => null,
                 'nama_lengkap'   => 'Willy Nugroho',
             ],
             [
@@ -33,7 +32,6 @@ class UserSeeder extends Seeder
                 'email'          => 'difnd573@gmail.com',
                 'profile_pic'    => null,
                 'role'           => 'Pembaca',
-                'kredensial'     => null,
                 'nama_lengkap'   => 'Daniel Umar',
             ],
             [
@@ -43,7 +41,6 @@ class UserSeeder extends Seeder
                 'email'          => 'yrwvi105@gmail.com',
                 'profile_pic'    => null,
                 'role'           => 'Admin',
-                'kredensial'     => null,
                 'nama_lengkap'   => 'Admin1',
             ],
             [
@@ -53,7 +50,6 @@ class UserSeeder extends Seeder
                 'email'          => 'reddragonflies46@gmail.com',
                 'profile_pic'    => null,
                 'role'           => 'Penulis',
-                'kredensial'     => null,
                 'nama_lengkap'   => 'Nikto Vasilevskiy',
             ],
             [
@@ -63,7 +59,6 @@ class UserSeeder extends Seeder
                 'email'          => 'ateox912@gmail.com',
                 'profile_pic'    => null,
                 'role'           => 'Pembaca',
-                'kredensial'     => null,
                 'nama_lengkap'   => 'mohammad habiburrohman',
             ],
         ];
