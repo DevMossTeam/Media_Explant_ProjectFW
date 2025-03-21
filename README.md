@@ -66,44 +66,58 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
 ```
-.
 ├── app
+│   ├── Console
+│   ├── Exceptions
+│   │   └── Handler.php
 │   ├── Http
-│   │   └── Controllers
-│   │       ├── API
-│   │       │   ├── SignInController.php
-│   │       │   ├── SignUpController.php
-│   │       │   └── VerifikasiAkunController.php
-│   │       ├── Admin
-│   │       │   └── AdminUserController.php
-│   │       ├── Author
-│   │       │   ├── BeritaController.php
-│   │       │   ├── DraftController.php
-│   │       │   ├── KaryaController.php
-│   │       │   ├── ProdukController.php
-│   │       │   └── TagController.php
-│   │       ├── News
-│   │       │   ├── AgendaNewsController.php
-│   │       │   ├── DiskusiNewsController.php
-│   │       │   ├── HomeNewsController.php
-│   │       │   ├── OpiniNewsController.php
-│   │       │   ├── RisetNewsController.php
-│   │       │   ├── SiaranPersNewsController.php
-│   │       │   └── WawancaraNewsController.php
-│   │       ├── Profile
-│   │       │   └── ProfileController.php
-│   │       ├── Setting
-│   │       │   └── SettingController.php
-│   │       ├── UserAuth
-│   │       │   ├── ChangePasswordController.php
-│   │       │   ├── CreatePasswordController.php
-│   │       │   ├── ForgotPasswordController.php
-│   │       │   ├── LoginController.php
-│   │       │   ├── LogoutController.php
-│   │       │   ├── RegisterController.php
-│   │       │   └── VerifikasiAkunController.php
-│   │       ├── Controller.php
-│   │       └── HomeController.php
+│   │   ├── Controllers
+│   │   │   ├── API
+│   │   │   │   ├── SignInController.php
+│   │   │   │   ├── SignUpController.php
+│   │   │   │   └── VerifikasiAkunController.php
+│   │   │   ├── Admin
+│   │   │   │   └── AdminUserController.php
+│   │   │   ├── Author
+│   │   │   │   ├── BeritaController.php
+│   │   │   │   ├── DraftController.php
+│   │   │   │   ├── KaryaController.php
+│   │   │   │   ├── ProdukController.php
+│   │   │   │   └── TagController.php
+│   │   │   ├── News
+│   │   │   │   ├── AgendaNewsController.php
+│   │   │   │   ├── DiskusiNewsController.php
+│   │   │   │   ├── HomeNewsController.php
+│   │   │   │   ├── OpiniNewsController.php
+│   │   │   │   ├── RisetNewsController.php
+│   │   │   │   ├── SiaranPersNewsController.php
+│   │   │   │   └── WawancaraNewsController.php
+│   │   │   ├── Profile
+│   │   │   │   └── ProfileController.php
+│   │   │   ├── Setting
+│   │   │   │   └── SettingController.php
+│   │   │   ├── UserAuth
+│   │   │   │   ├── ChangePasswordController.php
+│   │   │   │   ├── CreatePasswordController.php
+│   │   │   │   ├── ForgotPasswordController.php
+│   │   │   │   ├── LoginController.php
+│   │   │   │   ├── LogoutController.php
+│   │   │   │   ├── RegisterController.php
+│   │   │   │   └── VerifikasiAkunController.php
+│   │   │   ├── Controller.php
+│   │   │   └── HomeController.php
+│   │   └── Middleware
+│   │       ├── AuthSanctumMiddleware.php
+│   │       ├── Authenticate.php
+│   │       ├── EncryptCookies.php
+│   │       ├── PreventRequestsDuringMaintenance.php
+│   │       ├── RedirectIfAuthenticated.php
+│   │       ├── TrimStrings.php
+│   │       ├── TrustHosts.php
+│   │       ├── TrustProxies.php
+│   │       ├── ValidateSignature.php
+│   │       └── VerifyCsrfToken.php
+│   ├── Kernel.php
 │   └── Models
 │       ├── Admin
 │       │   └── AdminUser.php
@@ -123,7 +137,11 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 │       │   └── WawancaraNews.php
 │       └── User.php
 ├── Providers
-│   └── AppServiceProvider.php
+│   ├── AppServiceProvider.php
+│   ├── AuthServiceProvider.php
+│   ├── BroadcastServiceProvider.php
+│   ├── EventServiceProvider.php
+│   └── RouteServiceProvider.php
 ├── bootstrap
 │   └── cache
 │       ├── app.php
@@ -131,20 +149,25 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ├── config
 │   ├── app.php
 │   ├── auth.php
+│   ├── broadcasting.php
 │   ├── cache.php
+│   ├── cors.php
 │   ├── database.php
 │   ├── filesystems.php
+│   ├── hashing.php
 │   ├── logging.php
 │   ├── mail.php
+│   ├── permission.php
 │   ├── queue.php
 │   ├── sanctum.php
 │   ├── services.php
-│   └── session.php
+│   ├── session.php
+│   └── view.php
 ├── database
 │   ├── factories
+│   │   └── UserFactory.php
 │   ├── migrations
 │   └── seeders
-├── .gitignore
 ├── public
 │   ├── assets
 │   │   ├── dev-64.png
