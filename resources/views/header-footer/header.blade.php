@@ -195,15 +195,74 @@
             <i class="fa-solid fa-bars text-lg"></i>
         </button>
 
+        <!-- Search Container -->
+        <div id="searchContainer"
+            class="fixed top-0 right-0 w-full md:w-96 h-screen bg-white shadow-lg transform translate-x-full transition-transform duration-300 flex flex-col p-4 z-50">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-700">Pencarian</h2>
+                <button id="closeSearch" class="text-gray-500 hover:text-red-700">
+                    <i class="fa-solid fa-times text-xl"></i>
+                </button>
+            </div>
+            <input type="text" placeholder="Ketik dan tekan enter"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+        </div>
+
+        <!-- Overlay -->
+        <div id="searchOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden transition-opacity duration-300">
+        </div>
+
         <!-- Search & Notifications -->
         <div id="searchNotifContainer"
             class="fixed top-0 right-0 w-48 h-screen bg-white shadow-lg transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center space-y-4 md:flex-row md:relative md:w-auto md:h-auto md:bg-transparent md:translate-x-0 md:shadow-none md:space-x-4 md:space-y-0 hidden md:flex">
-            <button class="text-gray-500 hover:text-red-700">
+            <!-- Tombol Search -->
+            <button id="searchButton" class="text-gray-500 hover:text-red-700">
                 <i class="fa-solid fa-magnifying-glass text-lg"></i>
             </button>
-            <button class="text-gray-500 hover:text-red-700">
+            <button id="notifButton" class="text-gray-500 hover:text-red-700 focus:outline-none">
                 <i class="fa-solid fa-bell text-lg"></i>
             </button>
+
+            <!-- Dropdown Notifikasi -->
+            <div id="notifDropdown"
+                class="absolute top-10 right-2 w-64 bg-white shadow-lg rounded-lg hidden opacity-0 transition-all duration-300 transform scale-95">
+                <div class="p-4 border-b">
+                    <h3 class="text-gray-700 font-semibold text-sm">Notifikasi</h3>
+                </div>
+                <div class="max-h-60 overflow-y-auto">
+                    <!-- Contoh notifikasi -->
+                    <div class="p-3 border-b hover:bg-gray-100 flex space-x-2">
+                        <div class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white">
+                            <i class="fa-solid fa-bullhorn"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-700 text-sm">Berita terbaru telah dipublikasikan!</p>
+                            <span class="text-xs text-gray-500">2 jam yang lalu</span>
+                        </div>
+                    </div>
+                    <div class="p-3 border-b hover:bg-gray-100 flex space-x-2">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-700 text-sm">Komentar baru di artikel Anda.</p>
+                            <span class="text-xs text-gray-500">1 hari yang lalu</span>
+                        </div>
+                    </div>
+                    <div class="p-3 hover:bg-gray-100 flex space-x-2">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
+                            <i class="fa-solid fa-check-circle"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-700 text-sm">Permintaan Anda telah disetujui.</p>
+                            <span class="text-xs text-gray-500">3 hari yang lalu</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-3 text-center">
+                    <a href="#" class="text-red-600 text-sm font-semibold hover:underline">Lihat Semua</a>
+                </div>
+            </div>
 
             <!-- Media Dropdown -->
             <div class="relative">
@@ -273,26 +332,29 @@
         const profileButton = document.getElementById("profileButton");
         const profileDropdown = document.getElementById("profileDropdown");
 
-        // Fungsi untuk menutup semua dropdown
-        function closeAllDropdowns() {
-            articleDropdown.classList.add("hidden");
-            profileDropdown.classList.add("hidden");
+        // Fungsi untuk menutup semua dropdown kecuali yang sedang dibuka
+        function closeAllDropdowns(except = null) {
+            if (except !== articleDropdown) articleDropdown.classList.add("hidden");
+            if (except !== profileDropdown) profileDropdown.classList.add("hidden");
         }
 
         articleButton.addEventListener("click", (e) => {
             e.stopPropagation();
-            closeAllDropdowns(); // Tutup dropdown lain
-            articleDropdown.classList.toggle("hidden");
+            const isHidden = articleDropdown.classList.contains("hidden");
+            closeAllDropdowns(articleDropdown); // Tutup dropdown lain
+            articleDropdown.classList.toggle("hidden", !
+                isHidden); // Toggle hanya jika sebelumnya tersembunyi
         });
 
         profileButton.addEventListener("click", (e) => {
             e.stopPropagation();
-            closeAllDropdowns(); // Tutup dropdown lain
-            profileDropdown.classList.toggle("hidden");
+            const isHidden = profileDropdown.classList.contains("hidden");
+            closeAllDropdowns(profileDropdown); // Tutup dropdown lain
+            profileDropdown.classList.toggle("hidden", !isHidden);
         });
 
-        // Tutup dropdown ketika klik di luar
-        document.addEventListener("click", closeAllDropdowns);
+        // Tutup dropdown ketika klik di luar dropdown atau tombolnya
+        document.addEventListener("click", () => closeAllDropdowns());
 
         // Sidebar Toggle
         const toggleButton = document.getElementById("toggleSearchNotif");
@@ -317,6 +379,52 @@
         toggleButton.addEventListener("click", openSidebar);
         closeButton.addEventListener("click", closeSidebar);
         overlay.addEventListener("click", closeSidebar);
+
+        const searchButton = document.getElementById("searchButton");
+        const searchContainer = document.getElementById("searchContainer");
+        const closeSearch = document.getElementById("closeSearch");
+        const searchOverlay = document.getElementById("searchOverlay");
+
+        function openSearch() {
+            searchContainer.classList.remove("translate-x-full");
+            searchContainer.classList.add("translate-x-0");
+            searchOverlay.classList.remove("hidden");
+            searchOverlay.classList.add("opacity-100");
+        }
+
+        function closeSearchFunc() {
+            searchContainer.classList.add("translate-x-full");
+            searchContainer.classList.remove("translate-x-0");
+            searchOverlay.classList.add("hidden");
+            searchOverlay.classList.remove("opacity-100");
+        }
+
+        searchButton.addEventListener("click", openSearch);
+        closeSearch.addEventListener("click", closeSearchFunc);
+        searchOverlay.addEventListener("click", closeSearchFunc);
+
+        const notifButton = document.getElementById("notifButton");
+        const notifDropdown = document.getElementById("notifDropdown");
+
+        function toggleNotif() {
+            if (notifDropdown.classList.contains("hidden")) {
+                notifDropdown.classList.remove("hidden", "opacity-0", "scale-95");
+                notifDropdown.classList.add("opacity-100", "scale-100");
+            } else {
+                notifDropdown.classList.add("hidden", "opacity-0", "scale-95");
+                notifDropdown.classList.remove("opacity-100", "scale-100");
+            }
+        }
+
+        notifButton.addEventListener("click", toggleNotif);
+
+        // Menutup dropdown saat klik di luar
+        document.addEventListener("click", function(event) {
+            if (!notifButton.contains(event.target) && !notifDropdown.contains(event.target)) {
+                notifDropdown.classList.add("hidden", "opacity-0", "scale-95");
+                notifDropdown.classList.remove("opacity-100", "scale-100");
+            }
+        });
     });
 </script>
 
