@@ -10,28 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class SignInController extends Controller
 {
-    /**
-     * API Login (Mobile)
-     *
-     * Memproses login menggunakan field 'email' atau 'nama_pengguna'
-     * dan password. Pastikan password tersimpan di database dengan di-hash menggunakan Hash::make.
-     *
-     * Contoh request:
-     * {
-     *     "email": "snowowl035@gmail.com",
-     *     "password": "White035"
-     * }
-     *
-     * atau
-     *
-     * {
-     *     "nama_pengguna": "SnowOwl035",
-     *     "password": "White035"
-     * }
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function login(Request $request)
     {
         // Validasi input dengan kedua field nullable
@@ -98,14 +76,6 @@ class SignInController extends Controller
         ], 200);
     }
 
-    /**
-     * API Logout (Mobile)
-     *
-     * Menghapus semua token yang dimiliki user.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function logout(Request $request)
     {
         if ($request->user()) {
