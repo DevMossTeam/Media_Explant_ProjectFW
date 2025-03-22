@@ -67,38 +67,38 @@ Route::get('/kategori/opini', function () {
 })->name('opini');
 
 // Rute untuk halaman Buletin
-Route::get('/kategori/buletin', function () {
-    return view('kategori.buletin');
+Route::get('/produk/buletin', function () {
+    return view('produk.buletin');
 })->name('buletin');
 
 // Rute untuk halaman Majalah
-Route::get('/kategori/majalah', function () {
-    return view('kategori.majalah');
+Route::get('/produk/majalah', function () {
+    return view('produk.majalah');
 })->name('majalah');
 
 // Rute untuk halaman Puisi
-Route::get('/kategori/puisi', function () {
-    return view('kategori.puisi');
+Route::get('/karya/puisi', function () {
+    return view('karya.puisi');
 })->name('puisi');
 
 // Rute untuk halaman Pantun
-Route::get('/kategori/pantun', function () {
-    return view('kategori.pantun');
+Route::get('/karya/pantun', function () {
+    return view('karya.pantun');
 })->name('pantun');
 
 // Rute untuk halaman Syair
-Route::get('/kategori/syair', function () {
-    return view('kategori.syair');
+Route::get('/karya/syair', function () {
+    return view('karya.syair');
 })->name('syair');
 
 // Rute untuk halaman Fotografi
-Route::get('/kategori/fotografi', function () {
-    return view('kategori.fotografi');
+Route::get('/karya/fotografi', function () {
+    return view('karya.fotografi');
 })->name('fotografi');
 
 // Rute untuk halaman Desain Grafis
-Route::get('/kategori/desain-grafis', function () {
-    return view('kategori.desain-grafis');
+Route::get('/karya/desain-grafis', function () {
+    return view('karya.desain-grafis');
 })->name('desain-grafis');
 
 // Route untuk login
