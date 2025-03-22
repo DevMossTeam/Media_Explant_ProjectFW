@@ -6,54 +6,119 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class SignInController extends Controller
 {
     /**
      * API Login (Mobile)
+     *
+     * Memproses login menggunakan field 'email' atau 'nama_pengguna'
+     * dan password. Pastikan password tersimpan di database dengan di-hash menggunakan Hash::make.
+     *
+     * Contoh request:
+     * {
+     *     "email": "snowowl035@gmail.com",
+     *     "password": "White035"
+     * }
+     *
+     * atau
+     *
+     * {
+     *     "nama_pengguna": "SnowOwl035",
+     *     "password": "White035"
+     * }
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
-        $request->validate([
-            'identifier' => 'required',
-            'password' => 'required',
+        // Validasi input dengan kedua field nullable
+        $validator = Validator::make($request->all(), [
+            'email'         => 'nullable|string',
+            'nama_pengguna' => 'nullable|string',
+            'password'      => 'required|string',
         ]);
 
-        $user = User::where('nama_pengguna', $request->identifier)
-                    ->orWhere('email', $request->identifier)
-                    ->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Nama pengguna atau password salah.'], 401);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal!',
+                'errors'  => $validator->errors()
+            ], 422);
         }
 
-        // Buat token untuk API
+        // Pastikan salah satu dari email atau nama_pengguna diisi
+        if (!$request->filled('email') && !$request->filled('nama_pengguna')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Harap isi email atau nama_pengguna untuk login.'
+            ], 422);
+        }
+
+        // Ambil input login: prioritaskan email jika ada, jika tidak gunakan nama_pengguna
+        $loginInput = $request->filled('email') ? $request->input('email') : $request->input('nama_pengguna');
+
+        // Cari user berdasarkan email atau nama_pengguna
+        $user = User::where('email', $loginInput)
+                    ->orWhere('nama_pengguna', $loginInput)
+                    ->first();
+
+        // Jika user tidak ditemukan
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nama pengguna atau email tidak ditemukan.'
+            ], 401);
+        }
+
+        // Jika password salah
+        if (!Hash::check($request->input('password'), $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password yang Anda masukkan salah.'
+            ], 401);
+        }
+
+        // Buat token untuk API menggunakan Laravel Sanctum.
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Kembalikan data user dan token
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil!',
-            'user' => [
-                'uid' => $user->uid,
+            'user'    => [
+                'uid'           => $user->uid,
                 'nama_pengguna' => $user->nama_pengguna,
-                'email' => $user->email,
-                'role' => $user->role
+                'email'         => $user->email,
+                'role'          => $user->role,
             ],
-            'token' => $token
-        ]);
+            'token'   => $token
+        ], 200);
     }
 
     /**
      * API Logout (Mobile)
+     *
+     * Menghapus semua token yang dimiliki user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
+        if ($request->user()) {
+            $request->user()->tokens()->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Logout berhasil!'
+            ], 200);
+        }
 
         return response()->json([
-            'success' => true,
-            'message' => 'Logout berhasil!'
-        ]);
+            'success' => false,
+            'message' => 'User tidak terautentikasi.'
+        ], 401);
     }
 }
