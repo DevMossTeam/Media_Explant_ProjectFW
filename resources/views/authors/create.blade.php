@@ -3,8 +3,7 @@
 @section('content')
     <div class="container mx-auto px-4 py-8 lg:px-16">
         <!-- Form Penulisan berita dan Pengaturan Publikasi -->
-        <form id="createArticleForm" method="POST" action="{{ route('author.berita.store') }}"
-            enctype="multipart/form-data">
+        <form id="createArticleForm" method="POST" action="{{ route('author.berita.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="lg:flex lg:space-x-8">
                 <!-- Form Penulisan berita -->
@@ -39,12 +38,16 @@
                         <p class="text-sm text-gray-500 mb-2">Menambah kategori untuk mempermudah pencarian berita.</p>
                         <select id="kategori" name="kategori" required
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500">
-                            <option value="Siaran Pers">Siaran Pers</option>
-                            <option value="Riset">Riset</option>
-                            <option value="Wawancara">Wawancara</option>
-                            <option value="Diskusi">Diskusi</option>
-                            <option value="Agenda">Agenda</option>
-                            <option value="Opini">Opini</option>
+                            <option value="Kampus">Kampus</option>
+                            <option value="Nasional">Nasional</option>
+                            <option value="Internasional">Internasional</option>
+                            <option value="Opini dan Esai">Opini dan Esai</option>
+                            <option value="Liputan Khusus">Liputan Khusus</option>
+                            <option value="Kesenian dan Sejarah">Kesenian dan Sejarah</option>
+                            <option value="Kesehatan">Kesehatan</option>
+                            <option value="Atletik">Atletik</option>
+                            <option value="Teknologi">Teknologi</option>
+                            <option value="Hiburan">Hiburan</option>
                         </select>
                     </div>
 
@@ -144,18 +147,46 @@
     </style>
 
     <script>
-        // Inisialisasi Quill
+        // Inisialisasi Quill Editor
         const quill = new Quill('#quillEditor', {
             theme: 'snow',
             modules: {
                 toolbar: [
-                    [{ 'font': [] }, { 'size': [] }],
+                    [{
+                        'font': []
+                    }, {
+                        'size': []
+                    }],
                     ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'color': [] }, { 'background': [] }],
-                    [{ 'script': 'sub' }, { 'script': 'super' }],
-                    [{ 'header': '1' }, { 'header': '2' }, 'blockquote', 'code-block'],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-                    [{ 'direction': 'rtl' }, { 'align': [] }],
+                    [{
+                        'color': []
+                    }, {
+                        'background': []
+                    }],
+                    [{
+                        'script': 'sub'
+                    }, {
+                        'script': 'super'
+                    }],
+                    [{
+                        'header': '1'
+                    }, {
+                        'header': '2'
+                    }, 'blockquote', 'code-block'],
+                    [{
+                        'list': 'ordered'
+                    }, {
+                        'list': 'bullet'
+                    }, {
+                        'indent': '-1'
+                    }, {
+                        'indent': '+1'
+                    }],
+                    [{
+                        'direction': 'rtl'
+                    }, {
+                        'align': []
+                    }],
                     ['link', 'image', 'video'],
                     ['clean']
                 ]
@@ -163,35 +194,30 @@
             placeholder: 'Tulis konten berita di sini...',
         });
 
+        // Elemen Modal
         const modal = document.getElementById('modalAlert');
         const modalMessage = document.getElementById('modalMessage');
         const closeModal = document.getElementById('closeModal');
         const modalContent = document.getElementById('modalContent');
 
-        function hideModal() {
-            modal.classList.add('hidden');
-        }
-
-        closeModal.addEventListener('click', () => {
-            modal.classList.add('hidden');
-        });
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === "Escape") {
-                hideModal();
-            }
-        });
-
-        modal.addEventListener('click', (event) => {
-            if (!modalContent.contains(event.target)) {
-                modal.classList.add('hidden');
-            }
-        });
-
+        // Fungsi Modal
         function showModal(message) {
             modalMessage.textContent = message;
             modal.classList.remove('hidden');
         }
+
+        function hideModal() {
+            modal.classList.add('hidden');
+        }
+
+        // Event Listener Modal
+        closeModal.addEventListener('click', hideModal);
+        document.addEventListener('keydown', (event) => {
+            if (event.key === "Escape") hideModal();
+        });
+        modal.addEventListener('click', (event) => {
+            if (!modalContent.contains(event.target)) hideModal();
+        });
 
         // Validasi Judul
         const judulInput = document.getElementById('judul');
@@ -207,7 +233,7 @@
             }
         });
 
-        // Simpan data Quill ke textarea sebelum submit
+        // Simpan data sebelum submit
         document.getElementById('submitArticle').addEventListener('click', () => {
             const judul = judulInput.value.trim();
             const konten = quill.root.innerHTML.trim();
@@ -215,7 +241,6 @@
 
             let errorMessage = '';
 
-            // Cek panjang judul
             if ((konten !== '' && konten !== '<p><br></p>') && judul === '') {
                 errorMessage += 'Silakan isi judul terlebih dahulu.\n';
                 judulInput.classList.add('border-red-500');
@@ -223,36 +248,53 @@
                 judulInput.classList.remove('border-red-500');
             }
 
-            // Cek panjang judul
             if (judul.length > 200) {
                 errorMessage += 'Judul terlalu panjang. Kurangi hingga 200 karakter.\n';
             }
 
-            // Cek jika konten kosong
             if (konten === '' || konten === '<p><br></p>') {
                 errorMessage += 'Konten berita tidak boleh kosong.\n';
             }
 
-            // Jika ada kesalahan, munculkan modal
             if (errorMessage !== '') {
                 showModal(errorMessage);
                 return;
             }
 
-            // Jika semua valid, submit form
+            // Hapus data sessionStorage setelah submit
+            sessionStorage.clear();
             document.getElementById('createArticleForm').submit();
         });
 
-        function showModal(message) {
-            modalMessage.textContent = message;
-            modal.classList.remove('hidden');
+        // Penyimpanan Sementara (Judul & Konten)
+        function saveToSession() {
+            sessionStorage.setItem('judul', judulInput.value);
+            sessionStorage.setItem('konten_berita', quill.root.innerHTML);
+            sessionStorage.setItem('tags', JSON.stringify(tags));
         }
 
-        // Tag
+        function loadFromSession() {
+            if (sessionStorage.getItem('judul')) {
+                judulInput.value = sessionStorage.getItem('judul');
+            }
+            if (sessionStorage.getItem('konten_berita')) {
+                quill.root.innerHTML = sessionStorage.getItem('konten_berita');
+            }
+            if (sessionStorage.getItem('tags')) {
+                tags = JSON.parse(sessionStorage.getItem('tags'));
+                tags.forEach(tag => addTagElement(tag));
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", loadFromSession);
+        judulInput.addEventListener("input", saveToSession);
+        quill.on("text-change", saveToSession);
+
+        // Fitur Tag (Opsional)
         const tagInput = document.getElementById('tagInput');
         const tagContainer = document.getElementById('tagContainer');
         const tagsHidden = document.getElementById('tagsHidden');
-        const tags = [];
+        let tags = [];
 
         tagInput.addEventListener('keydown', (e) => {
             if (e.key === ',') {
@@ -274,6 +316,7 @@
                     tags.push(tagValue);
                     addTagElement(tagValue);
                     updateHiddenTags();
+                    saveToSession();
                 }
                 tagInput.value = '';
             }
@@ -283,9 +326,9 @@
             const tagEl = document.createElement('div');
             tagEl.className = 'flex items-center bg-gray-200 px-3 py-1 rounded-full text-sm';
             tagEl.innerHTML = `
-                                        <span>${tagValue}</span>
-                                        <button type="button" class="ml-2 text-gray-600 focus:outline-none">&times;</button>
-                                    `;
+        <span>${tagValue}</span>
+        <button type="button" class="ml-2 text-gray-600 focus:outline-none">&times;</button>
+    `;
             tagEl.querySelector('button').addEventListener('click', () => {
                 removeTag(tagValue);
             });
@@ -297,18 +340,22 @@
         }
 
         function removeTag(tagValue) {
-            tags.splice(tags.indexOf(tagValue), 1);
+            tags = tags.filter(tag => tag !== tagValue);
             updateHiddenTags();
+            saveToSession();
+
             Array.from(tagContainer.children).forEach((child) => {
-                if (child.innerText.includes(tagValue)) {
+                if (child.querySelector('span')?.innerText === tagValue) {
                     child.remove();
                 }
             });
-            tagInput.disabled = tags.length >= 10 ? true : false;
+
+            tagInput.disabled = tags.length >= 10;
         }
 
         function updateHiddenTags() {
             tagsHidden.value = tags.join(',');
+            saveToSession();
         }
     </script>
 @endsection
