@@ -35,14 +35,12 @@
                     </button>
                     <ul
                         class="absolute left-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                        <li><a href="{{ route('siaran-pers') }}" class="block px-4 py-2 hover:bg-gray-100">Siaran
-                                Pers</a></li>
-                        <li><a href="{{ route('riset') }}" class="block px-4 py-2 hover:bg-gray-100">Riset</a></li>
-                        <li><a href="{{ route('wawancara') }}" class="block px-4 py-2 hover:bg-gray-100">Wawancara</a>
-                        </li>
-                        <li><a href="{{ route('diskusi') }}" class="block px-4 py-2 hover:bg-gray-100">Diskusi</a></li>
-                        <li><a href="{{ route('agenda') }}" class="block px-4 py-2 hover:bg-gray-100">Agenda</a></li>
-                        <li><a href="{{ route('opini') }}" class="block px-4 py-2 hover:bg-gray-100">Opini</a></li>
+                        <li><a href="{{ route('kampus') }}" class="block px-4 py-2 hover:bg-gray-100">Kampus</a></li>
+                        <li><a href="{{ route('nasional-internasional') }}" class="block px-4 py-2 hover:bg-gray-100">Nasional dan Internasional</a></li>
+                        <li><a href="{{ route('opini-esai') }}" class="block px-4 py-2 hover:bg-gray-100">Opini dan Esai</a></li>
+                        <li><a href="{{ route('kesenian-sejarah') }}" class="block px-4 py-2 hover:bg-gray-100">Kesenian dan Sejarah</a></li>
+                        <li><a href="{{ route('kesehatan-atletik') }}" class="block px-4 py-2 hover:bg-gray-100">Kesehatan dan Atletik</a></li>
+                        <li><a href="{{ route('teknologi') }}" class="block px-4 py-2 hover:bg-gray-100">Teknologi</a></li>
                     </ul>
                 </li>
 
