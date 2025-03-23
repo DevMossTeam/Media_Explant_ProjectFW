@@ -39,15 +39,11 @@
                         <select id="kategori" name="kategori" required
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500">
                             <option value="Kampus">Kampus</option>
-                            <option value="Nasional">Nasional</option>
-                            <option value="Internasional">Internasional</option>
+                            <option value="Nasional dan Internasional">Nasional dan Internasional</option>
                             <option value="Opini dan Esai">Opini dan Esai</option>
-                            <option value="Liputan Khusus">Liputan Khusus</option>
                             <option value="Kesenian dan Sejarah">Kesenian dan Sejarah</option>
-                            <option value="Kesehatan">Kesehatan</option>
-                            <option value="Atletik">Atletik</option>
+                            <option value="Kesehatan dan Atletik">Kesehatan dan Atletik</option>
                             <option value="Teknologi">Teknologi</option>
-                            <option value="Hiburan">Hiburan</option>
                         </select>
                     </div>
 
