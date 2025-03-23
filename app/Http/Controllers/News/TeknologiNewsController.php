@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
-use App\Models\News\NasionalNews;
+use App\Models\News\TeknologiNews;
 use Illuminate\Http\Request;
 
-class NasionalNewsController extends Controller
+class TeknologiNewsController extends Controller
 {
     /**
-     * Tampilkan daftar berita Nasional.
+     * Tampilkan daftar berita Teknologi.
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Nasional' dan visibilitas 'public'
-        $news = NasionalNews::where('kategori', 'Nasional')
+        // Ambil berita dengan kategori 'Teknologi' dan visibilitas 'public'
+        $news = TeknologiNews::where('kategori', 'Teknologi')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->paginate(10);
 
-        return view('kategori.nasional', compact('news'));
+        return view('kategori.teknologi', compact('news'));
     }
 
     /**
@@ -29,7 +29,7 @@ class NasionalNewsController extends Controller
     {
         // Ambil ID dari query string ?a=id
         $newsId = $request->query('a');
-        $news = NasionalNews::where('id', $newsId)->firstOrFail();
+        $news = TeknologiNews::where('id', $newsId)->firstOrFail();
 
         return view('kategori.news-detail', compact('news'));
     }

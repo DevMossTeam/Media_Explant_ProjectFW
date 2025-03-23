@@ -9,11 +9,11 @@ use Illuminate\Http\Request;
 class OpiniEsaiNewsController extends Controller
 {
     /**
-     * Tampilkan daftar berita OpiniEsai.
+     * Tampilkan daftar berita Opini dan Esai.
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'OpiniEsai' dan visibilitas 'public'
+        // Ambil berita dengan kategori 'Opini dan Esai' dan visibilitas 'public'
         $news = OpiniEsaiNews::where('kategori', 'Opini dan Esai')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')

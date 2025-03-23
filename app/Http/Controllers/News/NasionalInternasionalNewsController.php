@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
-use App\Models\News\InternasionalNews;
+use App\Models\News\NasionalInternasionalNews;
 use Illuminate\Http\Request;
 
-class InternasionalNewsController extends Controller
+class NasionalInternasionalNewsController extends Controller
 {
     /**
-     * Tampilkan daftar berita Internasional.
+     * Tampilkan daftar berita Nasional dan Internasional.
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Internasional' dan visibilitas 'public'
-        $news = InternasionalNews::where('kategori', 'Internasional')
+        // Ambil berita dengan kategori 'Nasional dan Internasional' dan visibilitas 'public'
+        $news = NasionalInternasionalNews::where('kategori', 'Nasional dan Internasional')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->paginate(10);
 
-        return view('kategori.internasional', compact('news'));
+        return view('kategori.nasional-internasional', compact('news'));
     }
 
     /**
@@ -29,7 +29,7 @@ class InternasionalNewsController extends Controller
     {
         // Ambil ID dari query string ?a=id
         $newsId = $request->query('a');
-        $news = InternasionalNews::where('id', $newsId)->firstOrFail();
+        $news = NasionalInternasionalNews::where('id', $newsId)->firstOrFail();
 
         return view('kategori.news-detail', compact('news'));
     }
