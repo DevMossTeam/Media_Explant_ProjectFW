@@ -13,12 +13,12 @@ use App\Http\Controllers\UserAuth\ForgotPasswordController;
 use App\Http\Controllers\UserAuth\CreatePasswordController;
 use App\Http\Controllers\UserAuth\VerifikasiAkunController;
 use App\Http\Controllers\News\HomeNewsController;
-use App\Http\Controllers\News\OpiniNewsController;
-use App\Http\Controllers\News\DiskusiNewsController;
-use App\Http\Controllers\News\WawancaraNewsController;
-use App\Http\Controllers\News\RisetNewsController;
-use App\Http\Controllers\News\SiaranPersNewsController;
-use App\Http\Controllers\News\AgendaNewsController;
+use App\Http\Controllers\News\KampusNewsController;
+use App\Http\Controllers\News\NasionalNewsController;
+use App\Http\Controllers\News\InternasionalNewsController;
+use App\Http\Controllers\News\OpiniEsaiNewsController;
+use App\Http\Controllers\News\LiputanKhususNewsController;
+use App\Http\Controllers\News\KesenianSejarahNewsController;
 use App\Http\Controllers\Author\ProdukController;
 use App\Http\Controllers\Author\KaryaController;
 
@@ -199,18 +199,18 @@ Route::post('verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name(
 Route::get('ganti-password', [ForgotPasswordController::class, 'showChangePasswordForm'])->name('password.changePasswordForm');
 Route::post('ganti-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
 
-Route::get('/kategori/opini', [OpiniNewsController::class, 'index'])->name('opini');
-Route::get('/kategori/opini/read', [OpiniNewsController::class, 'show'])->name('opini.detail');
-Route::get('/kategori/diskusi', [DiskusiNewsController::class, 'index'])->name('diskusi');
-Route::get('/kategori/diskusi/read', [DiskusiNewsController::class, 'show'])->name('diskusi.detail');
-Route::get('/kategori/wawancara', [WawancaraNewsController::class, 'index'])->name('wawancara');
-Route::get('/kategori/wawancara/read', [WawancaraNewsController::class, 'show'])->name('wawancara.detail');
-Route::get('/kategori/riset', [RisetNewsController::class, 'index'])->name('riset');
-Route::get('/kategori/riset/read', [RisetNewsController::class, 'show'])->name('riset.detail');
-Route::get('/kategori/siaran-pers', [SiaranPersNewsController::class, 'index'])->name('siaran-pers');
-Route::get('/kategori/siaran-pers/read', [SiaranPersNewsController::class, 'show'])->name('siaran-pers.detail');
-Route::get('/kategori/agenda', [AgendaNewsController::class, 'index'])->name('agenda');
-Route::get('/kategori/agenda/read', [AgendaNewsController::class, 'show'])->name('agenda.detail');
+Route::get('/kategori/kampus', [KampusNewsController::class, 'index'])->name('opini');
+Route::get('/kategori/kampus/read', [KampusNewsController::class, 'show'])->name('opini.detail');
+Route::get('/kategori/nasional', [NasionalNewsController::class, 'index'])->name('diskusi');
+Route::get('/kategori/nasional/read', [NasionalNewsController::class, 'show'])->name('diskusi.detail');
+Route::get('/kategori/internasional', [InternasionalNewsController::class, 'index'])->name('wawancara');
+Route::get('/kategori/internasional/read', [InternasionalNewsController::class, 'show'])->name('wawancara.detail');
+Route::get('/kategori/opini-esai', [OpiniEsaiNewsController::class, 'index'])->name('riset');
+Route::get('/kategori/opini-esai/read', [OpiniEsaiNewsController::class, 'show'])->name('riset.detail');
+Route::get('/kategori/liputanKhusus', [LiputanKhususNewsController::class, 'index'])->name('siaran-pers');
+Route::get('/kategori/liputanKhusus/read', [LiputanKhususNewsController::class, 'show'])->name('siaran-pers.detail');
+Route::get('/kategori/kesenianSejarah', [KesenianSejarahNewsController::class, 'index'])->name('agenda');
+Route::get('/kategori/kesenianSejarah/read', [KesenianSejarahNewsController::class, 'show'])->name('agenda.detail');
 
 Route::get('/', [HomeNewsController::class, 'index'])->name('home');
 
