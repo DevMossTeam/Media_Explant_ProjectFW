@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
-use App\Models\News\AgendaNews;
+use App\Models\News\OpiniEsaiNews;
 use Illuminate\Http\Request;
 
-class AgendaNewsController extends Controller
+class OpiniEsaiNewsController extends Controller
 {
     /**
-     * Tampilkan daftar berita Agenda.
+     * Tampilkan daftar berita OpiniEsai.
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Agenda' dan visibilitas 'public'
-        $news = AgendaNews::where('kategori', 'Agenda')
+        // Ambil berita dengan kategori 'OpiniEsai' dan visibilitas 'public'
+        $news = OpiniEsaiNews::where('kategori', 'Opini dan Esai')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->paginate(10);
 
-        return view('kategori.agenda', compact('news'));
+        return view('kategori.opini-esai', compact('news'));
     }
 
     /**
@@ -29,7 +29,7 @@ class AgendaNewsController extends Controller
     {
         // Ambil ID dari query string ?a=id
         $newsId = $request->query('a');
-        $news = AgendaNews::where('id', $newsId)->firstOrFail();
+        $news = OpiniEsaiNews::where('id', $newsId)->firstOrFail();
 
         return view('kategori.news-detail', compact('news'));
     }

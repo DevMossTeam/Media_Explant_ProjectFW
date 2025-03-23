@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
-use App\Models\News\WawancaraNews;
+use App\Models\News\InternasionalNews;
 use Illuminate\Http\Request;
 
-class WawancaraNewsController extends Controller
+class InternasionalNewsController extends Controller
 {
     /**
-     * Tampilkan daftar berita Wawancara.
+     * Tampilkan daftar berita Internasional.
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Wawancara' dan visibilitas 'public'
-        $news = WawancaraNews::where('kategori', 'Wawancara')
+        // Ambil berita dengan kategori 'Internasional' dan visibilitas 'public'
+        $news = InternasionalNews::where('kategori', 'Internasional')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->paginate(10);
 
-        return view('kategori.wawancara', compact('news'));
+        return view('kategori.internasional', compact('news'));
     }
 
     /**
@@ -29,7 +29,7 @@ class WawancaraNewsController extends Controller
     {
         // Ambil ID dari query string ?a=id
         $newsId = $request->query('a');
-        $news = WawancaraNews::where('id', $newsId)->firstOrFail();
+        $news = InternasionalNews::where('id', $newsId)->firstOrFail();
 
         return view('kategori.news-detail', compact('news'));
     }

@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
-use App\Models\News\RisetNews;
+use App\Models\News\KampusNews;
 use Illuminate\Http\Request;
 
-class RisetNewsController extends Controller
+class KampusNewsController extends Controller
 {
     /**
-     * Tampilkan daftar berita Riset.
+     * Tampilkan daftar berita Kampus.
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Riset' dan visibilitas 'public'
-        $news = RisetNews::where('kategori', 'Riset')
+        // Ambil berita dengan kategori 'Kampus' dan visibilitas 'public'
+        $news = KampusNews::where('kategori', 'Kampus')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->paginate(10);
 
-        return view('kategori.riset', compact('news'));
+        return view('kategori.kampus', compact('news'));
     }
 
     /**
@@ -29,7 +29,7 @@ class RisetNewsController extends Controller
     {
         // Ambil ID dari query string ?a=id
         $newsId = $request->query('a');
-        $news = RisetNews::where('id', $newsId)->firstOrFail();
+        $news = KampusNews::where('id', $newsId)->firstOrFail();
 
         return view('kategori.news-detail', compact('news'));
     }

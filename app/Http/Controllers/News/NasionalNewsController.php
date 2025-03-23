@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
-use App\Models\News\DiskusiNews;
+use App\Models\News\NasionalNews;
 use Illuminate\Http\Request;
 
-class DiskusiNewsController extends Controller
+class NasionalNewsController extends Controller
 {
     /**
-     * Tampilkan daftar berita Diskusi.
+     * Tampilkan daftar berita Nasional.
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Diskusi' dan visibilitas 'public'
-        $news = DiskusiNews::where('kategori', 'Diskusi')
+        // Ambil berita dengan kategori 'Nasional' dan visibilitas 'public'
+        $news = NasionalNews::where('kategori', 'Nasional')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->paginate(10);
 
-        return view('kategori.diskusi', compact('news'));
+        return view('kategori.nasional', compact('news'));
     }
 
     /**
@@ -29,7 +29,7 @@ class DiskusiNewsController extends Controller
     {
         // Ambil ID dari query string ?a=id
         $newsId = $request->query('a');
-        $news = DiskusiNews::where('id', $newsId)->firstOrFail();
+        $news = NasionalNews::where('id', $newsId)->firstOrFail();
 
         return view('kategori.news-detail', compact('news'));
     }

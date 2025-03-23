@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
-use App\Models\News\SiaranPersNews;
+use App\Models\News\LiputanKhususNews;
 use Illuminate\Http\Request;
 
-class SiaranPersNewsController extends Controller
+class LiputanKhususNewsController extends Controller
 {
     /**
-     * Tampilkan daftar berita SiaranPers.
+     * Tampilkan daftar berita LiputanKhusus.
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'SiaranPers' dan visibilitas 'public'
-        $news = SiaranPersNews::where('kategori', 'Siaran Pers')
+        // Ambil berita dengan kategori 'LiputanKhusus' dan visibilitas 'public'
+        $news = LiputanKhususNews::where('kategori', 'Liputan Khusus')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->paginate(10);
 
-        return view('kategori.siaranPers', compact('news'));
+        return view('kategori.liputanKhusus', compact('news'));
     }
 
     /**
@@ -29,7 +29,7 @@ class SiaranPersNewsController extends Controller
     {
         // Ambil ID dari query string ?a=id
         $newsId = $request->query('a');
-        $news = SiaranPersNews::where('id', $newsId)->firstOrFail();
+        $news = LiputanKhususNews::where('id', $newsId)->firstOrFail();
 
         return view('kategori.news-detail', compact('news'));
     }
