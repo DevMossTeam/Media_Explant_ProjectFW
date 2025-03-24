@@ -16,6 +16,6 @@ class Produk extends Model
     public $timestamps = false; // Matikan timestamps
 
     protected $fillable = [
-        'id', 'judul', 'deskripsi', 'kategori', 'media', 'release_date', 'visibilitas'
+        'id', 'judul', 'deskripsi', 'kategori', 'media', 'release_date', 'user_id', 'visibilitas'
     ];
 }

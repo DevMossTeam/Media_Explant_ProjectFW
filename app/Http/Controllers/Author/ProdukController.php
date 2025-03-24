@@ -31,6 +31,9 @@ class ProdukController extends Controller
         $file = $request->file('media');
         $fileContent = file_get_contents($file->getRealPath());
 
+        // Ambil uid dari cookie
+        $userUid = $request->cookie('user_uid');
+
         // Simpan ke database menggunakan DB::table untuk debugging lebih mudah
         try {
             DB::table('produk')->insert([
@@ -38,6 +41,7 @@ class ProdukController extends Controller
                 'judul' => $request->judul,
                 'deskripsi' => $request->deskripsi,
                 'kategori' => $request->kategori,
+                'user_id' => $userUid,
                 'media' => $fileContent, // Simpan sebagai binary
                 'release_date' => now()->toDateString(), // Set tanggal otomatis
                 'visibilitas' => $request->visibilitas,

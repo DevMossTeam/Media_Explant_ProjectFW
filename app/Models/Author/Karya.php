@@ -20,6 +20,7 @@ class Karya extends Model
         'judul',
         'deskripsi',
         'kategori',
+        'user_id',
         'media',
         'release_date',
         'visibilitas'

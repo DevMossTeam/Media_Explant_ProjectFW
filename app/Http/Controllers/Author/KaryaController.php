@@ -26,6 +26,9 @@ class KaryaController extends Controller
             $fileBase64 = base64_encode(file_get_contents($request->file('media')->path()));
         }
 
+        // Ambil uid dari cookie
+        $userUid = $request->cookie('user_uid');
+
         // Simpan ke Database
         Karya::create([
             'id' => Str::random(12), // ID acak unik
@@ -33,6 +36,7 @@ class KaryaController extends Controller
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi ?? '', // Default kosong jika tidak diisi
             'kategori' => $request->kategori,
+            'user_id' => $userUid,
             'media' => $fileBase64, // Simpan dalam bentuk base64 di kolom mediumtext
             'release_date' => now(), // Otomatis menggunakan waktu sekarang
             'visibilitas' => $request->visibilitas,
