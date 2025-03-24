@@ -23,7 +23,7 @@ class ProdukController extends Controller
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required',
             'kategori' => 'required|in:Buletin,Majalah',
-            'media' => 'required|file|mimes:pdf,doc,docx|max:5120',
+            'media' => 'required|file|mimes:pdf,doc,docx|max:1048576',
             'visibilitas' => 'required|in:public,private',
         ]);
 
