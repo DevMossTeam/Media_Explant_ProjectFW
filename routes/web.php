@@ -14,11 +14,11 @@ use App\Http\Controllers\UserAuth\CreatePasswordController;
 use App\Http\Controllers\UserAuth\VerifikasiAkunController;
 use App\Http\Controllers\News\HomeNewsController;
 use App\Http\Controllers\News\KampusNewsController;
-use App\Http\Controllers\News\NasionalNewsController;
-use App\Http\Controllers\News\InternasionalNewsController;
+use App\Http\Controllers\News\NasionalInternasionalNewsController;
 use App\Http\Controllers\News\OpiniEsaiNewsController;
-use App\Http\Controllers\News\LiputanKhususNewsController;
 use App\Http\Controllers\News\KesenianSejarahNewsController;
+use App\Http\Controllers\News\KesehatanAtletikNewsController;
+use App\Http\Controllers\News\TeknologiNewsController;
 use App\Http\Controllers\Author\ProdukController;
 use App\Http\Controllers\Author\KaryaController;
 
@@ -199,18 +199,18 @@ Route::post('verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name(
 Route::get('ganti-password', [ForgotPasswordController::class, 'showChangePasswordForm'])->name('password.changePasswordForm');
 Route::post('ganti-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
 
-Route::get('/kategori/kampus', [KampusNewsController::class, 'index'])->name('opini');
-Route::get('/kategori/kampus/read', [KampusNewsController::class, 'show'])->name('opini.detail');
-Route::get('/kategori/nasional', [NasionalNewsController::class, 'index'])->name('diskusi');
-Route::get('/kategori/nasional/read', [NasionalNewsController::class, 'show'])->name('diskusi.detail');
-Route::get('/kategori/internasional', [InternasionalNewsController::class, 'index'])->name('wawancara');
-Route::get('/kategori/internasional/read', [InternasionalNewsController::class, 'show'])->name('wawancara.detail');
-Route::get('/kategori/opini-esai', [OpiniEsaiNewsController::class, 'index'])->name('riset');
-Route::get('/kategori/opini-esai/read', [OpiniEsaiNewsController::class, 'show'])->name('riset.detail');
-Route::get('/kategori/liputanKhusus', [LiputanKhususNewsController::class, 'index'])->name('siaran-pers');
-Route::get('/kategori/liputanKhusus/read', [LiputanKhususNewsController::class, 'show'])->name('siaran-pers.detail');
-Route::get('/kategori/kesenianSejarah', [KesenianSejarahNewsController::class, 'index'])->name('agenda');
-Route::get('/kategori/kesenianSejarah/read', [KesenianSejarahNewsController::class, 'show'])->name('agenda.detail');
+Route::get('/kategori/kampus', [KampusNewsController::class, 'index'])->name('kampus');
+Route::get('/kategori/kampus/read', [KampusNewsController::class, 'show'])->name('kampus.detail');
+Route::get('/kategori/nasional-internasional', [NasionalInternasionalNewsController::class, 'index'])->name('nasional-internasional');
+Route::get('/kategori/nasional-internasional/read', [NasionalInternasionalNewsController::class, 'show'])->name('nasional-internasional.detail');
+Route::get('/kategori/opini-esai', [OpiniEsaiNewsController::class, 'index'])->name('opini-esai');
+Route::get('/kategori/opini-esai/read', [OpiniEsaiNewsController::class, 'show'])->name('opini-esai.detail');
+Route::get('/kategori/kesenian-sejarah', [KesenianSejarahNewsController::class, 'index'])->name('kesenian-sejarah');
+Route::get('/kategori/kesenian-sejarah/read', [KesenianSejarahNewsController::class, 'show'])->name('kesenian-sejarah.detail');
+Route::get('/kategori/kesehatan-atletik', [KesehatanAtletikNewsController::class, 'index'])->name('kesehatan-atletik');
+Route::get('/kategori/kesehatan-atletik/read', [KesehatanAtletikNewsController::class, 'show'])->name('kesehatan-atletik.detail');
+Route::get('/kategori/teknologi', [TeknologiNewsController::class, 'index'])->name('teknologi');
+Route::get('/kategori/teknologi/read', [TeknologiNewsController::class, 'show'])->name('teknologi.detail');
 
 Route::get('/', [HomeNewsController::class, 'index'])->name('home');
 
