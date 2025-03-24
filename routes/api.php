@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\SignInController;
 use App\Http\Controllers\API\SignUpController;
+use App\Http\Controllers\API\GetProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,7 @@ use App\Http\Controllers\API\SignUpController;
 |
 */
 
+// Route default untuk mengembalikan data user yang sudah terautentikasi.
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -31,6 +33,11 @@ Route::post('/verify-otp', [SignUpController::class, 'verifyOtp']);
 // Step 3: Input password & pendaftaran akhir
 Route::post('/register-step3', [SignUpController::class, 'registerStep3']);
 
-// Endpoint tambahan untuk mendapatkan data user
+// Endpoint tambahan untuk mendapatkan data user (umum)
 Route::get('/user', [SignUpController::class, 'getUsers']);
-Route::get('/user/{uid}', [SignUpController::class, 'getUserByUid']);   
+Route::get('/user/{uid}', [SignUpController::class, 'getUserByUid']);
+
+// Endpoint untuk mendapatkan data profil user yang terautentikasi
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/profile', [GetProfileController::class, 'getProfile']);
+});
