@@ -21,6 +21,7 @@ use App\Http\Controllers\News\KesehatanAtletikNewsController;
 use App\Http\Controllers\News\TeknologiNewsController;
 use App\Http\Controllers\Author\ProdukController;
 use App\Http\Controllers\Author\KaryaController;
+use App\Http\Controllers\Produk\BuletinController;
 
 /*
 |--------------------------------------------------------------------------
@@ -226,3 +227,5 @@ Route::view('/pusat-bantuan', 'header-footer.footer-menu.pusatBantuan');
 
 Route::post('/password/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->name('password.resendOtp');
 Route::post('/verifikasi-akun/resend-otp', [RegisterController::class, 'resendOtp'])->name('verifikasi-akun.resendOtp');
+
+Route::get('/buletin', [BuletinController::class, 'index'])->name('buletin.index');
