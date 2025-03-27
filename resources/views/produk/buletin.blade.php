@@ -1,75 +1,50 @@
-@extends('layouts.app')
-
-@section('content')
-
+<!DOCTYPE html>
+<html lang="id">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buletin - {{ $buletin->judul ?? 'Tidak Ditemukan' }}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
+<body>
+    <h1>Produk Kami</h1>
+    <p>Kumpulan Produk Terbaik</p>
+    <hr>
 
-<div class="container mx-auto px-4 lg:px-16 xl:px-24 2xl:px-32 py-6 max-w-screen-2xl">
+    @if (isset($error))
+        <p>{{ $error }}</p>
+    @elseif ($buletin)
+        <h2>{{ $buletin->judul }}</h2>
+        <p><strong>Tanggal Rilis:</strong> {{ \Carbon\Carbon::parse($buletin->release_date)->translatedFormat('d M Y') }}</p>
 
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div>
-            <h2 class="text-3xl font-semibold">Produk Kami</h2>
-            <p class="text-gray-600 mb-2 text-lg">Kumpulan Produk Terbaik</p>
-            <div class="w-full h-[2px] bg-gray-300"></div>
+        <!-- Thumbnail PDF -->
+        <canvas id="pdf-thumbnail"></canvas>
 
-            <div class="grid grid-cols-1 gap-8 mt-4">
-                @if(isset($buletin))
-                    <div class="relative rounded-lg overflow-hidden shadow-md">
-                        <div id="pdf-container" class="w-full h-96 bg-gray-200 flex items-center justify-center">
-                            <canvas id="pdf-render"></canvas>
-                        </div>
+        <!-- PDF Viewer -->
+        <iframe src="data:application/pdf;base64,{{ base64_encode($buletin->media) }}" width="100%" height="600px"></iframe>
 
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#990505] to-transparent opacity-90"></div>
+        <script>
+            var pdfData = atob("{{ base64_encode($buletin->media) }}");
 
-                        <div class="absolute bottom-0 left-0 p-4 text-white w-full">
-                            <p class="text-sm font-medium flex items-center gap-2">
-                                <span>BULETIN</span> |
-                                <span>{{ \Carbon\Carbon::parse($buletin->release_date)->translatedFormat('d M Y') }}</span>
-                            </p>
+            var loadingTask = pdfjsLib.getDocument({ data: pdfData });
+            loadingTask.promise.then(function(pdf) {
+                pdf.getPage(1).then(function(page) {
+                    var scale = 1.5;
+                    var viewport = page.getViewport({ scale: scale });
 
-                            <h2 class="text-lg font-semibold mt-1">{{ $buletin->judul }}</h2>
-                        </div>
+                    var canvas = document.getElementById('pdf-thumbnail');
+                    var context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
 
-                        <div class="absolute bottom-4 right-4">
-                            <img src="https://img.icons8.com/ios-filled/50/ffffff/pdf.png" alt="PDF Icon" class="w-10 h-10">
-                        </div>
-                    </div>
-                @else
-                    <p class="text-gray-500">Buletin tidak ditemukan.</p>
-                @endif
-            </div>
-        </div>
-    </section>
-
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var pdfData = atob("{{ $pdfData ?? '' }}"); // Decode Base64
-
-        var loadingTask = pdfjsLib.getDocument({data: new Uint8Array([...pdfData].map(c => c.charCodeAt(0)))});
-        loadingTask.promise.then(function(pdf) {
-            return pdf.getPage(1);
-        }).then(function(page) {
-            var canvas = document.getElementById('pdf-render');
-            var ctx = canvas.getContext('2d');
-            var viewport = page.getViewport({ scale: 1.5 });
-
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-
-            var renderContext = {
-                canvasContext: ctx,
-                viewport: viewport
-            };
-            page.render(renderContext);
-        }).catch(function(error) {
-            console.error('Error loading PDF:', error);
-        });
-    });
-</script>
-
-@endsection
+                    var renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    page.render(renderContext);
+                });
+            });
+        </script>
+    @endif
+</body>
+</html>

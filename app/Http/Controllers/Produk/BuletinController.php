@@ -10,18 +10,13 @@ class BuletinController extends Controller
 {
     public function show($id)
     {
-        // Cek ID yang diterima
-        \Log::info("Mencari Buletin dengan ID: " . $id);
+        // Mengambil data buletin berdasarkan ID dan kategori 'Buletin'
+        $buletin = Buletin::whereRaw('BINARY id = ?', [$id])
+                            ->where('kategori', 'Buletin')
+                            ->first();
 
-        // Ambil data dari database
-        $buletin = Buletin::where('id', $id)
-            ->where('kategori', 'Buletin')
-            ->first();
-
-        // Debugging untuk memastikan data ditemukan
         if (!$buletin) {
-            \Log::error("Buletin tidak ditemukan untuk ID: " . $id);
-            dd("Buletin tidak ditemukan. Cek ID:", $id);
+            return view('produk.buletin', ['error' => "Buletin dengan ID $id tidak ditemukan di database."]);
         }
 
         return view('produk.buletin', compact('buletin'));
