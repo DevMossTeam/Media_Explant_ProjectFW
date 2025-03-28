@@ -228,6 +228,6 @@ Route::view('/pusat-bantuan', 'header-footer.footer-menu.pusatBantuan');
 Route::post('/password/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->name('password.resendOtp');
 Route::post('/verifikasi-akun/resend-otp', [RegisterController::class, 'resendOtp'])->name('verifikasi-akun.resendOtp');
 
-Route::get('/produk/buletin/', [BuletinController::class, 'index'])->name('buletin.index');
+Route::get('/produk/buletin', [BuletinController::class, 'index'])->name('buletin.index');
 Route::get('/produk/buletin/{id}', [BuletinController::class, 'show'])->name('buletin.show');
 Route::get('/produk/buletin/pdf-preview/{id}', [BuletinController::class, 'pdfPreview'])->name('pdf.preview');

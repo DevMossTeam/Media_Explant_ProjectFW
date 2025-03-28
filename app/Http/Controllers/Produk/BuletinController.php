@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Produk;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Produk\Buletin;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 
 class BuletinController extends Controller
 {
@@ -36,8 +36,13 @@ class BuletinController extends Controller
     public function pdfPreview($id)
     {
         $buletin = Buletin::findOrFail($id);
-        $pdfData = $buletin->media; // Sesuai dengan kolom di database
 
-        return response($pdfData)->header('Content-Type', 'application/pdf');
+        if (!$buletin || !$buletin->media) {
+            return abort(404, "PDF tidak ditemukan.");
+        }
+
+        return Response::make($buletin->media, 200, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 }
