@@ -9,15 +9,27 @@ use Illuminate\Support\Facades\Response;
 
 class BuletinController extends Controller
 {
-    // Menampilkan 3 buletin terbaru
+    // Menampilkan buletin
     public function index()
     {
+        // 3 buletin terbaru untuk "Produk Kami"
         $buletins = Buletin::where('kategori', 'Buletin')
-                            ->orderBy('release_date', 'desc')
-                            ->take(3)
-                            ->get();
+            ->orderBy('release_date', 'desc')
+            ->take(3)
+            ->get();
 
-        return view('produk.buletin', compact('buletins'));
+        // 9 buletin terbaru untuk "Terbaru"
+        $buletinsTerbaru = Buletin::where('kategori', 'Buletin')
+            ->orderBy('release_date', 'desc')
+            ->take(9)
+            ->get();
+
+            $buletinsRekomendasi = Buletin::where('kategori', 'Buletin')
+            ->orderBy('release_date', 'desc')
+            ->take(12)
+            ->get();
+
+        return view('produk.buletin', compact('buletins', 'buletinsTerbaru', 'buletinsRekomendasi'));
     }
 
     // Menampilkan halaman detail buletin

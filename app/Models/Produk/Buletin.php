@@ -15,6 +15,6 @@ class Buletin extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'id', 'judul', 'kategori', 'media', 'release_date'
+        'id', 'judul', 'kategori', 'media', 'deskripsi', 'release_date'
     ];
 }
