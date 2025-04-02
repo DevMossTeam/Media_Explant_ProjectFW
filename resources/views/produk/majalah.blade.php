@@ -15,7 +15,7 @@
                 @foreach ($majalahs as $majalah)
                     <div class="flex items-start space-x-4">
                         <a href="{{ route('majalah.show', $majalah->id) }}">
-                            <img src="https://via.placeholder.com/140x260" alt="{{ $majalah->judul }}" class="w-40 h-52 object-cover rounded-lg shadow-md">
+                            <canvas id="pdf-thumbnail-{{ $majalah->id }}" class="w-40 h-52 object-cover rounded-lg shadow-md"></canvas>
                         </a>
 
                         <div class="flex-1">
@@ -28,6 +28,30 @@
                             <a href="{{ route('majalah.show', $majalah->id) }}" class="text-[#5773FF] font-medium text-sm">Lihat Majalah</a>
                         </div>
                     </div>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            var pdfUrl = "{{ route('pdf.preview', ['id' => $majalah->id]) }}";
+
+                            var loadingTask = pdfjsLib.getDocument(pdfUrl);
+                            loadingTask.promise.then(function(pdf) {
+                                pdf.getPage(1).then(function(page) {
+                                    var canvas = document.getElementById('pdf-thumbnail-{{ $majalah->id }}');
+                                    var context = canvas.getContext('2d');
+
+                                    var viewport = page.getViewport({ scale: 1.5 });
+                                    canvas.width = viewport.width;
+                                    canvas.height = viewport.height;
+
+                                    var renderContext = {
+                                        canvasContext: context,
+                                        viewport: viewport
+                                    };
+                                    page.render(renderContext);
+                                });
+                            });
+                        });
+                    </script>
                 @endforeach
             </div>
         </section>
@@ -48,7 +72,7 @@
                 @foreach ($majalahsTerbaru as $majalah)
                     <div class="flex items-start space-x-4">
                         <a href="{{ route('majalah.show', $majalah->id) }}">
-                            <img src="https://via.placeholder.com/100x160" alt="{{ $majalah->judul }}" class="w-28 h-40 object-cover rounded-lg shadow-md">
+                            <canvas id="pdf-thumbnail-terbaru-{{ $majalah->id }}" class="w-28 h-40 object-cover rounded-lg shadow-md"></canvas>
                         </a>
 
                         <div class="flex-1">
@@ -61,11 +85,38 @@
                             <a href="{{ route('majalah.show', $majalah->id) }}" class="text-[#5773FF] text-xs font-medium">Lihat Majalah</a>
                         </div>
                     </div>
+
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            var pdfUrl = "{{ route('pdf.preview', ['id' => $majalah->id]) }}";
+
+                            var loadingTask = pdfjsLib.getDocument(pdfUrl);
+                            loadingTask.promise.then(function(pdf) {
+                                pdf.getPage(1).then(function(page) {
+                                    var canvas = document.getElementById('pdf-thumbnail-terbaru-{{ $majalah->id }}');
+                                    var context = canvas.getContext('2d');
+
+                                    var viewport = page.getViewport({ scale: 1.2 });
+                                    canvas.width = viewport.width;
+                                    canvas.height = viewport.height;
+
+                                    var renderContext = {
+                                        canvasContext: context,
+                                        viewport: viewport
+                                    };
+                                    page.render(renderContext);
+                                });
+                            });
+                        });
+                    </script>
                 @endforeach
             </div>
         </section>
 
     </div>
 </div>
+
+<!-- Tambahkan Library PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
 @endsection
