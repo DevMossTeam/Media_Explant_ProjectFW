@@ -22,6 +22,7 @@ use App\Http\Controllers\News\TeknologiNewsController;
 use App\Http\Controllers\Author\ProdukController;
 use App\Http\Controllers\Author\KaryaController;
 use App\Http\Controllers\Produk\BuletinController;
+use App\Http\Controllers\Produk\MajalahController;
 
 /*
 |--------------------------------------------------------------------------
@@ -231,3 +232,7 @@ Route::post('/verifikasi-akun/resend-otp', [RegisterController::class, 'resendOt
 Route::get('/produk/buletin', [BuletinController::class, 'index'])->name('buletin.index');
 Route::get('/produk/buletin/{id}', [BuletinController::class, 'show'])->name('buletin.show');
 Route::get('/produk/buletin/pdf-preview/{id}', [BuletinController::class, 'pdfPreview'])->name('pdf.preview');
+
+Route::get('/produk/majalah', [MajalahController::class, 'index'])->name('majalah.index');
+Route::get('/produk/majalah/{id}', [MajalahController::class, 'show'])->name('majalah.show');
+Route::get('/produk/majalah/pdf-preview/{id}', [MajalahController::class, 'pdfPreview'])->name('majalah.pdfPreview');

@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Majalah extends Model
 {
     use HasFactory;
+
+    protected $table = 'produk';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected $fillable = [
+        'id', 'judul', 'kategori', 'media', 'deskripsi', 'release_date'
+    ];
 }
