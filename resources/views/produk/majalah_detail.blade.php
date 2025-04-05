@@ -3,42 +3,95 @@
 @section('content')
 
 <div class="container mx-auto px-4 py-6 max-w-5xl">
-    <!-- Judul dan informasi -->
-    <h1 class="text-3xl font-bold mb-2">{{ $majalah->judul }}</h1>
-    <p class="text-gray-700">Oleh: <strong>{{ $majalah->user ? $majalah->user->nama_lengkap : 'Tidak Diketahui' }}</strong></p>
-    <p class="text-gray-500 mb-4">{{ \Carbon\Carbon::parse($majalah->release_date)->translatedFormat('d M Y') }}</p>
+    <!-- Breadcrumb -->
+    <div class="mb-4">
+        <span class="text-red-600 font-semibold bg-red-100 px-3 py-1 rounded">Buletin</span>
+    </div>
 
-    <!-- Tombol Unduh dan Pratinjau -->
-    <div class="flex gap-4 mb-6">
-        <a href="{{ route('majalah.download', ['id' => $majalah->id]) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
-            <i class="fas fa-download"></i> Unduh Sekarang
+    <!-- Judul -->
+    <h1 class="text-3xl font-bold italic">{{ $majalah->judul }}</h1>
+
+    <!-- Info penulis & tanggal -->
+    <div class="flex items-center text-sm text-gray-600 my-2">
+        <span>Oleh : <strong>{{ $majalah->user ? $majalah->user->nama_lengkap : 'Tidak Diketahui' }}</strong></span>
+        <span class="mx-2">•</span>
+        <span>{{ \Carbon\Carbon::parse($majalah->release_date)->translatedFormat('j M Y - H:i') }} WIB</span>
+
+        <!-- Bookmark ikon (frontend-only) -->
+        <div class="ml-auto">
+            <button class="text-gray-400 hover:text-gray-800" title="Simpan dan baca nanti">
+                <i class="far fa-bookmark text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Thumbnail PDF -->
+    <div class="my-4">
+        <iframe src="{{ route('majalah.pdfPreview', ['id' => $majalah->id]) }}#page=1" class="w-full h-72 rounded-lg shadow border" type="application/pdf"></iframe>
+    </div>
+
+    <!-- Tombol Aksi -->
+    <div class="flex gap-4 mb-4">
+        <a href="{{ route('majalah.download', ['id' => $majalah->id]) }}"
+           class="bg-[#5773FF] hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
+            <i class="fas fa-download mr-2"></i>Unduh Sekarang
         </a>
-        <button
-            id="toggle-preview"
-            data-id="{{ $majalah->id }}"
-            class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded-lg shadow">
-            <i class="fas fa-eye"></i> Pratinjau
+
+        <button id="toggle-preview" data-id="{{ $majalah->id }}"
+           class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg shadow">
+            <i class="fas fa-eye mr-2"></i>Pratinjau
         </button>
     </div>
 
-    <a href="{{ route('majalah.index') }}" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg">
-        Kembali
-    </a>
-</div>
+    <!-- Modal Container -->
+    <div id="previewModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-60 flex items-center justify-center">
+        <div class="bg-white w-full max-w-6xl h-[85vh] rounded-xl shadow-lg relative flex flex-col mx-auto my-auto">
+            <div class="flex justify-between items-center px-6 py-4 border-b">
+                <h2 class="text-lg font-semibold">Pratinjau Majalah</h2>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div class="flex-1 overflow-hidden" id="modalContent">
+                <div class="w-full h-full flex items-center justify-center text-gray-500">Memuat pratinjau...</div>
+            </div>
+        </div>
+    </div>
 
-<!-- Modal Container -->
-<div id="previewModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-60">
-    <div class="bg-white w-full max-w-6xl h-[85vh] rounded-xl shadow-lg relative flex flex-col mx-auto my-auto">
-        <!-- Header -->
-        <div class="flex justify-between items-center px-6 py-4 border-b">
-            <h2 class="text-lg font-semibold">Pratinjau Majalah</h2>
-            <button id="closeModal" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+    <!-- Reaksi -->
+    <div class="flex items-center gap-6 mt-6 text-gray-700">
+        <button class="flex items-center gap-2"><i class="fas fa-thumbs-up"></i> 107</button>
+        <button class="flex items-center gap-2"><i class="fas fa-thumbs-down"></i> 0</button>
+        <button class="flex items-center gap-2"><i class="fas fa-share"></i> 0</button>
+        <button class="ml-auto text-red-600 hover:text-red-800" title="Laporkan">
+            <i class="fas fa-flag"></i>
+        </button>
+    </div>
+
+    <!-- Rekomendasi Hari Ini -->
+    <div class="mt-10">
+        <h2 class="text-xl font-semibold mb-3 text-red-700">
+            <span class="bg-red-100 px-3 py-1 rounded">Rekomendasi Hari ini</span>
+        </h2>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            @foreach ($rekomendasiMajalah as $item)
+                <div class="bg-white rounded-lg shadow p-2">
+                    <iframe src="{{ route('majalah.pdfPreview', ['id' => $item->id]) }}#page=1"
+                            class="w-full h-40 rounded" type="application/pdf"></iframe>
+
+                    <div class="mt-2 text-xs text-red-600 font-semibold">BULETIN | {{ \Carbon\Carbon::parse($item->release_date)->translatedFormat('d M Y') }}</div>
+                    <div class="text-sm font-semibold">{{ $item->judul }}</div>
+
+                    <a href="{{ route('majalah.download', ['id' => $item->id]) }}"
+                       class="mt-1 inline-block text-blue-600 hover:underline text-sm">
+                        <i class="fas fa-download"></i> Unduh Sekarang
+                    </a>
+                </div>
+            @endforeach
         </div>
 
-        <!-- Body -->
-        <div class="flex-1 overflow-hidden" id="modalContent">
-            <!-- AJAX content from majalah_preview.blade.php will be loaded here -->
-            <div class="w-full h-full flex items-center justify-center text-gray-500">Memuat pratinjau...</div>
+        <!-- Pagination -->
+        <div class="mt-4">
+            {{ $rekomendasiMajalah->links() }}
         </div>
     </div>
 </div>
@@ -58,35 +111,52 @@
         const closeBtn = document.getElementById("closeModal");
         const modalContent = document.getElementById("modalContent");
 
-        previewBtn.addEventListener("click", () => {
-            const id = previewBtn.dataset.id;
-            const previewUrl = `/produk/majalah/preview?f=${id}`;
+        const id = previewBtn.dataset.id;
+        const browseUrl = `/produk/majalah/browse?f=${id}`;
+        const previewUrl = `/produk/majalah/preview?f=${id}`;
 
-            // Update URL di address bar tanpa reload
-            history.pushState(null, '', previewUrl);
-
-            // Tampilkan modal
+        function openModal() {
             modal.classList.remove("hidden");
-
-            // Ambil konten dari view preview
             fetch(previewUrl)
-                .then(response => response.text())
+                .then(res => res.text())
                 .then(html => {
                     modalContent.innerHTML = html;
                 });
+        }
+
+        function closeModal() {
+            modal.classList.add("hidden");
+            modalContent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-gray-500">Memuat pratinjau...</div>`;
+        }
+
+        previewBtn.addEventListener("click", () => {
+            history.pushState({ preview: true }, '', previewUrl);
+            openModal();
         });
 
         closeBtn.addEventListener("click", () => {
-            modal.classList.add("hidden");
-            history.pushState(null, '', `/produk/majalah/browse?f={{ $majalah->id }}`);
+            history.pushState(null, '', browseUrl);
+            closeModal();
         });
 
-        modal.addEventListener("click", function(e) {
+        modal.addEventListener("click", function (e) {
             if (e.target === modal) {
-                modal.classList.add("hidden");
-                history.pushState(null, '', `/produk/majalah/browse?f={{ $majalah->id }}`);
+                history.pushState(null, '', browseUrl);
+                closeModal();
             }
         });
+
+        window.addEventListener("popstate", function () {
+            if (window.location.pathname.includes('/preview')) {
+                openModal();
+            } else {
+                closeModal();
+            }
+        });
+
+        if (window.location.pathname.includes('/preview')) {
+            openModal();
+        }
     });
 </script>
 

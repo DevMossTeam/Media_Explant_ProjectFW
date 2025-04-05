@@ -41,8 +41,15 @@ class MajalahController extends Controller
             return abort(404, "Majalah tidak ditemukan.");
         }
 
-        return view('produk.majalah_detail', compact('majalah'));
+        // Rekomendasi majalah (dengan paginasi)
+        $rekomendasiMajalah = Majalah::where('kategori', 'Majalah')
+            ->where('id', '!=', $id)
+            ->orderBy('release_date', 'desc')
+            ->paginate(6); // atau jumlah sesuai kebutuhan
+
+        return view('produk.majalah_detail', compact('majalah', 'rekomendasiMajalah'));
     }
+
 
     // Menampilkan halaman pertama PDF sebagai thumbnail
     public function pdfPreview($id)
