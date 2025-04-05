@@ -28,12 +28,17 @@ class MajalahController extends Controller
     }
 
     // Menampilkan halaman detail majalah
-    public function show($id)
+    public function show(Request $request)
     {
-        $majalah = Majalah::where('id', $id)->where('kategori', 'Majalah')->first();
+        $id = $request->query('f');
+
+        $majalah = Majalah::with('user')
+            ->where('id', $id)
+            ->where('kategori', 'Majalah')
+            ->first();
 
         if (!$majalah) {
-            return abort(404, "Majalah dengan ID $id tidak ditemukan.");
+            return abort(404, "Majalah tidak ditemukan.");
         }
 
         return view('produk.majalah_detail', compact('majalah'));

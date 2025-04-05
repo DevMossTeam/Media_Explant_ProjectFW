@@ -14,7 +14,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @foreach ($majalahs as $majalah)
                     <div class="flex items-start space-x-4">
-                        <a href="{{ route('majalah.show', $majalah->id) }}">
+                        <a href="{{ route('majalah.browse', ['f' => $majalah->id]) }}">
                             <canvas id="pdf-thumbnail-{{ $majalah->id }}" class="w-40 h-52 object-cover rounded-lg shadow-md"></canvas>
                         </a>
 
@@ -25,7 +25,7 @@
                             </div>
 
                             <h3 class="text-lg font-semibold leading-tight">{{ $majalah->judul }}</h3>
-                            <a href="{{ route('majalah.show', $majalah->id) }}" class="text-[#5773FF] font-medium text-sm">Lihat Majalah</a>
+                            <a href="{{ route('majalah.browse', ['f' => $majalah->id]) }}" class="text-[#5773FF] font-medium text-sm">Lihat Majalah</a>
                         </div>
                     </div>
 
@@ -71,7 +71,7 @@
             <div class="grid grid-cols-1 gap-6">
                 @foreach ($majalahsTerbaru as $majalah)
                     <div class="flex items-start space-x-4">
-                        <a href="{{ route('majalah.show', $majalah->id) }}">
+                        <a href="{{ route('majalah.browse', ['f' => $majalah->id]) }}">
                             <canvas id="pdf-thumbnail-terbaru-{{ $majalah->id }}" class="w-28 h-40 object-cover rounded-lg shadow-md"></canvas>
                         </a>
 
@@ -82,7 +82,7 @@
                             </div>
 
                             <h3 class="text-sm font-semibold leading-tight">{{ $majalah->judul }}</h3>
-                            <a href="{{ route('majalah.show', $majalah->id) }}" class="text-[#5773FF] text-xs font-medium">Lihat Majalah</a>
+                            <a href="{{ route('majalah.browse', ['f' => $majalah->id]) }}" class="text-[#5773FF] text-xs font-medium">Lihat Majalah</a>
                         </div>
                     </div>
 
