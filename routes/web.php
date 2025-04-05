@@ -236,3 +236,6 @@ Route::get('/produk/buletin/pdf-preview/{id}', [BuletinController::class, 'pdfPr
 Route::get('/produk/majalah', [MajalahController::class, 'index'])->name('majalah.index');
 Route::get('/produk/majalah/browse', [MajalahController::class, 'show'])->name('majalah.browse');
 Route::get('/produk/majalah/pdf-preview/{id}', [MajalahController::class, 'pdfPreview'])->name('majalah.pdfPreview');
+Route::get('/produk/majalah/download/{id}', [MajalahController::class, 'download'])->name('majalah.download');
+Route::get('/produk/majalah/preview', [MajalahController::class, 'preview'])->name('majalah.preview');
+

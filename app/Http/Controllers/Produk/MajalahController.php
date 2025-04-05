@@ -57,4 +57,33 @@ class MajalahController extends Controller
             'Content-Type' => 'application/pdf',
         ]);
     }
+
+    public function download($id)
+    {
+        $majalah = Majalah::findOrFail($id);
+
+        if (!$majalah || !$majalah->media) {
+            return abort(404, "PDF tidak ditemukan.");
+        }
+
+        $filename = str_replace(' ', '_', $majalah->judul) . '.pdf';
+
+        return Response::make($majalah->media, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    public function preview(Request $request)
+    {
+        $id = $request->query('f');
+
+        $majalah = Majalah::findOrFail($id);
+
+        if (!$majalah || !$majalah->media) {
+            return abort(404, "Majalah tidak ditemukan.");
+        }
+
+        return view('produk.majalah_preview', compact('majalah'));
+    }
 }
