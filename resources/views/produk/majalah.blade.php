@@ -31,7 +31,7 @@
 
                     <script>
                         document.addEventListener("DOMContentLoaded", function() {
-                            var pdfUrl = "{{ route('pdf.preview', ['id' => $majalah->id]) }}";
+                            var pdfUrl = "{{ route('majalah.pdfPreview', ['id' => $majalah->id]) }}";
 
                             var loadingTask = pdfjsLib.getDocument(pdfUrl);
                             loadingTask.promise.then(function(pdf) {
@@ -61,7 +61,8 @@
             <div class="flex flex-col mb-6">
                 <div class="flex items-center">
                     <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
-                    <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605]">
+                    <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605] flex items-center justify-center text-center"
+                        style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
                         Terbaru
                     </h2>
                 </div>
@@ -88,7 +89,7 @@
 
                     <script>
                         document.addEventListener("DOMContentLoaded", function() {
-                            var pdfUrl = "{{ route('pdf.preview', ['id' => $majalah->id]) }}";
+                            var pdfUrl = "{{ route('majalah.pdfPreview', ['id' => $majalah->id]) }}";
 
                             var loadingTask = pdfjsLib.getDocument(pdfUrl);
                             loadingTask.promise.then(function(pdf) {

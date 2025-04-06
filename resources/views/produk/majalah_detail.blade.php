@@ -5,7 +5,7 @@
 <div class="container mx-auto px-4 py-6 max-w-5xl">
     <!-- Breadcrumb -->
     <div class="mb-4">
-        <span class="text-red-600 font-semibold bg-red-100 px-3 py-1 rounded">Buletin</span>
+        <span class="text-red-600 font-semibold bg-red-100 px-3 py-1 rounded">Majalah</span>
     </div>
 
     <!-- Judul -->
@@ -15,7 +15,7 @@
     <div class="flex items-center text-sm text-gray-600 my-2">
         <span>Oleh : <strong>{{ $majalah->user ? $majalah->user->nama_lengkap : 'Tidak Diketahui' }}</strong></span>
         <span class="mx-2">•</span>
-        <span>{{ \Carbon\Carbon::parse($majalah->release_date)->translatedFormat('j M Y - H:i') }} WIB</span>
+        <span>{{ \Carbon\Carbon::parse($majalah->release_date)->translatedFormat('j M Y') }}</span>
 
         <!-- Bookmark ikon (frontend-only) -->
         <div class="ml-auto">
@@ -78,7 +78,7 @@
                     <iframe src="{{ route('majalah.pdfPreview', ['id' => $item->id]) }}#page=1"
                             class="w-full h-40 rounded" type="application/pdf"></iframe>
 
-                    <div class="mt-2 text-xs text-red-600 font-semibold">BULETIN | {{ \Carbon\Carbon::parse($item->release_date)->translatedFormat('d M Y') }}</div>
+                    <div class="mt-2 text-xs text-red-600 font-semibold">MAJALAH | {{ \Carbon\Carbon::parse($item->release_date)->translatedFormat('d M Y') }}</div>
                     <div class="text-sm font-semibold">{{ $item->judul }}</div>
 
                     <a href="{{ route('majalah.download', ['id' => $item->id]) }}"

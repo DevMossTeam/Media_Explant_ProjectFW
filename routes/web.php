@@ -230,12 +230,13 @@ Route::post('/password/resend-otp', [ForgotPasswordController::class, 'resendOtp
 Route::post('/verifikasi-akun/resend-otp', [RegisterController::class, 'resendOtp'])->name('verifikasi-akun.resendOtp');
 
 Route::get('/produk/buletin', [BuletinController::class, 'index'])->name('buletin.index');
-Route::get('/produk/buletin/{id}', [BuletinController::class, 'show'])->name('buletin.show');
-Route::get('/produk/buletin/pdf-preview/{id}', [BuletinController::class, 'pdfPreview'])->name('pdf.preview');
+Route::get('/produk/buletin/browse', [BuletinController::class, 'show'])->name('buletin.browse');
+Route::get('/produk/buletin/pdf-preview/{id}', [BuletinController::class, 'pdfPreview'])->name('buletin.pdfPreview');
+Route::get('/produk/buletin/download/{id}', [BuletinController::class, 'download'])->name('buletin.download');
+Route::get('/produk/buletin/preview', [BuletinController::class, 'preview'])->name('buletin.preview');
 
 Route::get('/produk/majalah', [MajalahController::class, 'index'])->name('majalah.index');
 Route::get('/produk/majalah/browse', [MajalahController::class, 'show'])->name('majalah.browse');
 Route::get('/produk/majalah/pdf-preview/{id}', [MajalahController::class, 'pdfPreview'])->name('majalah.pdfPreview');
 Route::get('/produk/majalah/download/{id}', [MajalahController::class, 'download'])->name('majalah.download');
 Route::get('/produk/majalah/preview', [MajalahController::class, 'preview'])->name('majalah.preview');
-
