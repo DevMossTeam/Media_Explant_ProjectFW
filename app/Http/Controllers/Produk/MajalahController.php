@@ -32,6 +32,7 @@ class MajalahController extends Controller
     {
         $id = $request->query('f');
 
+        // Ambil majalah utama
         $majalah = Majalah::with('user')
             ->where('id', $id)
             ->where('kategori', 'Majalah')
@@ -41,15 +42,20 @@ class MajalahController extends Controller
             return abort(404, "Majalah tidak ditemukan.");
         }
 
-        // Rekomendasi majalah (dengan paginasi)
+        // Ambil rekomendasi Majalah lain dengan pagination
         $rekomendasiMajalah = Majalah::where('kategori', 'Majalah')
             ->where('id', '!=', $id)
             ->orderBy('release_date', 'desc')
-            ->paginate(6); // atau jumlah sesuai kebutuhan
+            ->paginate(6);
 
+        // Cek jika request adalah AJAX (untuk pagination)
+        if ($request->ajax()) {
+            return view('produk.partials.MajalahRekomendasi', compact('rekomendasiMajalah'))->render();
+        }
+
+        // Jika bukan AJAX, tampilkan full page
         return view('produk.majalah_detail', compact('majalah', 'rekomendasiMajalah'));
     }
-
 
     // Menampilkan halaman pertama PDF sebagai thumbnail
     public function pdfPreview($id)

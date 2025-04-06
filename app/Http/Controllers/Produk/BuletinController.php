@@ -24,7 +24,7 @@ class BuletinController extends Controller
             ->take(9)
             ->get();
 
-            $buletinsRekomendasi = Buletin::where('kategori', 'Buletin')
+        $buletinsRekomendasi = Buletin::where('kategori', 'Buletin')
             ->orderBy('release_date', 'desc')
             ->take(12)
             ->get();
@@ -37,8 +37,7 @@ class BuletinController extends Controller
     {
         $id = $request->query('f');
 
-        $buletin = Buletin::findOrFail($id);
-
+        // Ambil buletin utama
         $buletin = Buletin::with('user')
             ->where('id', $id)
             ->where('kategori', 'Buletin')
@@ -48,12 +47,18 @@ class BuletinController extends Controller
             return abort(404, "Buletin tidak ditemukan.");
         }
 
-        // Rekomendasi Buletin (dengan paginasi)
+        // Ambil rekomendasi buletin lain dengan pagination
         $rekomendasiBuletin = Buletin::where('kategori', 'Buletin')
             ->where('id', '!=', $id)
             ->orderBy('release_date', 'desc')
-            ->paginate(6); // atau jumlah sesuai kebutuhan
+            ->paginate(6);
 
+        // Cek jika request adalah AJAX (untuk pagination)
+        if ($request->ajax()) {
+            return view('produk.partials.BuletinRekomendasi', compact('rekomendasiBuletin'))->render();
+        }
+
+        // Jika bukan AJAX, tampilkan full page
         return view('produk.buletin_detail', compact('buletin', 'rekomendasiBuletin'));
     }
 
@@ -99,5 +104,4 @@ class BuletinController extends Controller
 
         return view('produk.buletin_preview', compact('buletin'));
     }
-
 }

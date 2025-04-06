@@ -2,7 +2,9 @@
     <div class="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-3">
         <!-- Logo -->
         <div class="flex items-center">
-            <a href="{{ route('home') }}" class="text-[#990505] text-xl font-bold">MediaExplant</a>
+            <a href="{{ route('home') }}">
+                <img src="{{ asset('assets/Media-Explant-head-Ic.svg') }}" alt="Media Explant Logo" class="h-8">
+            </a>
         </div>
 
         <!-- Navigation -->
@@ -36,11 +38,16 @@
                     <ul
                         class="absolute left-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                         <li><a href="{{ route('kampus') }}" class="block px-4 py-2 hover:bg-gray-100">Kampus</a></li>
-                        <li><a href="{{ route('nasional-internasional') }}" class="block px-4 py-2 hover:bg-gray-100">Nasional dan Internasional</a></li>
-                        <li><a href="{{ route('opini-esai') }}" class="block px-4 py-2 hover:bg-gray-100">Opini dan Esai</a></li>
-                        <li><a href="{{ route('kesenian-sejarah') }}" class="block px-4 py-2 hover:bg-gray-100">Kesenian dan Sejarah</a></li>
-                        <li><a href="{{ route('kesehatan-atletik') }}" class="block px-4 py-2 hover:bg-gray-100">Kesehatan dan Atletik</a></li>
-                        <li><a href="{{ route('teknologi') }}" class="block px-4 py-2 hover:bg-gray-100">Teknologi</a></li>
+                        <li><a href="{{ route('nasional-internasional') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Nasional dan Internasional</a></li>
+                        <li><a href="{{ route('opini-esai') }}" class="block px-4 py-2 hover:bg-gray-100">Opini dan
+                                Esai</a></li>
+                        <li><a href="{{ route('kesenian-sejarah') }}" class="block px-4 py-2 hover:bg-gray-100">Kesenian
+                                dan Sejarah</a></li>
+                        <li><a href="{{ route('kesehatan-atletik') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Kesehatan dan Atletik</a></li>
+                        <li><a href="{{ route('teknologi') }}" class="block px-4 py-2 hover:bg-gray-100">Teknologi</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -56,8 +63,10 @@
                     </button>
                     <ul
                         class="absolute left-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                        <li><a href="{{ route('buletin.index') }}" class="block px-4 py-2 hover:bg-gray-100">Buletin</a></li>
-                        <li><a href="{{ route('majalah.index') }}" class="block px-4 py-2 hover:bg-gray-100">Majalah</a></li>
+                        <li><a href="{{ route('buletin.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Buletin</a></li>
+                        <li><a href="{{ route('majalah.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Majalah</a></li>
                     </ul>
                 </li>
 
@@ -162,8 +171,10 @@
                         Produk <i class="fa-solid fa-chevron-down float-right"></i>
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li><a href="{{ route('buletin.index') }}" class="text-gray-600 hover:text-[#990505]">Buletin</a></li>
-                        <li><a href="{{ route('majalah.index') }}" class="text-gray-600 hover:text-[#990505]">Majalah</a></li>
+                        <li><a href="{{ route('buletin.index') }}"
+                                class="text-gray-600 hover:text-[#990505]">Buletin</a></li>
+                        <li><a href="{{ route('majalah.index') }}"
+                                class="text-gray-600 hover:text-[#990505]">Majalah</a></li>
                     </ul>
                 </div>
 
