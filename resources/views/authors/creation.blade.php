@@ -55,9 +55,16 @@
                         </div>
                     </div>
 
-                    <!-- Caption -->
+                    <!-- Konten -->
                     <div class="mb-4">
-                        <label for="deskripsi" class="block text-gray-700 font-medium">Caption</label>
+                        <label for="konten" id="konten-label" class="block text-gray-700 font-medium">Konten</label>
+                        <textarea id="konten" name="konten" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
+                            placeholder="Masukkan konten utama karya..."></textarea>
+                    </div>
+
+                    <!-- Caption -->
+                    <div class="mb-4" id="deskripsi-container">
+                        <label for="deskripsi" id="deskripsi-label" class="block text-gray-700 font-medium">Caption</label>
                         <textarea id="deskripsi" name="deskripsi" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
                             placeholder="Tambahkan caption di sini..."></textarea>
                     </div>
@@ -229,6 +236,73 @@
                     closeModal();
                 }
             });
+
+            const kategoriSelect = document.getElementById("kategori");
+            const deskripsiContainer = document.getElementById("deskripsi-container");
+            const deskripsiLabel = document.getElementById("deskripsi-label");
+            const deskripsiInput = document.getElementById("deskripsi");
+
+            const kontenLabel = document.getElementById("konten-label");
+            const kontenInput = document.getElementById("konten");
+
+            function updateFieldsByKategori() {
+                const selected = kategoriSelect.value;
+
+                // Update caption visibility + label & placeholder
+                if (["puisi", "pantun", "syair"].includes(selected)) {
+                    deskripsiContainer.classList.remove("hidden");
+                    switch (selected) {
+                        case "puisi":
+                            deskripsiLabel.textContent = "Caption Puisi";
+                            deskripsiInput.placeholder = "Tambahkan caption untuk puisi Anda...";
+                            break;
+                        case "pantun":
+                            deskripsiLabel.textContent = "Caption Pantun";
+                            deskripsiInput.placeholder = "Tambahkan caption untuk pantun Anda...";
+                            break;
+                        case "syair":
+                            deskripsiLabel.textContent = "Caption Syair";
+                            deskripsiInput.placeholder = "Tambahkan caption untuk syair Anda...";
+                            break;
+                    }
+                } else {
+                    deskripsiContainer.classList.add("hidden");
+                    deskripsiInput.value = "";
+                }
+
+                // Update konten label & placeholder
+                switch (selected) {
+                    case "puisi":
+                        kontenLabel.textContent = "Konten Puisi";
+                        kontenInput.placeholder = "Masukkan puisi Anda di sini...";
+                        break;
+                    case "pantun":
+                        kontenLabel.textContent = "Konten Pantun";
+                        kontenInput.placeholder = "Masukkan pantun Anda di sini...";
+                        break;
+                    case "syair":
+                        kontenLabel.textContent = "Konten Syair";
+                        kontenInput.placeholder = "Masukkan syair Anda di sini...";
+                        break;
+                    case "fotografi":
+                        kontenLabel.textContent = "Deskripsi Foto";
+                        kontenInput.placeholder = "Tambahkan deskripsi tentang foto atau ceritanya...";
+                        break;
+                    case "desain_grafis":
+                        kontenLabel.textContent = "Deskripsi Desain";
+                        kontenInput.placeholder = "Tambahkan deskripsi tentang desain atau pesan visualnya...";
+                        break;
+                    default:
+                        kontenLabel.textContent = "Konten";
+                        kontenInput.placeholder = "Masukkan konten karya...";
+                }
+            }
+
+            // Panggil saat pertama kali halaman dimuat
+            updateFieldsByKategori();
+
+            // Perubahan saat kategori berubah
+            kategoriSelect.addEventListener("change", updateFieldsByKategori);
         });
     </script>
 @endsection

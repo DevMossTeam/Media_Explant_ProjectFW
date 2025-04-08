@@ -23,6 +23,7 @@ class Karya extends Model
         'user_id',
         'media',
         'release_date',
-        'visibilitas'
+        'visibilitas',
+        'konten'
     ];
 }

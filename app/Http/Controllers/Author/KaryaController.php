@@ -16,6 +16,7 @@ class KaryaController extends Controller
             'penulis' => 'required', // Nama Penulis wajib
             'judul' => 'required',
             'deskripsi' => 'required_unless:kategori,fotografi,desain_grafis', // Wajib kecuali kategori Fotografi & Desain Grafis
+            'konten' => 'nullable', // Field tambahan untuk konten utama
             'media' => 'required|file|mimes:jpg,jpeg,png|max:10240', // Pastikan hanya gambar dengan ukuran max 10MB
             'visibilitas' => 'required|in:public,private'
         ]);
@@ -35,6 +36,7 @@ class KaryaController extends Controller
             'creator' => $request->penulis,
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi ?? '', // Default kosong jika tidak diisi
+            'konten' => $request->konten ?? '', // Menyimpan konten ke kolom mediumtext
             'kategori' => $request->kategori,
             'user_id' => $userUid,
             'media' => $fileBase64, // Simpan dalam bentuk base64 di kolom mediumtext
