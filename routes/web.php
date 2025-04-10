@@ -23,6 +23,7 @@ use App\Http\Controllers\Author\ProdukController;
 use App\Http\Controllers\Author\KaryaController;
 use App\Http\Controllers\Produk\BuletinController;
 use App\Http\Controllers\Produk\MajalahController;
+use App\Http\Controllers\Karya\PuisiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -240,3 +241,5 @@ Route::get('/produk/majalah/browse', [MajalahController::class, 'show'])->name('
 Route::get('/produk/majalah/pdf-preview/{id}', [MajalahController::class, 'pdfPreview'])->name('majalah.pdfPreview');
 Route::get('/produk/majalah/download/{id}', [MajalahController::class, 'download'])->name('majalah.download');
 Route::get('/produk/majalah/preview', [MajalahController::class, 'preview'])->name('majalah.preview');
+
+Route::get('/karya/puisi', [PuisiController::class, 'index'])->name('puisi');
