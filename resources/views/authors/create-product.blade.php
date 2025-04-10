@@ -10,7 +10,7 @@
                     📖 <span class="ml-2">Tambahkan Produk</span>
                 </h2>
 
-                @if(session('success'))
+                @if (session('success'))
                     <div class="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
                         {{ session('success') }}
                     </div>
@@ -26,15 +26,8 @@
                     <!-- Judul -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-1">Judul</label>
-                        <input type="text" name="judul" required
+                        <input type="text" name="judul" required placeholder="Masukkan judul produk"
                             class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <!-- Deskripsi -->
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-bold mb-1">Deskripsi</label>
-                        <textarea name="deskripsi" required
-                            class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
                     </div>
 
                     <!-- Media Upload -->
@@ -43,7 +36,8 @@
                         <div id="drop-area"
                             class="border-dashed border-2 border-gray-300 p-6 text-center cursor-pointer relative">
                             <p class="text-gray-500">Seret dan letakkan file di sini atau klik untuk unggah</p>
-                            <input type="file" name="media" required class="hidden" id="fileInput" accept=".pdf,.doc,.docx">
+                            <input type="file" name="media" required class="hidden" id="fileInput"
+                                accept=".pdf,.doc,.docx">
                         </div>
                         <p id="file-name" class="text-gray-500 mt-2"></p>
 
@@ -52,6 +46,14 @@
                             <p class="text-gray-700 font-semibold">Pratinjau File:</p>
                             <iframe id="preview-frame" class="w-full h-64 border rounded-lg"></iframe>
                         </div>
+                    </div>
+
+                    <!-- Deskripsi -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-1">Deskripsi</label>
+                        <div id="editor-container"
+                            class="bg-white min-h-[240px] max-h-[240px] overflow-y-auto border rounded-lg p-2"></div>
+                        <input type="hidden" name="deskripsi" id="deskripsi">
                     </div>
             </div>
 
@@ -104,12 +106,52 @@
                     </button>
                 </div>
             </div>
-
             </form>
         </div>
     </div>
 
+    <!-- Quill CSS & JS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
     <script>
+        // Inisialisasi Quill Editor
+        const quill = new Quill('#editor-container', {
+            theme: 'snow',
+            placeholder: 'Tulis deskripsi produk di sini...',
+            modules: {
+                toolbar: [
+                    [{
+                        header: [1, 2, false]
+                    }],
+                    ['bold', 'italic', 'underline'],
+                    ['link', ],
+                    [{
+                        list: 'ordered'
+                    }, {
+                        list: 'bullet'
+                    }]
+                ]
+            }
+        });
+
+        // Saat submit form, ambil isi Quill ke input hidden
+        document.getElementById("productForm").addEventListener("submit", function() {
+            document.getElementById("deskripsi").value = quill.root.innerHTML;
+        });
+
+        // Filter paste: buang gambar dan video
+        quill.clipboard.addMatcher(Node.ELEMENT_NODE, function(node, delta) {
+            const newOps = delta.ops.filter(op => {
+                if (op.insert && typeof op.insert === 'object') {
+                    return !op.insert.image && !op.insert.video;
+                }
+                return true;
+            });
+            delta.ops = newOps;
+            return delta;
+        });
+
         const dropArea = document.getElementById("drop-area");
         const fileInput = document.getElementById("fileInput");
         const fileNameDisplay = document.getElementById("file-name");

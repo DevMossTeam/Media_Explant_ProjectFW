@@ -27,6 +27,14 @@
                             placeholder="Masukkan judul karya..." required>
                     </div>
 
+                    <!-- Nama Penulis -->
+                    <div class="mb-4">
+                        <label for="penulis" class="block text-gray-700 font-medium">Nama Penulis</label>
+                        <input type="text" id="penulis" name="penulis"
+                            class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
+                            placeholder="Masukkan nama penulis..." required>
+                    </div>
+
                     <!-- Upload File -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-medium">Upload File</label>
@@ -58,23 +66,18 @@
                     <!-- Konten -->
                     <div class="mb-4">
                         <label for="konten" id="konten-label" class="block text-gray-700 font-medium">Konten</label>
-                        <textarea id="konten" name="konten" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
-                            placeholder="Masukkan konten utama karya..."></textarea>
+                        <textarea id="konten" name="konten"
+                            class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300 resize-none"
+                            placeholder="Masukkan konten utama karya..." style="height: 200px; overflow-y: auto;"></textarea>
                     </div>
 
                     <!-- Caption -->
                     <div class="mb-4" id="deskripsi-container">
                         <label for="deskripsi" id="deskripsi-label" class="block text-gray-700 font-medium">Caption</label>
-                        <textarea id="deskripsi" name="deskripsi" class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
-                            placeholder="Tambahkan caption di sini..."></textarea>
-                    </div>
 
-                    <!-- Nama Penulis -->
-                    <div class="mb-4">
-                        <label for="penulis" class="block text-gray-700 font-medium">Nama Penulis</label>
-                        <input type="text" id="penulis" name="penulis"
-                            class="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
-                            placeholder="Masukkan nama penulis..." required>
+                        <div id="quill-editor" class="mt-1 border rounded-md" style="height: 200px; overflow-y: auto;">
+                        </div>
+                        <input type="hidden" name="deskripsi" id="deskripsi">
                     </div>
             </div>
 
@@ -145,9 +148,14 @@
         </div>
     </div>
 
+    <!-- Quill CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <!-- Quill JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
     <!-- Script -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const dropArea = document.getElementById("drop-area");
             const fileInput = document.getElementById("media");
             const imagePreview = document.getElementById("imagePreview");
@@ -161,9 +169,9 @@
             fileInput.addEventListener("change", previewImage);
 
             // Hapus preview tanpa membuka dialog file
-            removePreview.addEventListener("click", function(event) {
-                event.stopPropagation(); // Mencegah pemicuan klik pada drop area
-                fileInput.value = ""; // Reset input file
+            removePreview.addEventListener("click", function (event) {
+                event.stopPropagation();
+                fileInput.value = "";
                 previewContainer.classList.add("hidden");
             });
 
@@ -198,49 +206,52 @@
                     reader.readAsDataURL(file);
                 }
             }
-        });
 
-        document.addEventListener("DOMContentLoaded", function() {
+            // Modal Peringatan
             const modal = document.getElementById("warningModal");
             const closeModalBtn = document.getElementById("closeModal");
 
-            // Fungsi untuk menutup modal
             function closeModal() {
                 modal.classList.add("hidden");
             }
 
-            // Cek input nama penulis saat submit
-            document.getElementById("karyaForm").addEventListener("submit", function(event) {
+            document.getElementById("karyaForm").addEventListener("submit", function (event) {
                 let penulis = document.getElementById("penulis").value;
                 let regex = /^[a-zA-Z\s]+$/;
 
                 if (!regex.test(penulis)) {
-                    event.preventDefault(); // Cegah submit
+                    event.preventDefault();
                     modal.classList.remove("hidden");
                 }
+
+                const deskripsiInput = document.getElementById("deskripsi");
+                deskripsiInput.value = quill.root.innerHTML;
             });
 
-            // Tutup modal dengan tombol "Tutup"
             closeModalBtn.addEventListener("click", closeModal);
 
-            // Tutup modal dengan klik di luar modal
-            modal.addEventListener("click", function(event) {
+            modal.addEventListener("click", function (event) {
                 if (event.target === modal) {
                     closeModal();
                 }
             });
 
-            // Tutup modal dengan tombol "Esc"
-            document.addEventListener("keydown", function(event) {
+            document.addEventListener("keydown", function (event) {
                 if (event.key === "Escape") {
                     closeModal();
                 }
             });
 
+            // Quill Editor
+            const quill = new Quill('#quill-editor', {
+                theme: 'snow',
+                placeholder: 'Tambahkan caption di sini...',
+            });
+
+            // Update bidang input berdasarkan kategori
             const kategoriSelect = document.getElementById("kategori");
             const deskripsiContainer = document.getElementById("deskripsi-container");
             const deskripsiLabel = document.getElementById("deskripsi-label");
-            const deskripsiInput = document.getElementById("deskripsi");
 
             const kontenLabel = document.getElementById("konten-label");
             const kontenInput = document.getElementById("konten");
@@ -248,60 +259,59 @@
             function updateFieldsByKategori() {
                 const selected = kategoriSelect.value;
 
-                // Update caption visibility + label & placeholder
-                if (["puisi", "pantun", "syair"].includes(selected)) {
+                // Caption selalu muncul untuk semua kategori ini
+                if (["puisi", "pantun", "syair", "fotografi", "desain_grafis"].includes(selected)) {
                     deskripsiContainer.classList.remove("hidden");
+
                     switch (selected) {
                         case "puisi":
                             deskripsiLabel.textContent = "Caption Puisi";
-                            deskripsiInput.placeholder = "Tambahkan caption untuk puisi Anda...";
+                            quill.root.dataset.placeholder = "Tambahkan caption untuk puisi Anda...";
                             break;
                         case "pantun":
                             deskripsiLabel.textContent = "Caption Pantun";
-                            deskripsiInput.placeholder = "Tambahkan caption untuk pantun Anda...";
+                            quill.root.dataset.placeholder = "Tambahkan caption untuk pantun Anda...";
                             break;
                         case "syair":
                             deskripsiLabel.textContent = "Caption Syair";
-                            deskripsiInput.placeholder = "Tambahkan caption untuk syair Anda...";
+                            quill.root.dataset.placeholder = "Tambahkan caption untuk syair Anda...";
+                            break;
+                        case "fotografi":
+                            deskripsiLabel.textContent = "Caption Foto";
+                            quill.root.dataset.placeholder = "Tambahkan caption untuk foto Anda...";
+                            break;
+                        case "desain_grafis":
+                            deskripsiLabel.textContent = "Caption Desain";
+                            quill.root.dataset.placeholder = "Tambahkan caption untuk desain Anda...";
+                            break;
+                    }
+                }
+
+                // Tampilkan konten hanya untuk kategori teks
+                if (["puisi", "pantun", "syair"].includes(selected)) {
+                    kontenInput.parentElement.classList.remove("hidden");
+
+                    switch (selected) {
+                        case "puisi":
+                            kontenLabel.textContent = "Konten Puisi";
+                            kontenInput.placeholder = "Masukkan puisi Anda di sini...";
+                            break;
+                        case "pantun":
+                            kontenLabel.textContent = "Konten Pantun";
+                            kontenInput.placeholder = "Masukkan pantun Anda di sini...";
+                            break;
+                        case "syair":
+                            kontenLabel.textContent = "Konten Syair";
+                            kontenInput.placeholder = "Masukkan syair Anda di sini...";
                             break;
                     }
                 } else {
-                    deskripsiContainer.classList.add("hidden");
-                    deskripsiInput.value = "";
-                }
-
-                // Update konten label & placeholder
-                switch (selected) {
-                    case "puisi":
-                        kontenLabel.textContent = "Konten Puisi";
-                        kontenInput.placeholder = "Masukkan puisi Anda di sini...";
-                        break;
-                    case "pantun":
-                        kontenLabel.textContent = "Konten Pantun";
-                        kontenInput.placeholder = "Masukkan pantun Anda di sini...";
-                        break;
-                    case "syair":
-                        kontenLabel.textContent = "Konten Syair";
-                        kontenInput.placeholder = "Masukkan syair Anda di sini...";
-                        break;
-                    case "fotografi":
-                        kontenLabel.textContent = "Deskripsi Foto";
-                        kontenInput.placeholder = "Tambahkan deskripsi tentang foto atau ceritanya...";
-                        break;
-                    case "desain_grafis":
-                        kontenLabel.textContent = "Deskripsi Desain";
-                        kontenInput.placeholder = "Tambahkan deskripsi tentang desain atau pesan visualnya...";
-                        break;
-                    default:
-                        kontenLabel.textContent = "Konten";
-                        kontenInput.placeholder = "Masukkan konten karya...";
+                    kontenInput.parentElement.classList.add("hidden");
+                    kontenInput.value = "";
                 }
             }
 
-            // Panggil saat pertama kali halaman dimuat
             updateFieldsByKategori();
-
-            // Perubahan saat kategori berubah
             kategoriSelect.addEventListener("change", updateFieldsByKategori);
         });
     </script>
