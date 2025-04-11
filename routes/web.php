@@ -24,6 +24,7 @@ use App\Http\Controllers\Author\KaryaController;
 use App\Http\Controllers\Produk\BuletinController;
 use App\Http\Controllers\Produk\MajalahController;
 use App\Http\Controllers\Karya\PuisiController;
+use App\Http\Controllers\Karya\PantunController;
 
 /*
 |--------------------------------------------------------------------------
@@ -243,3 +244,4 @@ Route::get('/produk/majalah/download/{id}', [MajalahController::class, 'download
 Route::get('/produk/majalah/preview', [MajalahController::class, 'preview'])->name('majalah.preview');
 
 Route::get('/karya/puisi', [PuisiController::class, 'index'])->name('puisi');
+Route::get('/karya/pantun', [PantunController::class, 'index'])->name('pantun');
