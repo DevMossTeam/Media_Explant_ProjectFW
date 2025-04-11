@@ -36,9 +36,10 @@
             </div>
 
             {{-- Karya Kami --}}
-            <div class="md:col-span-2">
-                <h2 class="text-xl font-semibold mb-1">Karya Kami</h2>
-                <p class="text-sm text-gray-500 mb-4">Kumpulan Karya Karya Terbaik</p>
+            <div class="md:col-span-2 -mt-2">
+                <h2 class="text-2xl font-bold mb-1">Karya Kami</h2>
+                <p class="text-sm text-gray-500 mb-2">Kumpulan Karya Karya Terbaik</p>
+                <div class="w-full h-[2px] bg-[#A8A8A8] mb-4"></div>
 
                 <div class="grid grid-cols-2 gap-4">
                     @foreach ($karya as $item)
@@ -77,7 +78,6 @@
                         </div>
                     @endforeach
                 </div>
-
             </div>
         </div>
     </div>

@@ -9,18 +9,17 @@ class PuisiController extends Controller
 {
     public function index()
     {
-        // Ambil 6 data terbaru
-        $terbaru = Puisi::with('user')
-            ->where('kategori', 'puisi')
+        $terbaru = Puisi::where('kategori', 'puisi')
+            ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
-            ->limit(6)
+            ->take(6)
             ->get();
 
-        // Ambil 20 data untuk "Karya Kami"
         $karya = Puisi::with('user')
             ->where('kategori', 'puisi')
+            ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
-            ->limit(20)
+            ->take(20)
             ->get();
 
         return view('karya.puisi', compact('terbaru', 'karya'));
