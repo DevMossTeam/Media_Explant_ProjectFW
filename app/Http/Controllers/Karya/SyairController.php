@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Http\Controllers\Karya;
+
+use App\Http\Controllers\Controller;
+use App\Models\Karya\Syair;
+
+class SyairController extends Controller
+{
+    public function index()
+    {
+        $terbaru = Syair::where('kategori', 'syair')
+            ->where('visibilitas', 'public')
+            ->orderBy('release_date', 'desc')
+            ->take(6)
+            ->get();
+
+        $karya = Syair::with('user')
+            ->where('kategori', 'syair')
+            ->where('visibilitas', 'public')
+            ->orderBy('release_date', 'desc')
+            ->take(20)
+            ->get();
+
+        return view('karya.syair', compact('terbaru', 'karya'));
+    }
+}
