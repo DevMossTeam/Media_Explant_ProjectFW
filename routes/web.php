@@ -26,6 +26,7 @@ use App\Http\Controllers\Produk\MajalahController;
 use App\Http\Controllers\Karya\PuisiController;
 use App\Http\Controllers\Karya\PantunController;
 use App\Http\Controllers\Karya\SyairController;
+use App\Http\Controllers\Karya\FotografiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -247,3 +248,4 @@ Route::get('/produk/majalah/preview', [MajalahController::class, 'preview'])->na
 Route::get('/karya/puisi', [PuisiController::class, 'index'])->name('puisi');
 Route::get('/karya/pantun', [PantunController::class, 'index'])->name('pantun');
 Route::get('/karya/syair', [SyairController::class, 'index'])->name('syair');
+Route::get('/karya/fotografi', [FotografiController::class, 'index'])->name('fotografi');
