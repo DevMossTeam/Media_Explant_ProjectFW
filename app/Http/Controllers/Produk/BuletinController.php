@@ -14,17 +14,20 @@ class BuletinController extends Controller
     {
         // 3 buletin terbaru untuk "Produk Kami"
         $buletins = Buletin::where('kategori', 'Buletin')
+            ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take(3)
             ->get();
 
         // 9 buletin terbaru untuk "Terbaru"
         $buletinsTerbaru = Buletin::where('kategori', 'Buletin')
+            ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take(9)
             ->get();
 
         $buletinsRekomendasi = Buletin::where('kategori', 'Buletin')
+            ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take(12)
             ->get();
@@ -39,6 +42,7 @@ class BuletinController extends Controller
 
         // Ambil buletin utama
         $buletin = Buletin::with('user')
+            ->where('visibilitas', 'public')
             ->where('id', $id)
             ->where('kategori', 'Buletin')
             ->first();
@@ -49,6 +53,7 @@ class BuletinController extends Controller
 
         // Ambil rekomendasi buletin lain dengan pagination
         $rekomendasiBuletin = Buletin::where('kategori', 'Buletin')
+            ->where('visibilitas', 'public')
             ->where('id', '!=', $id)
             ->orderBy('release_date', 'desc')
             ->paginate(6);

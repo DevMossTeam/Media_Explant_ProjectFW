@@ -14,12 +14,14 @@ class MajalahController extends Controller
     {
         // 14 majalah terbaru untuk "Produk Kami"
         $majalahs = Majalah::where('kategori', 'Majalah')
+            ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take(14)
             ->get();
 
         // 8 majalah terbaru untuk "Terbaru"
         $majalahsTerbaru = Majalah::where('kategori', 'Majalah')
+            ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take(8)
             ->get();
@@ -34,6 +36,7 @@ class MajalahController extends Controller
 
         // Ambil majalah utama
         $majalah = Majalah::with('user')
+            ->where('visibilitas', 'public')
             ->where('id', $id)
             ->where('kategori', 'Majalah')
             ->first();
@@ -44,6 +47,7 @@ class MajalahController extends Controller
 
         // Ambil rekomendasi Majalah lain dengan pagination
         $rekomendasiMajalah = Majalah::where('kategori', 'Majalah')
+            ->where('visibilitas', 'public')
             ->where('id', '!=', $id)
             ->orderBy('release_date', 'desc')
             ->paginate(6);
