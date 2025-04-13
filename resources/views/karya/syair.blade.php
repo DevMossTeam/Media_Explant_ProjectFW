@@ -23,7 +23,9 @@
                             <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
                                 class="w-full h-[240px] object-cover rounded-lg shadow-md" />
                             <p class="mt-2 text-sm text-left">
-                                <span class="text-[#990505] font-bold">{{ ucfirst($item->kategori) }}</span> |
+                                <span class="text-[#990505] font-bold">
+                                    {{ strtoupper(str_replace('_', ' ', $item->kategori)) }} |
+                                </span>
                                 <span class="text-[#A8A8A8]">
                                     {{ \Carbon\Carbon::parse($item->release_date)->format('d M Y') }}
                                 </span>
@@ -49,7 +51,9 @@
                             <div class="flex flex-col justify-between text-left w-full">
                                 <div>
                                     <p class="text-sm mb-1">
-                                        <span class="text-[#990505] font-bold">{{ ucfirst($item->kategori) }}</span> |
+                                        <span class="text-[#990505] font-bold">
+                                            {{ strtoupper(str_replace('_', ' ', $item->kategori)) }} |
+                                        </span>
                                         <span class="text-[#A8A8A8]">
                                             {{ \Carbon\Carbon::parse($item->release_date)->format('d M Y') }}
                                         </span>

@@ -27,6 +27,7 @@ use App\Http\Controllers\Karya\PuisiController;
 use App\Http\Controllers\Karya\PantunController;
 use App\Http\Controllers\Karya\SyairController;
 use App\Http\Controllers\Karya\FotografiController;
+use App\Http\Controllers\Karya\DesainGrafisController;
 
 /*
 |--------------------------------------------------------------------------
@@ -249,3 +250,4 @@ Route::get('/karya/puisi', [PuisiController::class, 'index'])->name('puisi');
 Route::get('/karya/pantun', [PantunController::class, 'index'])->name('pantun');
 Route::get('/karya/syair', [SyairController::class, 'index'])->name('syair');
 Route::get('/karya/fotografi', [FotografiController::class, 'index'])->name('fotografi');
+Route::get('/karya/desain-grafis', [DesainGrafisController::class, 'index'])->name('desain-grafis');
