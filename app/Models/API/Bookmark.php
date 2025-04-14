@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\Berita;
+namespace App\Models\API;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-use App\Models\Berita\Berita;
+use App\Models\API\Berita;
 use App\Models\User;
 
 class Bookmark extends Model

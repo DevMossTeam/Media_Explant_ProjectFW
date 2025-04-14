@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Models\Berita;
+namespace App\Models\API;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-use App\Models\Berita\Komentar;
-use App\Models\Berita\Reaksi;
-use App\Models\Berita\tag;
-use App\Models\Berita\bookmark;
+use App\Models\API\Komentar;
+use App\Models\API\Reaksi;
+use App\Models\API\tag;
+use App\Models\API\bookmark;
 
 class Berita extends Model   
 

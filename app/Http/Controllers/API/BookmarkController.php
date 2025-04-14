@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Berita\Bookmark;
+use App\Models\API\Bookmark;
 use Illuminate\Http\Request;
 
 class BookmarkController extends Controller

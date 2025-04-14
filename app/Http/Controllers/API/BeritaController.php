@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Berita\Berita;
+use App\Models\API\Berita;
 use Illuminate\Http\Request;
 
 class BeritaController extends Controller

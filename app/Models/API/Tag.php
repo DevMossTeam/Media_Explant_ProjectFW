@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Berita;
+namespace App\Models\API;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Berita\Berita;
+use App\Models\API\Berita;
 
 class Tag extends Model
 {

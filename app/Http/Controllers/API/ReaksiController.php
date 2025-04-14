@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 
-use App\Models\Berita\Reaksi;
+use App\Models\API\Reaksi;
 use Illuminate\Http\Request;
 
 class ReaksiController extends Controller
