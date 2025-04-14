@@ -26,18 +26,19 @@ class PantunController extends Controller
         return view('karya.pantun', compact('terbaru', 'karya'));
     }
 
-    public function show($id)
+    public function show()
     {
+        $id = request()->get('k');
+
         $karya = Pantun::with('user')
             ->where('id', $id)
             ->where('kategori', 'pantun')
             ->where('visibilitas', 'public')
             ->firstOrFail();
 
-        // Ambil 4 karya lain untuk rekomendasi (selain yang sedang dilihat)
         $rekomendasi = Pantun::with('user')
             ->where('id', '!=', $id)
-            ->where('kategori', 'Pantun')
+            ->where('kategori', 'pantun')
             ->where('visibilitas', 'public')
             ->inRandomOrder()
             ->take(4)

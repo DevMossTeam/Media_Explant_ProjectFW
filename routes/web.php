@@ -251,8 +251,10 @@ Route::prefix('karya/puisi')->name('karya.puisi.')->group(function () {
     Route::get('/read', [PuisiController::class, 'show'])->name('read');
 });
 
-Route::get('/karya/pantun', [PantunController::class, 'index'])->name('pantun');
-Route::get('/karya/detail/{id}', [PantunController::class, 'show'])->name('karya.detail');
+Route::prefix('karya/pantun')->name('karya.pantun.')->group(function () {
+    Route::get('/', [PantunController::class, 'index'])->name('index');
+    Route::get('/read', [PantunController::class, 'show'])->name('read');
+});
 
 Route::get('/karya/syair', [SyairController::class, 'index'])->name('syair');
 

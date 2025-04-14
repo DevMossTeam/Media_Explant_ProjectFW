@@ -83,7 +83,7 @@
                     <ul
                         class="absolute left-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                         <li><a href="{{ route('karya.puisi.index') }}" class="block px-4 py-2 hover:bg-gray-100">Puisi</a></li>
-                        <li><a href="{{ route('pantun') }}" class="block px-4 py-2 hover:bg-gray-100">Pantun</a></li>
+                        <li><a href="{{ route('karya.pantun.index') }}" class="block px-4 py-2 hover:bg-gray-100">Pantun</a></li>
                         <li><a href="{{ route('syair') }}" class="block px-4 py-2 hover:bg-gray-100">Syair</a></li>
                         <li><a href="{{ route('fotografi') }}" class="block px-4 py-2 hover:bg-gray-100">Fotografi</a>
                         </li>
@@ -185,8 +185,7 @@
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
                         <li><a href="{{ route('karya.puisi.index') }}" class="block px-4 py-2 hover:bg-gray-100">Puisi</a></li>
-                        <li><a href="{{ route('pantun') }}" class="text-gray-600 hover:text-[#990505]">Pantun</a>
-                        </li>
+                        <li><a href="{{ route('karya.pantun.index') }}" class="block px-4 py-2 hover:bg-gray-100">Pantun</a></li>
                         <li><a href="{{ route('syair') }}" class="text-gray-600 hover:text-[#990505]">Syair</a></li>
                         <li><a href="{{ route('fotografi') }}"
                                 class="text-gray-600 hover:text-[#990505]">Fotografi</a></li>

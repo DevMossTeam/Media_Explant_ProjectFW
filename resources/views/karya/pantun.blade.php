@@ -20,7 +20,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     @foreach ($terbaru as $item)
                         <div class="flex flex-col items-start">
-                            <a href="{{ route('karya.detail', $item->id) }}">
+                            <a href="{{ route('karya.pantun.read', ['k' => $item->id]) }}">
                                 <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
                                     class="w-full h-[240px] object-cover rounded-lg shadow-md" />
                             </a>
@@ -32,7 +32,7 @@
                                     {{ \Carbon\Carbon::parse($item->release_date)->format('d M Y') }}
                                 </span>
                             </p>
-                            <a href="{{ route('karya.detail', $item->id) }}">
+                            <a href="{{ route('karya.pantun.read', ['k' => $item->id]) }}">
                                 <h3 class="text-base font-bold mb-1">{{ $item->judul }}</h3>
                             </a>
                             <p class="text-sm text-left">{{ \Illuminate\Support\Str::limit($item->deskripsi, 50) }}</p>
@@ -50,7 +50,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     @foreach ($karya as $item)
                         <div class="flex gap-4">
-                            <a href="{{ route('karya.detail', $item->id) }}">
+                            <a href="{{ route('karya.pantun.read', ['k' => $item->id]) }}">
                                 <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
                                     class="w-full h-[240px] object-cover rounded-lg shadow-md" />
                             </a>
@@ -64,7 +64,7 @@
                                             {{ \Carbon\Carbon::parse($item->release_date)->format('d M Y') }}
                                         </span>
                                     </p>
-                                    <a href="{{ route('karya.detail', $item->id) }}">
+                                    <a href="{{ route('karya.pantun.read', ['k' => $item->id]) }}">
                                         <h3 class="text-base font-bold mb-1">{{ $item->judul }}</h3>
                                     </a>
                                     <p class="text-sm text-gray-700 mb-2">
