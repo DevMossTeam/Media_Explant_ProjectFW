@@ -246,8 +246,17 @@ Route::get('/produk/majalah/pdf-preview/{id}', [MajalahController::class, 'pdfPr
 Route::get('/produk/majalah/download/{id}', [MajalahController::class, 'download'])->name('majalah.download');
 Route::get('/produk/majalah/preview', [MajalahController::class, 'preview'])->name('majalah.preview');
 
-Route::get('/karya/puisi', [PuisiController::class, 'index'])->name('puisi');
+Route::prefix('karya/puisi')->name('karya.puisi.')->group(function () {
+    Route::get('/', [PuisiController::class, 'index'])->name('index');
+    Route::get('/read', [PuisiController::class, 'show'])->name('read');
+});
+
 Route::get('/karya/pantun', [PantunController::class, 'index'])->name('pantun');
+Route::get('/karya/detail/{id}', [PantunController::class, 'show'])->name('karya.detail');
+
 Route::get('/karya/syair', [SyairController::class, 'index'])->name('syair');
+
 Route::get('/karya/fotografi', [FotografiController::class, 'index'])->name('fotografi');
+
 Route::get('/karya/desain-grafis', [DesainGrafisController::class, 'index'])->name('desain-grafis');
+Route::get('/karya/detail/{id}', [DesainGrafisController::class, 'show'])->name('karya.detail');

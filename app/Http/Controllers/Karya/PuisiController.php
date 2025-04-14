@@ -24,4 +24,25 @@ class PuisiController extends Controller
 
         return view('karya.puisi', compact('terbaru', 'karya'));
     }
+
+    public function show()
+    {
+        $id = request()->get('k');
+
+        $karya = Puisi::with('user')
+            ->where('id', $id)
+            ->where('kategori', 'puisi')
+            ->where('visibilitas', 'public')
+            ->firstOrFail();
+
+        $rekomendasi = Puisi::with('user')
+            ->where('id', '!=', $id)
+            ->where('kategori', 'puisi')
+            ->where('visibilitas', 'public')
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
+        return view('karya.detail.puisi-detail', compact('karya', 'rekomendasi'));
+    }
 }
