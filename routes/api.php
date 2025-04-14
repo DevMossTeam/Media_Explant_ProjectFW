@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\SignInController;
 use App\Http\Controllers\API\SignUpController;
 use App\Http\Controllers\API\GetProfileController;
+use App\Http\Controllers\API\BeritaController;
+use App\Http\Controllers\API\BookmarkController;
+use App\Http\Controllers\API\ReaksiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,3 +45,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [GetProfileController::class, 'getProfile']);
 });
 
+// mendapatkan data berita dan relasinya
+Route::get('berita', [BeritaController::class, 'getAllBerita']);
+
+// toggle bookmark
+Route::post('/bookmark/toggle', [BookmarkController::class, 'toggle']);
+
+// toggle reaksi berita
+Route::post('/reaksi/toggle', [ReaksiController::class, 'toggle']);

@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
                 'nama_lengkap'   => 'Nikto Vasilevskiy',
             ],
             [
-                'uid'            => Str::random(28),
+                'uid'            => 'ovPHOkUBw3FHrq6PeQkg1McfBqkF',
                 'nama_pengguna'  => 'habiburrohman093',
                 'password'       => Hash::make('Pembaca2'),
                 'email'          => 'ateox912@gmail.com',
