@@ -24,4 +24,25 @@ class SyairController extends Controller
 
         return view('karya.syair', compact('terbaru', 'karya'));
     }
+
+    public function show()
+    {
+        $id = request()->get('k');
+
+        $karya = Syair::with('user')
+            ->where('id', $id)
+            ->where('kategori', 'syair')
+            ->where('visibilitas', 'public')
+            ->firstOrFail();
+
+        $rekomendasi = Syair::with('user')
+            ->where('id', '!=', $id)
+            ->where('kategori', 'syair')
+            ->where('visibilitas', 'public')
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
+        return view('karya.detail.syair-detail', compact('karya', 'rekomendasi'));
+    }
 }

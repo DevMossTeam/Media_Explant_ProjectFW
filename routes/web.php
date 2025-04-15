@@ -28,6 +28,7 @@ use App\Http\Controllers\Karya\PantunController;
 use App\Http\Controllers\Karya\SyairController;
 use App\Http\Controllers\Karya\FotografiController;
 use App\Http\Controllers\Karya\DesainGrafisController;
+use App\Models\Karya\Fotografi;
 
 /*
 |--------------------------------------------------------------------------
@@ -256,9 +257,15 @@ Route::prefix('karya/pantun')->name('karya.pantun.')->group(function () {
     Route::get('/read', [PantunController::class, 'show'])->name('read');
 });
 
-Route::get('/karya/syair', [SyairController::class, 'index'])->name('syair');
+Route::prefix('karya/syair')->name('karya.syair.')->group(function () {
+    Route::get('/', [SyairController::class, 'index'])->name('index');
+    Route::get('/read', [SyairController::class, 'show'])->name('read');
+});
 
-Route::get('/karya/fotografi', [FotografiController::class, 'index'])->name('fotografi');
+Route::prefix('karya/fotografi')->name('karya.fotografi.')->group(function () {
+    Route::get('/', [FotografiController::class, 'index'])->name('index');
+    Route::get('/read', [FotografiController::class, 'show'])->name('read');
+});
 
 Route::get('/karya/desain-grafis', [DesainGrafisController::class, 'index'])->name('desain-grafis');
 Route::get('/karya/detail/{id}', [DesainGrafisController::class, 'show'])->name('karya.detail');

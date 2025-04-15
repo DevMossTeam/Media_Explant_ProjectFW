@@ -3,13 +3,13 @@
 @section('content')
     <div class="max-w-[1320px] mx-auto px-4 sm:px-6 py-10">
 
-        {{-- Label PANTUN --}}
+        {{-- Label FOTOGRAFI --}}
         <div class="flex flex-col mb-8">
             <div class="flex items-center">
                 <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
                 <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605]"
                     style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
-                    PANTUN
+                    FOTOGRAFI
                 </h2>
             </div>
             <div class="w-full h-[2px] bg-gray-300 mb-4"></div>
@@ -100,7 +100,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach ($rekomendasi as $item)
                 <div class="flex flex-col">
-                    <a href="{{ route('karya.pantun.read', ['k' => $item->id]) }}">
+                    <a href="{{ route('karya.fotografi.read', ['k' => $item->id]) }}">
                         <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
                             class="w-full h-[240px] object-cover rounded-lg shadow-md" />
                     </a>
@@ -113,7 +113,7 @@
                             {{ \Carbon\Carbon::parse($item->release_date)->format('d M Y') }}
                         </span>
                     </p>
-                    <a href="{{ route('karya.pantun.read', ['k' => $item->id]) }}">
+                    <a href="{{ route('karya.fotografi.read', ['k' => $item->id]) }}">
                         <h3 class="text-base font-bold mt-1">"{{ $item->judul }}"</h3>
                     </a>
                     <p class="text-sm text-gray-700 mb-2">

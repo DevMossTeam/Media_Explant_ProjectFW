@@ -22,7 +22,7 @@
                         <div class="flex flex-col items-start">
                             <a href="{{ route('karya.pantun.read', ['k' => $item->id]) }}">
                                 <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
-                                    class="w-full h-[240px] object-cover rounded-lg shadow-md" />
+                                class="w-[280px] h-[240px] object-cover rounded-lg shadow-md" />
                             </a>
                             <p class="mt-2 text-sm text-left">
                                 <span class="text-[#990505] font-bold">
@@ -52,7 +52,7 @@
                         <div class="flex gap-4">
                             <a href="{{ route('karya.pantun.read', ['k' => $item->id]) }}">
                                 <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
-                                    class="w-full h-[240px] object-cover rounded-lg shadow-md" />
+                                    class="w-[320px] h-[200px] object-cover rounded-lg shadow-md" />
                             </a>
                             <div class="flex flex-col justify-between text-left w-full">
                                 <div>

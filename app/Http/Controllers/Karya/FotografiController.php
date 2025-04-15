@@ -34,4 +34,25 @@ class FotografiController extends Controller
 
         return view('karya.fotografi', compact('karya', 'terbaru', 'rekomendasi'));
     }
+
+    public function show()
+    {
+        $id = request()->get('k');
+
+        $karya = Fotografi::with('user')
+            ->where('id', $id)
+            ->where('kategori', 'fotografi')
+            ->where('visibilitas', 'public')
+            ->firstOrFail();
+
+        $rekomendasi = Fotografi::with('user')
+            ->where('id', '!=', $id)
+            ->where('kategori', 'fotografi')
+            ->where('visibilitas', 'public')
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
+        return view('karya.detail.fotografi-detail', compact('karya', 'rekomendasi'));
+    }
 }

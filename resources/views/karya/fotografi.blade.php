@@ -13,11 +13,13 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @foreach ($karya as $item)
                         <div class="flex gap-4">
-                            <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
-                                class="w-[200px] h-[160px] object-fill rounded-md flex-shrink-0" />
+                            <a href="{{ route('karya.fotografi.read', ['k' => $item->id]) }}"
+                                class="block w-[200px] h-[160px] overflow-hidden rounded-md flex-shrink-0">
+                                <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
+                                    class="w-full h-full object-cover" />
+                            </a>
                             <div class="flex flex-col justify-between w-full">
                                 <div class="space-y-[2px]">
-                                    <p class="text-sm">
                                     <p class="text-sm mb-1">
                                         <span class="text-[#990505] font-bold">
                                             {{ strtoupper(str_replace('_', ' ', $item->kategori)) }} |
@@ -26,11 +28,9 @@
                                             {{ \Carbon\Carbon::parse($item->release_date)->format('d M Y') }}
                                         </span>
                                     </p>
-                                    <span class="text-[#A8A8A8]">
-                                        {{ \Carbon\Carbon::parse($item->release_date)->format('d M Y') }}
-                                    </span>
-                                    </p>
-                                    <h3 class="text-base font-bold">{{ $item->judul }}</h3>
+                                    <a href="{{ route('karya.fotografi.read', ['k' => $item->id]) }}">
+                                        <h3 class="text-base font-bold">{{ $item->judul }}</h3>
+                                    </a>
                                     <div class="flex justify-between items-center">
                                         <p class="text-sm text-[#ABABAB] m-0">{{ $item->user->nama_lengkap ?? '-' }}</p>
                                         <div class="flex items-center gap-4 text-[#ABABAB] text-sm">
@@ -44,7 +44,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <p class="text-sm text-[#5773FF]">Lihat Gambar</p>
+                                    <a href="{{ route('karya.fotografi.read', ['k' => $item->id]) }}"
+                                        class="text-sm text-[#5773FF]">Lihat Gambar</a>
                                 </div>
                             </div>
                         </div>
@@ -65,18 +66,20 @@
                         </h2>
                     </div>
                     <div class="w-full h-[2px] bg-gray-300"></div>
-                    <div class="flex flex-col gap-4 mt-4">
+
+                    <div class="flex flex-col gap-3 mt-4">
                         @foreach ($terbaru as $item)
-                            <div class="relative w-full h-[220px] rounded-lg overflow-hidden shadow-md">
+                            <a href="{{ route('karya.fotografi.read', ['k' => $item->id]) }}"
+                                class="relative w-full h-[170px] overflow-hidden rounded-lg shadow-md block">
                                 <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
-                                    class="w-full h-full object-fill" />
+                                    class="w-full h-full object-cover" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-[#990505] to-transparent opacity-90">
                                 </div>
                                 <div
-                                    class="absolute bottom-0 left-0 right-0 px-4 py-2 text-white text-sm font-semibold z-10">
+                                    class="absolute bottom-0 left-0 right-0 px-3 py-1 text-white text-[13px] font-semibold z-10">
                                     {{ $item->judul }}
                                 </div>
-                            </div>
+                            </a>
                         @endforeach
                     </div>
                 </div>
@@ -93,11 +96,16 @@
                     <div class="w-full h-[2px] bg-gray-300"></div>
                     <div class="grid grid-cols-2 gap-4 mt-4">
                         @foreach ($rekomendasi as $item)
-                            <div class="flex flex-col items-start">
-                                <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
-                                    class="w-full h-[110px] object-fill rounded-md shadow-md" />
-                                <h3 class="text-sm font-bold mt-1">{{ $item->judul }}</h3>
-                                <div class="flex items-center justify-between w-full text-[#ABABAB] text-xs mt-1">
+                            <div class="flex flex-col items-start gap-1">
+                                <a href="{{ route('karya.fotografi.read', ['k' => $item->id]) }}"
+                                    class="block w-full overflow-hidden rounded-md shadow-md aspect-[4/3]">
+                                    <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
+                                        class="w-full h-full object-cover" />
+                                </a>
+                                <a href="{{ route('karya.fotografi.read', ['k' => $item->id]) }}">
+                                    <h3 class="text-sm font-bold">{{ $item->judul }}</h3>
+                                </a>
+                                <div class="flex items-center justify-between w-full text-[#ABABAB] text-xs">
                                     <p>{{ $item->user->nama_lengkap ?? '-' }}</p>
                                     <div class="flex items-center gap-2">
                                         <div class="flex items-center gap-1">
@@ -114,6 +122,7 @@
                         @endforeach
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
