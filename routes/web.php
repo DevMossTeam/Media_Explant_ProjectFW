@@ -267,5 +267,7 @@ Route::prefix('karya/fotografi')->name('karya.fotografi.')->group(function () {
     Route::get('/read', [FotografiController::class, 'show'])->name('read');
 });
 
-Route::get('/karya/desain-grafis', [DesainGrafisController::class, 'index'])->name('desain-grafis');
-Route::get('/karya/detail/{id}', [DesainGrafisController::class, 'show'])->name('karya.detail');
+Route::prefix('karya/desain-grafis')->name('karya.desain-grafis.')->group(function () {
+    Route::get('/', [DesainGrafisController::class, 'index'])->name('index');
+    Route::get('/read', [DesainGrafisController::class, 'show'])->name('read');
+});

@@ -21,15 +21,16 @@ class DesainGrafisController extends Controller
     }
 
     // Menampilkan detail karya
-    public function show($id)
+    public function show()
     {
+        $id = request()->get('k');
+
         $karya = DesainGrafis::with('user')
             ->where('id', $id)
             ->where('kategori', 'desain_grafis')
             ->where('visibilitas', 'public')
             ->firstOrFail();
 
-        // Ambil 4 karya lain untuk rekomendasi (selain yang sedang dilihat)
         $rekomendasi = DesainGrafis::with('user')
             ->where('id', '!=', $id)
             ->where('kategori', 'desain_grafis')

@@ -87,7 +87,7 @@
                         <li><a href="{{ route('karya.syair.index') }}" class="block px-4 py-2 hover:bg-gray-100">Syair</a></li>
                         <li><a href="{{ route('karya.fotografi.index') }}" class="block px-4 py-2 hover:bg-gray-100">Fotografi</a>
                         </li>
-                        <li><a href="{{ route('desain-grafis') }}" class="block px-4 py-2 hover:bg-gray-100">Desain
+                        <li><a href="{{ route('karya.desain-grafis.index') }}" class="block px-4 py-2 hover:bg-gray-100">Desain
                                 Grafis</a></li>
                     </ul>
                 </li>
@@ -189,7 +189,7 @@
                         <li><a href="{{ route('karya.syair.index') }}" class="text-gray-600 hover:text-[#990505]">Syair</a></li>
                         <li><a href="{{ route('karya.fotografi.index') }}"
                                 class="text-gray-600 hover:text-[#990505]">Fotografi</a></li>
-                        <li><a href="{{ route('desain-grafis') }}" class="text-gray-600 hover:text-[#990505]">Desain
+                        <li><a href="{{ route('karya.desain-grafis.index') }}" class="text-gray-600 hover:text-[#990505]">Desain
                                 Grafis</a></li>
                     </ul>
                 </div>

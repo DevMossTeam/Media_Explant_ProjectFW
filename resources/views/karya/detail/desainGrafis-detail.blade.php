@@ -100,7 +100,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach ($rekomendasi as $item)
                 <div class="flex flex-col">
-                    <a href="{{ route('karya.detail', $item->id) }}">
+                    <a href="{{ route('karya.desain-grafis.read', ['k' => $item->id]) }}">
                         <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
                             class="w-full h-[240px] object-cover rounded-lg shadow-md" />
                     </a>
@@ -113,7 +113,7 @@
                             {{ \Carbon\Carbon::parse($item->release_date)->format('d M Y') }}
                         </span>
                     </p>
-                    <a href="{{ route('karya.detail', $item->id) }}">
+                    <a href="{{ route('karya.desain-grafis.read', ['k' => $item->id]) }}">
                         <h3 class="text-base font-bold mt-1">"{{ $item->judul }}"</h3>
                     </a>
                     <p class="text-sm text-gray-700 mb-2">
