@@ -41,7 +41,7 @@ class PantunController extends Controller
             ->where('kategori', 'pantun')
             ->where('visibilitas', 'public')
             ->inRandomOrder()
-            ->take(4)
+            ->take(6)
             ->get();
 
         return view('karya.detail.pantun-detail', compact('karya', 'rekomendasi'));

@@ -21,7 +21,8 @@
         {{-- Info Penulis & Waktu --}}
         <div class="flex items-center text-sm text-[#A8A8A8] mb-4">
             <span class="mr-2">Oleh : {{ $karya->user->nama_lengkap ?? '-' }}</span> |
-            <span class="ml-2">{{ \Carbon\Carbon::parse($karya->release_date)->format('d M Y') }} - {{ \Carbon\Carbon::parse($karya->release_date)->format('H.i') }} WIB</span>
+            <span class="ml-2">{{ \Carbon\Carbon::parse($karya->release_date)->format('d M Y') }} -
+                {{ \Carbon\Carbon::parse($karya->release_date)->format('H.i') }} WIB</span>
             <div class="ml-auto -mt-4">
                 <button class="flex items-center gap-2 text-gray-400 hover:text-gray-800" title="Simpan dan baca nanti">
                     <span class="text-sm">Simpan dan baca nanti</span>
@@ -33,17 +34,18 @@
         {{-- Konten --}}
         <div class="flex flex-col lg:flex-row gap-10">
             {{-- Deskripsi --}}
-            <div class="lg:w-2/3 text-[15px] leading-relaxed text-justify">
+            <div class="lg:w-1/2 text-[15px] leading-relaxed text-justify">
                 {!! nl2br(e($karya->deskripsi)) !!}
             </div>
 
             {{-- Gambar --}}
-            <div class="lg:w-1/3">
-                <div class="relative mt-[-10px]">
-                    <img src="data:image/jpeg;base64,{{ $karya->media }}"
-                        alt="{{ $karya->judul }}" class="w-full rounded-lg shadow-md" />
+            <div class="lg:w-1/2">
+                <div class="relative mt-[-10px] aspect-square">
+                    <img src="data:image/jpeg;base64,{{ $karya->media }}" alt="{{ $karya->judul }}"
+                        class="w-full h-full object-cover rounded-lg shadow-md" />
                 </div>
-                <div class="mt-2 text-sm text-[#ABABAB] italic text-center">(Karya oleh {{ $karya->creator ?? 'Unknown' }})</div>
+                <div class="mt-2 text-sm text-[#ABABAB] italic text-center">(Karya oleh {{ $karya->creator ?? 'Unknown' }})
+                </div>
             </div>
         </div>
 

@@ -40,7 +40,7 @@ class PuisiController extends Controller
             ->where('kategori', 'puisi')
             ->where('visibilitas', 'public')
             ->inRandomOrder()
-            ->take(4)
+            ->take(6)
             ->get();
 
         return view('karya.detail.puisi-detail', compact('karya', 'rekomendasi'));

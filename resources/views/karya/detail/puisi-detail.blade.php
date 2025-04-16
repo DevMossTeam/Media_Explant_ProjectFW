@@ -4,7 +4,7 @@
     <div class="max-w-[1320px] mx-auto px-4 sm:px-6 py-10">
 
         {{-- Label PUISI --}}
-        <div class="flex flex-col mb-8">
+        <div class="flex flex-col mb-6">
             <div class="flex items-center">
                 <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
                 <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605]"
@@ -12,17 +12,18 @@
                     PUISI
                 </h2>
             </div>
-            <div class="w-full h-[2px] bg-gray-300 mb-4"></div>
+            <div class="w-full h-[2px] bg-gray-300 mb-3"></div>
         </div>
 
-        {{-- Judul --}}
-        <h1 class="text-3xl font-bold mb-2">{{ $karya->judul }}</h1>
+        {{-- Judul Besar --}}
+        <h1 class="text-3xl font-bold mb-1">{{ $karya->judul }}</h1>
 
         {{-- Info Penulis & Waktu --}}
-        <div class="flex items-center text-sm text-[#A8A8A8] mb-4">
+        <div class="flex items-center text-sm text-[#A8A8A8] mb-3">
             <span class="mr-2">Oleh : {{ $karya->user->nama_lengkap ?? '-' }}</span> |
-            <span class="ml-2">{{ \Carbon\Carbon::parse($karya->release_date)->format('d M Y') }} - {{ \Carbon\Carbon::parse($karya->release_date)->format('H.i') }} WIB</span>
-            <div class="ml-auto -mt-4">
+            <span class="ml-2">{{ \Carbon\Carbon::parse($karya->release_date)->format('d M Y') }} -
+                {{ \Carbon\Carbon::parse($karya->release_date)->format('H.i') }} WIB</span>
+            <div class="ml-auto -mt-3">
                 <button class="flex items-center gap-2 text-gray-400 hover:text-gray-800" title="Simpan dan baca nanti">
                     <span class="text-sm">Simpan dan baca nanti</span>
                     <i class="far fa-bookmark text-xl"></i>
@@ -31,24 +32,38 @@
         </div>
 
         {{-- Konten --}}
-        <div class="flex flex-col lg:flex-row gap-10">
-            {{-- Deskripsi --}}
-            <div class="lg:w-2/3 text-[15px] leading-relaxed text-justify">
-                {!! nl2br(e($karya->deskripsi)) !!}
+        <div class="flex flex-col lg:flex-row gap-6">
+            {{-- Kiri: Gambar + Deskripsi --}}
+            <div class="w-full lg:w-1/2 pr-20">
+                <div class="w-[600px]">
+                    {{-- Gambar --}}
+                    <div class="relative h-[840px]">
+                        <img src="data:image/jpeg;base64,{{ $karya->media }}" alt="{{ $karya->judul }}"
+                            class="w-full h-full object-cover rounded-lg shadow-md" />
+                    </div>
+
+                    {{-- Deskripsi --}}
+                    <div class="mt-6 text-[15px] leading-relaxed text-justify">
+                        {!! nl2br(e($karya->deskripsi)) !!}
+                    </div>
+                </div>
             </div>
 
-            {{-- Gambar --}}
-            <div class="lg:w-1/3">
-                <div class="relative mt-[-10px]">
-                    <img src="data:image/jpeg;base64,{{ $karya->media }}"
-                        alt="{{ $karya->judul }}" class="w-full rounded-lg shadow-md" />
+            {{-- Kanan: Judul kecil + Konten --}}
+            <div class="w-full lg:w-1/2 pl-20">
+                <div class="text-center">
+                    <div class="text-lg font-bold mb-1">{{ $karya->judul }}</div>
+                    <div class="text-sm mb-2 italic">(Karya oleh {{ $karya->creator ?? '-' }})</div>
                 </div>
-                <div class="mt-2 text-sm text-[#ABABAB] italic text-center">(Karya oleh {{ $karya->creator ?? 'Unknown' }})</div>
+
+                <div class="text-[14px] leading-[1.30] whitespace-pre-line text-justify">
+                    {!! nl2br(e($karya->konten)) !!}
+                </div>
             </div>
         </div>
 
         {{-- Tanggapan --}}
-        <div class="mt-6">
+        <div class="mt-5">
             <div class="text-sm font-semibold text-black mb-2">Beri Tanggapanmu :</div>
             <div class="flex items-center gap-6 text-[#ABABAB]">
                 <button class="flex items-center gap-2 hover:text-gray-700">
@@ -58,7 +73,7 @@
                     <i class="fas fa-thumbs-down"></i> 0
                 </button>
                 <button class="flex items-center gap-2 hover:text-gray-700">
-                    <i class="fas fa-share-nodes"></i> 0
+                    <i class="fas fa-share-nodes"></i> <span>Share</span>
                 </button>
                 <button class="ml-auto text-red-600 hover:text-red-800 bg-red-100 rounded-full p-2" title="Laporkan">
                     <i class="fas fa-flag"></i>
@@ -67,7 +82,7 @@
         </div>
 
         {{-- Komentar --}}
-        <div class="mt-6">
+        <div class="mt-5">
             <form action="#" method="POST">
                 @csrf
                 <div class="relative w-full">
@@ -85,7 +100,7 @@
         </div>
 
         {{-- Rekomendasi Hari Ini --}}
-        <div class="mt-10 flex flex-col mb-8">
+        <div class="mt-10 flex flex-col mb-6">
             <div class="flex items-center">
                 <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
                 <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605]"
@@ -93,11 +108,11 @@
                     Rekomendasi Hari ini
                 </h2>
             </div>
-            <div class="w-full h-[2px] bg-gray-300 mb-4"></div>
+            <div class="w-full h-[2px] bg-gray-300 mb-3"></div>
         </div>
 
-        {{-- Grid Rekomendasi --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {{-- Grid Rekomendasi (6 kolom) --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6">
             @foreach ($rekomendasi as $item)
                 <div class="flex flex-col">
                     <a href="{{ route('karya.puisi.read', ['k' => $item->id]) }}">
@@ -120,17 +135,7 @@
                         {{ \Illuminate\Support\Str::limit(strip_tags($item->deskripsi), 80) }}
                     </p>
                     <div class="flex justify-between items-center text-sm text-[#ABABAB] font-semibold">
-                        <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
-                        <div class="flex gap-3 text-xs">
-                            <div class="flex items-center gap-1">
-                                <i class="fa-regular fa-thumbs-up"></i>
-                                <span>107</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <i class="fa-solid fa-share-nodes"></i>
-                                <span>Share</span>
-                            </div>
-                        </div>
+                        <span>Oleh : {{ $item->creator ?? '-' }}</span>
                     </div>
                 </div>
             @endforeach
