@@ -21,7 +21,8 @@
         {{-- Info Penulis & Waktu --}}
         <div class="flex items-center text-sm text-[#A8A8A8] mb-4">
             <span class="mr-2">Oleh : {{ $karya->user->nama_lengkap ?? '-' }}</span> |
-            <span class="ml-2">{{ \Carbon\Carbon::parse($karya->release_date)->format('d M Y') }} - {{ \Carbon\Carbon::parse($karya->release_date)->format('H.i') }} WIB</span>
+            <span class="ml-2">{{ \Carbon\Carbon::parse($karya->release_date)->format('d M Y') }} -
+                {{ \Carbon\Carbon::parse($karya->release_date)->format('H.i') }} WIB</span>
             <div class="ml-auto -mt-4">
                 <button class="flex items-center gap-2 text-gray-400 hover:text-gray-800" title="Simpan dan baca nanti">
                     <span class="text-sm">Simpan dan baca nanti</span>
@@ -31,19 +32,18 @@
         </div>
 
         {{-- Konten --}}
-        <div class="flex flex-col lg:flex-row gap-10">
-            {{-- Deskripsi --}}
-            <div class="lg:w-2/3 text-[15px] leading-relaxed text-justify">
-                {!! nl2br(e($karya->deskripsi)) !!}
+        <div class="space-y-6">
+            {{-- Gambar --}}
+            <div class="w-full">
+                <img src="data:image/jpeg;base64,{{ $karya->media }}" alt="{{ $karya->judul }}"
+                    class="w-full max-h-[600px] object-cover rounded-lg shadow-md" />
+                <div class="mt-2 text-sm text-[#ABABAB] italic text-center">(Karya oleh {{ $karya->creator ?? 'Unknown' }})
+                </div>
             </div>
 
-            {{-- Gambar --}}
-            <div class="lg:w-1/3">
-                <div class="relative mt-[-10px]">
-                    <img src="data:image/jpeg;base64,{{ $karya->media }}"
-                        alt="{{ $karya->judul }}" class="w-full rounded-lg shadow-md" />
-                </div>
-                <div class="mt-2 text-sm text-[#ABABAB] italic text-center">(Karya oleh {{ $karya->creator ?? 'Unknown' }})</div>
+            {{-- Deskripsi --}}
+            <div class="text-[15px] leading-relaxed text-justify">
+                {!! nl2br(e($karya->deskripsi)) !!}
             </div>
         </div>
 
@@ -97,7 +97,7 @@
         </div>
 
         {{-- Grid Rekomendasi --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             @foreach ($rekomendasi as $item)
                 <div class="flex flex-col">
                     <a href="{{ route('karya.fotografi.read', ['k' => $item->id]) }}">

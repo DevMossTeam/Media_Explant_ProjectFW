@@ -50,7 +50,7 @@ class FotografiController extends Controller
             ->where('kategori', 'fotografi')
             ->where('visibilitas', 'public')
             ->inRandomOrder()
-            ->take(4)
+            ->take(12)
             ->get();
 
         return view('karya.detail.fotografi-detail', compact('karya', 'rekomendasi'));
