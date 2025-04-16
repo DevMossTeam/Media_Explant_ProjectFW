@@ -134,7 +134,7 @@
                     <p class="text-sm text-gray-700 mb-2">
                         {{ \Illuminate\Support\Str::limit(strip_tags($item->deskripsi), 80) }}
                     </p>
-                    <div class="flex justify-between items-center text-sm text-[#ABABAB] font-semibold">
+                    <div class="text-xs italic font-medium text-gray-800">
                         <span>Oleh : {{ $item->creator ?? '-' }}</span>
                     </div>
                 </div>

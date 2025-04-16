@@ -40,7 +40,7 @@ class SyairController extends Controller
             ->where('kategori', 'syair')
             ->where('visibilitas', 'public')
             ->inRandomOrder()
-            ->take(4)
+            ->take(6)
             ->get();
 
         return view('karya.detail.syair-detail', compact('karya', 'rekomendasi'));
