@@ -15,6 +15,8 @@ use App\Http\Controllers\UserAuth\VerifikasiAkunController;
 use App\Http\Controllers\News\HomeNewsController;
 use App\Http\Controllers\News\KampusNewsController;
 use App\Http\Controllers\News\NasionalInternasionalNewsController;
+use App\Http\Controllers\News\LiputanKhususNewsController;
+use App\Http\Controllers\News\OlahragaNewsController;
 use App\Http\Controllers\News\OpiniEsaiNewsController;
 use App\Http\Controllers\News\KesenianHiburanNewsController;
 use App\Http\Controllers\News\KesehatanNewsController;
@@ -28,7 +30,7 @@ use App\Http\Controllers\Karya\PantunController;
 use App\Http\Controllers\Karya\SyairController;
 use App\Http\Controllers\Karya\FotografiController;
 use App\Http\Controllers\Karya\DesainGrafisController;
-use App\Models\Karya\Fotografi;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -219,6 +221,10 @@ Route::get('/kategori/kesehatan', [KesehatanNewsController::class, 'index'])->na
 Route::get('/kategori/kesehatan/read', [KesehatanNewsController::class, 'show'])->name('kesehatan.detail');
 Route::get('/kategori/teknologi', [TeknologiNewsController::class, 'index'])->name('teknologi');
 Route::get('/kategori/teknologi/read', [TeknologiNewsController::class, 'show'])->name('teknologi.detail');
+Route::get('/kategori/liputan-khusus', [LiputanKhususNewsController::class, 'index'])->name('liputan-khusus');
+Route::get('/kategori/liputan-khusus/read', [LiputanKhususNewsController::class, 'show'])->name('liputan-khusus.detail');
+Route::get('/kategori/olahraga', [OlahragaNewsController::class, 'index'])->name('olahraga');
+Route::get('/kategori/olahraga/read', [OlahragaNewsController::class, 'show'])->name('olahraga.detail');
 
 Route::get('/', [HomeNewsController::class, 'index'])->name('home');
 

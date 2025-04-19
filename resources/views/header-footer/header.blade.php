@@ -40,11 +40,15 @@
                         <li><a href="{{ route('kampus') }}" class="block px-4 py-2 hover:bg-gray-100">Kampus</a></li>
                         <li><a href="{{ route('nasional-internasional') }}"
                                 class="block px-4 py-2 hover:bg-gray-100">Nasional dan Internasional</a></li>
+                        <li><a href="{{ route('liputan-khusus') }}" class="block px-4 py-2 hover:bg-gray-100">Liputan
+                                Khusus</a></li>
                         <li><a href="{{ route('teknologi') }}" class="block px-4 py-2 hover:bg-gray-100">Teknologi</a>
                         </li>
                         <li><a href="{{ route('kesenian-hiburan') }}" class="block px-4 py-2 hover:bg-gray-100">Kesenian
                                 dan Hiburan</a></li>
                         <li><a href="{{ route('kesehatan') }}" class="block px-4 py-2 hover:bg-gray-100">Kesehatan</a>
+                        </li>
+                        <li><a href="{{ route('olahraga') }}" class="block px-4 py-2 hover:bg-gray-100">Olahraga</a>
                         </li>
                         <li><a href="{{ route('opini-esai') }}" class="block px-4 py-2 hover:bg-gray-100">Opini dan
                                 Esai</a></li>
@@ -160,7 +164,10 @@
                         <li><a href="{{ route('kampus') }}" class="text-gray-600 hover:text-[#990505]">Kampus</a></li>
                         <li><a href="{{ route('nasional-internasional') }}"
                                 class="text-gray-600 hover:text-[#990505]">Nasional dan Internasional</a></li>
-                        <li><a href="{{ route('teknologi') }}" class="text-gray-600 hover:text-[#990505]">Teknologi</a>
+                        <li><a href="{{ route('liputan-khusus') }}"
+                                class="text-gray-600 hover:text-[#990505]">Liputan Khusus</a>
+                        <li><a href="{{ route('teknologi') }}"
+                                class="text-gray-600 hover:text-[#990505]">Teknologi</a>
                         </li>
                         <li><a href="{{ route('kesenian-hiburan') }}"
                                 class="text-gray-600 hover:text-[#990505]">Kesenian dan Hiburan</a>
@@ -168,6 +175,7 @@
                         <li><a href="{{ route('kesehatan') }}"
                                 class="text-gray-600 hover:text-[#990505]">Kesehatan</a>
                         </li>
+                        <li><a href="{{ route('olahraga') }}" class="text-gray-600 hover:text-[#990505]">Olahraga</a>
                         <li><a href="{{ route('opini-esai') }}" class="text-gray-600 hover:text-[#990505]">Opini dan
                                 Esai</a>
                         </li>

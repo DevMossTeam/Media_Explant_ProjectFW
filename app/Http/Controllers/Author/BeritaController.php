@@ -14,7 +14,7 @@ class BeritaController extends Controller
     {
         // Validasi input (tags tidak wajib)
         $request->validate([
-            'judul' => 'required|max:200',
+            'judul' => 'required|max:100',
             'konten_berita' => 'required|max:65535',
             'kategori' => 'required',
             'visibilitas' => 'required|in:public,private',
