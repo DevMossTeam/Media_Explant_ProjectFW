@@ -14,7 +14,7 @@ class NasionalInternasionalNewsController extends Controller
     public function index()
     {
         // Ambil berita dengan kategori 'Nasional dan Internasional' dan visibilitas 'public'
-        $news = NasionalInternasionalNews::where('kategori', 'Nasional dan Internasional')
+        $news = NasionalInternasionalNews::where('kategori', 'Nasional', 'Internasional')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->paginate(10);

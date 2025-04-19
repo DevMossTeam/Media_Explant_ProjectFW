@@ -16,8 +16,8 @@ use App\Http\Controllers\News\HomeNewsController;
 use App\Http\Controllers\News\KampusNewsController;
 use App\Http\Controllers\News\NasionalInternasionalNewsController;
 use App\Http\Controllers\News\OpiniEsaiNewsController;
-use App\Http\Controllers\News\KesenianSejarahNewsController;
-use App\Http\Controllers\News\KesehatanAtletikNewsController;
+use App\Http\Controllers\News\KesenianHiburanNewsController;
+use App\Http\Controllers\News\KesehatanNewsController;
 use App\Http\Controllers\News\TeknologiNewsController;
 use App\Http\Controllers\Author\ProdukController;
 use App\Http\Controllers\Author\KaryaController;
@@ -213,10 +213,10 @@ Route::get('/kategori/nasional-internasional', [NasionalInternasionalNewsControl
 Route::get('/kategori/nasional-internasional/read', [NasionalInternasionalNewsController::class, 'show'])->name('nasional-internasional.detail');
 Route::get('/kategori/opini-esai', [OpiniEsaiNewsController::class, 'index'])->name('opini-esai');
 Route::get('/kategori/opini-esai/read', [OpiniEsaiNewsController::class, 'show'])->name('opini-esai.detail');
-Route::get('/kategori/kesenian-sejarah', [KesenianSejarahNewsController::class, 'index'])->name('kesenian-sejarah');
-Route::get('/kategori/kesenian-sejarah/read', [KesenianSejarahNewsController::class, 'show'])->name('kesenian-sejarah.detail');
-Route::get('/kategori/kesehatan-atletik', [KesehatanAtletikNewsController::class, 'index'])->name('kesehatan-atletik');
-Route::get('/kategori/kesehatan-atletik/read', [KesehatanAtletikNewsController::class, 'show'])->name('kesehatan-atletik.detail');
+Route::get('/kategori/kesenian-hiburan', [KesenianHiburanNewsController::class, 'index'])->name('kesenian-hiburan');
+Route::get('/kategori/kesenian-hiburan/read', [KesenianHiburanNewsController::class, 'show'])->name('kesenian-hiburan.detail');
+Route::get('/kategori/kesehatan', [KesehatanNewsController::class, 'index'])->name('kesehatan');
+Route::get('/kategori/kesehatan/read', [KesehatanNewsController::class, 'show'])->name('kesehatan.detail');
 Route::get('/kategori/teknologi', [TeknologiNewsController::class, 'index'])->name('teknologi');
 Route::get('/kategori/teknologi/read', [TeknologiNewsController::class, 'show'])->name('teknologi.detail');
 

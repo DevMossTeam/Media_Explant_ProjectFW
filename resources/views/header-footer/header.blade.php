@@ -40,14 +40,14 @@
                         <li><a href="{{ route('kampus') }}" class="block px-4 py-2 hover:bg-gray-100">Kampus</a></li>
                         <li><a href="{{ route('nasional-internasional') }}"
                                 class="block px-4 py-2 hover:bg-gray-100">Nasional dan Internasional</a></li>
-                        <li><a href="{{ route('opini-esai') }}" class="block px-4 py-2 hover:bg-gray-100">Opini dan
-                                Esai</a></li>
-                        <li><a href="{{ route('kesenian-sejarah') }}" class="block px-4 py-2 hover:bg-gray-100">Kesenian
-                                dan Sejarah</a></li>
-                        <li><a href="{{ route('kesehatan-atletik') }}"
-                                class="block px-4 py-2 hover:bg-gray-100">Kesehatan dan Atletik</a></li>
                         <li><a href="{{ route('teknologi') }}" class="block px-4 py-2 hover:bg-gray-100">Teknologi</a>
                         </li>
+                        <li><a href="{{ route('kesenian-hiburan') }}" class="block px-4 py-2 hover:bg-gray-100">Kesenian
+                                dan Hiburan</a></li>
+                        <li><a href="{{ route('kesehatan') }}" class="block px-4 py-2 hover:bg-gray-100">Kesehatan</a>
+                        </li>
+                        <li><a href="{{ route('opini-esai') }}" class="block px-4 py-2 hover:bg-gray-100">Opini dan
+                                Esai</a></li>
                     </ul>
                 </li>
 
@@ -82,12 +82,17 @@
                     </button>
                     <ul
                         class="absolute left-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                        <li><a href="{{ route('karya.puisi.index') }}" class="block px-4 py-2 hover:bg-gray-100">Puisi</a></li>
-                        <li><a href="{{ route('karya.pantun.index') }}" class="block px-4 py-2 hover:bg-gray-100">Pantun</a></li>
-                        <li><a href="{{ route('karya.syair.index') }}" class="block px-4 py-2 hover:bg-gray-100">Syair</a></li>
-                        <li><a href="{{ route('karya.fotografi.index') }}" class="block px-4 py-2 hover:bg-gray-100">Fotografi</a>
+                        <li><a href="{{ route('karya.puisi.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Puisi</a></li>
+                        <li><a href="{{ route('karya.pantun.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Pantun</a></li>
+                        <li><a href="{{ route('karya.syair.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Syair</a></li>
+                        <li><a href="{{ route('karya.fotografi.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Fotografi</a>
                         </li>
-                        <li><a href="{{ route('karya.desain-grafis.index') }}" class="block px-4 py-2 hover:bg-gray-100">Desain
+                        <li><a href="{{ route('karya.desain-grafis.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Desain
                                 Grafis</a></li>
                     </ul>
                 </li>
@@ -152,16 +157,20 @@
                         Berita <i class="fa-solid fa-chevron-down float-right"></i>
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li><a href="{{ route('siaran-pers') }}" class="text-gray-600 hover:text-[#990505]">Siaran
-                                Pers</a></li>
-                        <li><a href="{{ route('riset') }}" class="text-gray-600 hover:text-[#990505]">Riset</a></li>
-                        <li><a href="{{ route('wawancara') }}" class="text-gray-600 hover:text-[#990505]">Wawancara</a>
+                        <li><a href="{{ route('kampus') }}" class="text-gray-600 hover:text-[#990505]">Kampus</a></li>
+                        <li><a href="{{ route('nasional-internasional') }}"
+                                class="text-gray-600 hover:text-[#990505]">Nasional dan Internasional</a></li>
+                        <li><a href="{{ route('teknologi') }}" class="text-gray-600 hover:text-[#990505]">Teknologi</a>
                         </li>
-                        <li><a href="{{ route('diskusi') }}" class="text-gray-600 hover:text-[#990505]">Diskusi</a>
+                        <li><a href="{{ route('kesenian-hiburan') }}"
+                                class="text-gray-600 hover:text-[#990505]">Kesenian dan Hiburan</a>
                         </li>
-                        <li><a href="{{ route('agenda') }}" class="text-gray-600 hover:text-[#990505]">Agenda</a>
+                        <li><a href="{{ route('kesehatan') }}"
+                                class="text-gray-600 hover:text-[#990505]">Kesehatan</a>
                         </li>
-                        <li><a href="{{ route('opini') }}" class="text-gray-600 hover:text-[#990505]">Opini</a></li>
+                        <li><a href="{{ route('opini-esai') }}" class="text-gray-600 hover:text-[#990505]">Opini dan
+                                Esai</a>
+                        </li>
                     </ul>
                 </div>
 
@@ -184,12 +193,16 @@
                         Karya <i class="fa-solid fa-chevron-down float-right"></i>
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li><a href="{{ route('karya.puisi.index') }}" class="block px-4 py-2 hover:bg-gray-100">Puisi</a></li>
-                        <li><a href="{{ route('karya.pantun.index') }}" class="block px-4 py-2 hover:bg-gray-100">Pantun</a></li>
-                        <li><a href="{{ route('karya.syair.index') }}" class="text-gray-600 hover:text-[#990505]">Syair</a></li>
+                        <li><a href="{{ route('karya.puisi.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Puisi</a></li>
+                        <li><a href="{{ route('karya.pantun.index') }}"
+                                class="block px-4 py-2 hover:bg-gray-100">Pantun</a></li>
+                        <li><a href="{{ route('karya.syair.index') }}"
+                                class="text-gray-600 hover:text-[#990505]">Syair</a></li>
                         <li><a href="{{ route('karya.fotografi.index') }}"
                                 class="text-gray-600 hover:text-[#990505]">Fotografi</a></li>
-                        <li><a href="{{ route('karya.desain-grafis.index') }}" class="text-gray-600 hover:text-[#990505]">Desain
+                        <li><a href="{{ route('karya.desain-grafis.index') }}"
+                                class="text-gray-600 hover:text-[#990505]">Desain
                                 Grafis</a></li>
                     </ul>
                 </div>

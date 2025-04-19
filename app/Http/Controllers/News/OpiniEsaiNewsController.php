@@ -14,7 +14,7 @@ class OpiniEsaiNewsController extends Controller
     public function index()
     {
         // Ambil berita dengan kategori 'Opini dan Esai' dan visibilitas 'public'
-        $news = OpiniEsaiNews::where('kategori', 'Opini dan Esai')
+        $news = OpiniEsaiNews::where('kategori', 'Opini', 'Esai')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->paginate(10);

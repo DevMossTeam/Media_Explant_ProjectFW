@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
-use App\Models\News\KesehatanAtletikNews;
+use App\Models\News\KesenianHiburanNews;
 use Illuminate\Http\Request;
 
-class KesehatanAtletikNewsController extends Controller
+class KesenianHiburanNewsController extends Controller
 {
     /**
-     * Tampilkan daftar berita Kesehatan dan Atletik.
+     * Tampilkan daftar berita Kesenian dan Hiburan.
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Kesehatan dan Atletik' dan visibilitas 'public'
-        $news = KesehatanAtletikNews::where('kategori', 'Kesehatan dan Atletik')
+        // Ambil berita dengan kategori 'Kesenian dan Hiburan' dan visibilitas 'public'
+        $news = KesenianHiburanNews::where('kategori', 'Kesenian', 'Hiburan')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->paginate(10);
 
-        return view('kategori.kesehatan-atletik', compact('news'));
+        return view('kategori.kesenianHiburan', compact('news'));
     }
 
     /**
@@ -29,7 +29,7 @@ class KesehatanAtletikNewsController extends Controller
     {
         // Ambil ID dari query string ?a=id
         $newsId = $request->query('a');
-        $news = KesehatanAtletikNews::where('id', $newsId)->firstOrFail();
+        $news = KesenianHiburanNews::where('id', $newsId)->firstOrFail();
 
         return view('kategori.news-detail', compact('news'));
     }
