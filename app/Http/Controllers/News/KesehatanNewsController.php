@@ -13,13 +13,28 @@ class KesehatanNewsController extends Controller
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Kesehatan' dan visibilitas 'public'
-        $news = KesehatanNews::where('kategori', 'Kesehatan')
+        $terbaru = KesehatanNews::with('user')
+            ->where('kategori', 'Kesehatan')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
-            ->paginate(10);
+            ->take(10)
+            ->get();
 
-        return view('kategori.kesehatan', compact('news'));
+        $terpopuler = KesehatanNews::with('user')
+            ->where('kategori', 'Kesehatan')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(10)
+            ->get();
+
+        $rekomendasi = KesehatanNews::with('user')
+            ->where('kategori', 'Kesehatan')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(8)
+            ->get();
+
+        return view('kategori.kesehatan', compact('terbaru', 'terpopuler', 'rekomendasi'));
     }
 
     /**

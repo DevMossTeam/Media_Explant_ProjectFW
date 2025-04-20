@@ -111,7 +111,6 @@
                 @endforeach
             </div>
         </div>
-
     </div>
 </main>
 @endsection
