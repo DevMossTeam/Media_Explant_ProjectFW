@@ -13,13 +13,28 @@ class OlahragaNewsController extends Controller
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Olahraga' dan visibilitas 'public'
-        $news = OlahragaNews::where('kategori', 'Olahraga')
+        $terbaru = OlahragaNews::with('user')
+            ->where('kategori', 'Olahraga')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
-            ->paginate(10);
+            ->take(10)
+            ->get();
 
-        return view('kategori.olahraga', compact('news'));
+        $terpopuler = OlahragaNews::with('user')
+            ->where('kategori', 'Olahraga')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(10)
+            ->get();
+
+        $rekomendasi = OlahragaNews::with('user')
+            ->where('kategori', 'Olahraga')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(8)
+            ->get();
+
+        return view('kategori.olahraga', compact('terbaru', 'terpopuler', 'rekomendasi'));
     }
 
     /**
