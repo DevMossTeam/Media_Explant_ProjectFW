@@ -13,13 +13,28 @@ class TeknologiNewsController extends Controller
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Teknologi' dan visibilitas 'public'
-        $news = TeknologiNews::where('kategori', 'Teknologi')
+        $terbaru = TeknologiNews::with('user')
+            ->where('kategori', 'Teknologi')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
-            ->paginate(10);
+            ->take(10)
+            ->get();
 
-        return view('kategori.teknologi', compact('news'));
+        $terpopuler = TeknologiNews::with('user')
+            ->where('kategori', 'Teknologi')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(10)
+            ->get();
+
+        $rekomendasi = TeknologiNews::with('user')
+            ->where('kategori', 'Teknologi')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(8)
+            ->get();
+
+        return view('kategori.teknologi', compact('terbaru', 'terpopuler', 'rekomendasi'));
     }
 
     /**

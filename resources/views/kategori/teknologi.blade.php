@@ -1,43 +1,127 @@
 @extends('layouts.app')
 
 @section('content')
-<main class="py-8">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Teknologi</h1>
+    <main class="py-8">
+        <div class="max-w-[1600px] mx-auto px-12 md:px-24 lg:px-32 grid grid-cols-1 md:grid-cols-3 gap-8">
 
-        @if ($news->count() > 0)
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 bg-white shadow rounded-lg overflow-hidden">
-                    <a href="{{ route('teknologi.detail', ['a' => $news->first()->id]) }}">
-                        <img src="{{ $news->first()->first_image }}" alt="{{ $news->first()->judul }}" class="w-full h-60 object-cover">
-                    </a>
-                    <div class="p-4">
-                        <a href="{{ route('teknologi.detail', ['a' => $news->first()->id]) }}">
-                            <h2 class="text-xl font-bold">{{ $news->first()->judul }}</h2>
-                        </a>
-                        <p class="text-gray-600 mt-2">Anonym - {{ \Carbon\Carbon::parse($news->first()->tanggal_diterbitkan)->format('d M Y') }}</p>
-                        <p class="text-gray-800 mt-2 text-justify">{{ Str::limit(strip_tags($news->first()->konten_berita), 150) }}</p>
-                        <a href="{{ route('teknologi.detail', ['a' => $news->first()->id]) }}" class="text-red-600 font-bold mt-4 inline-block">Baca Selengkapnya</a>
+            {{-- TERBARU --}}
+            <div class="md:col-span-1">
+                <div class="flex flex-col mb-8">
+                    <div class="flex items-center">
+                        <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
+                        <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605]"
+                            style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                            Terbaru
+                        </h2>
                     </div>
+                    <div class="w-full h-[2px] bg-gray-300 mb-4"></div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    @foreach ($news->skip(1)->take(4) as $news)
-                        <div class="bg-white shadow rounded-lg overflow-hidden">
-                            <a href="{{ route('teknologi.detail', ['a' => $news->id]) }}">
-                                <img src="{{ $news->first_image }}" alt="{{ $news->judul }}" class="w-full h-36 object-cover">
+                <div class="grid grid-cols-2 gap-3">
+                    @foreach ($terbaru as $item)
+                        <div>
+                            <a href="{{ route('teknologi.detail', ['a' => $item->id]) }}">
+                                <img src="{{ $item->first_image }}" alt="{{ $item->judul }}"
+                                    class="w-full h-28 object-cover mb-1 rounded">
                             </a>
-                            <div class="p-3">
-                                <a href="{{ route('teknologi.detail', ['a' => $news->id]) }}">
-                                    <h3 class="text-sm font-bold">{{ $news->judul }}</h3>
-                                </a>
-                                <p class="text-xs text-gray-600">Anonym - {{ \Carbon\Carbon::parse($news->tanggal_diterbitkan)->format('d M Y') }}</p>
+                            <a href="{{ route('teknologi.detail', ['a' => $item->id]) }}">
+                                <h3 class="text-[13px] font-semibold leading-tight">{{ Str::limit($item->judul, 40) }}</h3>
+                            </a>
+                            <div
+                                class="flex items-center justify-start gap-3 mt-1 text-[11px] text-[#ABABAB] font-semibold">
+                                <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
+                                <div class="flex gap-2 text-xs">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <i class="fa-solid fa-share-nodes"></i><span>Share</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- Rekomendasi --}}
+                <div class="flex flex-col mt-8 mb-4">
+                    <div class="flex items-center">
+                        <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
+                        <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605]"
+                            style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                            Rekomendasi Berita
+                        </h2>
+                    </div>
+                    <div class="w-full h-[2px] bg-gray-300 mb-4"></div>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    @foreach ($rekomendasi as $item)
+                        <div>
+                            <a href="{{ route('teknologi.detail', ['a' => $item->id]) }}">
+                                <h3 class="text-[15px] font-semibold leading-tight">{{ Str::limit($item->judul, 50) }}</h3>
+                            </a>
+                            <div
+                                class="flex items-center justify-start gap-3 mt-1 text-[11px] text-[#ABABAB] font-semibold">
+                                <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
+                                <div class="flex gap-2 text-xs">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <i class="fa-solid fa-share-nodes"></i><span>Share</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
             </div>
-        @endif
-    </div>
-</main>
+
+            {{-- TERPOPULER --}}
+            <div class="md:col-span-2 -mt-2">
+                <h2 class="text-2xl font-bold mb-1">Berita</h2>
+                <p class="text-sm text-gray-500 mb-2">Kumpulan Berita Terbaik</p>
+                <div class="w-full h-[2px] bg-[#A8A8A8] mb-4"></div>
+
+                <div class="flex flex-col gap-6">
+                    @foreach ($terpopuler as $item)
+                        <div class="flex gap-4">
+                            <a href="{{ route('teknologi.detail', ['a' => $item->id]) }}">
+                                <div class="w-52 h-36 overflow-hidden rounded">
+                                    <img src="{{ $item->first_image }}" alt="{{ $item->judul }}"
+                                        class="w-full h-full object-cover">
+                                </div>
+                            </a>
+                            <div class="flex-1">
+                                <div class="flex items-center text-xs font-semibold mb-1">
+                                    <span class="text-[#990505]">{{ strtoupper($item->kategori) }}</span>
+                                    <span class="mx-2 text-[#990505]">|</span>
+                                    <span
+                                        class="text-[#A8A8A8]">{{ \Carbon\Carbon::parse($item->tanggal_diterbitkan)->format('d M Y') }}</span>
+                                </div>
+                                <a href="{{ route('teknologi.detail', ['a' => $item->id]) }}">
+                                    <h3 class="text-lg font-bold mb-1">{{ $item->judul }}</h3>
+                                </a>
+                                <p class="text-sm text-gray-600 mb-2">
+                                    {{ Str::limit(strip_tags(str_replace('&nbsp;', ' ', $item->konten_berita)), 150) }}
+                                </p>
+                                <div class="flex items-center gap-3 text-[13px] text-[#ABABAB] font-semibold">
+                                    <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
+                                    <div class="flex gap-2 text-xs">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <i class="fa-solid fa-share-nodes"></i><span>Share</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </main>
 @endsection
