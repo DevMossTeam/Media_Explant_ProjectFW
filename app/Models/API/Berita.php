@@ -1,47 +1,47 @@
 <?php
 
+// app/Models/API/Berita.php
+
 namespace App\Models\API;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\API\Komentar;
-use App\Models\API\Reaksi;
-use App\Models\API\tag;
-use App\Models\API\bookmark;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Berita extends Model   
-
-
+class Berita extends Model
 {
     use HasFactory;
 
-    protected $table = 'berita';
-    protected $primaryKey = 'id';
     protected $keyType = 'string';
     public $incrementing = false;
-    
+
+    protected $table = 'berita';
+    protected $primaryKey = 'id';
     protected $fillable = [
-        'id', 'judul', 'konten_berita', 'gambar', 'tanggal_diterbitkan', 'kategori', 'user_id', 'visibilitas'
+        'id', 'judul', 'konten_berita', 'tanggal_diterbitkan', 'kategori', 'user_id', 'visibilitas'
     ];
 
-    public function user() {
-        return $this->belongsTo(User::class, 'user_id', 'uid');
-    }
-
-    public function komentar() {
-        return $this->hasMany(Komentar::class, 'berita_id', 'id');
-    }
-
-    public function reaksi() {
-        return $this->hasMany(Reaksi::class, 'berita_id', 'id');
-    }
-
-    public function tag() {
+  // App\Models\API\Berita.php
+    public function tags()
+    {
         return $this->hasMany(Tag::class, 'berita_id', 'id');
     }
 
-    public function bookmark() {
-        return $this->hasMany(Bookmark::class, 'berita_id', 'id');
+
+    public function bookmarks()
+    {
+        return $this->morphMany(Bookmark::class, 'bookmarkable', 'item_id', 'bookmark_type');
+    }
+
+    public function reaksis()
+    {
+        return $this->morphMany(Reaksi::class, 'reaksiable' ,'item_id', 'reaksi_type');
+    }
+
+    public function komentars()
+    {
+        return $this->morphMany(Komentar::class, 'komentarable','item_id', 'komentar_type');
     }
 }
+
+

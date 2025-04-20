@@ -4,7 +4,6 @@ namespace App\Models\API;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\API\Berita;
 
 class Tag extends Model
 {
@@ -12,11 +11,15 @@ class Tag extends Model
 
     protected $table = 'tag';
     protected $primaryKey = 'id';
+
     protected $fillable = [
         'id', 'nama_tag', 'berita_id'
     ];
 
-    public function berita() {
+        public function berita()
+    {
         return $this->belongsTo(Berita::class, 'berita_id', 'id');
     }
+
+    
 }

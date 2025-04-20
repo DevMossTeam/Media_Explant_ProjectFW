@@ -2,37 +2,50 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
 use App\Models\API\Berita;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class BeritaController extends Controller
 {
+
+
     public function getAllBerita()
     {
-        $beritas = Berita::with(['user', 'komentar', 'reaksi', 'tag', 'bookmark'])
-            ->get()
-            ->map(function($berita) {
-                return [
-                    'idBerita' => $berita->id,
-                    'judul' => $berita->judul,
-                    'kontenBerita' => $berita->konten_berita,
-                    'gambar' => $berita->gambar,
-                    'tanggalDibuat' => $berita->tanggal_diterbitkan,
-                    'penulis' => $berita->user->nama_pengguna,
-                    'profil' => $berita->user->profile_pic,
-                    'kategori' => $berita->kategori,
-                    'jumlahLike' => $berita->reaksi->where('jenis_reaksi', 'Suka')->count(),
-                    'jumlahDislike' => $berita->reaksi->where('jenis_reaksi', 'Tidak Suka')->count(),
-                    'jumlahKomentar' => $berita->komentar->count(),
-                    'tags' => $berita->tag->pluck('nama_tag')->toArray(),
-                    'isBookmark' => $berita->bookmark->where('user_id', auth()->id())->isNotEmpty(),
-                    'isLike' => $berita->reaksi->where('user_id', auth()->id())->where('jenis_reaksi', 'Suka')->isNotEmpty(),
-                    'isDislike' => $berita->reaksi->where('user_id', auth()->id())->where('jenis_reaksi', 'Tidak Suka')->isNotEmpty()
-                ];
-            });
-
-        return response()->json($beritas);
+        // Mendapatkan semua berita dengan relasi yang diperlukan
+        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars'])->get();
+    
+        // Menyiapkan data untuk response
+        $response = $beritas->map(function ($berita) {
+            $userId = Auth::id(); // Mendapatkan ID user yang sedang login
+    
+            // Pastikan tanggal_diterbitkan adalah objek Carbon
+            $tanggalDiterbitkan = Carbon::parse($berita->tanggal_diterbitkan);
+    
+            // Menyusun data untuk setiap berita
+            return [
+                'idBerita' => $berita->id,
+                'judul' => $berita->judul,
+                'kontenBerita' => $berita->konten_berita,
+                'gambar' => $berita->gambar ?? null,
+                'tanggalDibuat' => $tanggalDiterbitkan->toDateTimeString(),
+                'penulis' => $berita->user_id,
+                'profil' => $berita->user->profile_pic ?? null,
+                'kategori' => $berita->kategori,
+                'jumlahLike' => $berita->reaksis->where('jenis_reaksi', 'Suka')->count(),
+                'jumlahDislike' => $berita->reaksis->where('jenis_reaksi', 'Tidak Suka')->count(),
+                'jumlahKomentar' => $berita->komentars->count(),
+                'tags' => $berita->tags->pluck('nama_tag'),
+                'isBookmark' => $berita->bookmarks->where('user_id', $userId)->count() > 0,
+                'isLike' => $berita->reaksis->where('user_id', $userId)->where('jenis_reaksi', 'Suka')->count() > 0,
+                'isDislike' => $berita->reaksis->where('user_id', $userId)->where('jenis_reaksi', 'Tidak Suka')->count() > 0,
+            ];
+        });
+    
+        // Mengirimkan response dalam format JSON
+        return response()->json($response);
     }
+    
 }
-

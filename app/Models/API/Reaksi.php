@@ -1,39 +1,21 @@
 <?php
+
 namespace App\Models\API;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
-use App\Models\API\Berita;
-use App\Models\User;
 
 class Reaksi extends Model
 {
+    use HasFactory;
+
     protected $table = 'reaksi';
-    public $timestamps = false;
-    protected $keyType = 'string';
-    public $incrementing = false;
-    
-    protected $fillable = ['id', 'user_id', 'berita_id', 'jenis_reaksi', 'tanggal_reaksi'];
+    protected $primaryKey = 'id';
+    protected $fillable = ['id', 'user_id', 'jenis_reaksi', 'tanggal_reaksi', 'reaksi_type', 'item_id'];
 
-    public static function boot()
+    public function reaksiable()
     {
-        parent::boot();
-
-        static::creating(function ($model) {
-            $model->id = strtoupper(Str::random(12));
-            $model->tanggal_reaksi = Carbon::now();
-        });
-    }
-
-    public function berita()
-    {
-        return $this->belongsTo(Berita::class, 'berita_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'uid');
+        return $this->morphTo();
     }
 }
 

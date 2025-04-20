@@ -2,9 +2,10 @@
 
 namespace App\Models\API;
 
+
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\API\Berita;
 
 class Komentar extends Model
 {
@@ -12,12 +13,10 @@ class Komentar extends Model
 
     protected $table = 'komentar';
     protected $primaryKey = 'id';
-    protected $fillable = [
-        'id', 'user_id', 'berita_id', 'isi_komentar', 'tanggal_komentar'
-    ];
+    protected $fillable = ['id', 'user_id', 'isi_komentar', 'tanggal_komentar', 'komentar_type', 'item_id'];
 
-    public function berita() {
-        return $this->belongsTo(Berita::class, 'berita_id', 'id');
+    public function bookmarkable()
+    {
+        return $this->morphTo('bookmarkable', 'item_id', 'bookmark_type');
     }
 }
-

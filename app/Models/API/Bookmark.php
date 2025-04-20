@@ -2,42 +2,35 @@
 
 namespace App\Models\API;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
-use App\Models\API\Berita;
-use App\Models\User;
 
 class Bookmark extends Model
 {
+    use HasFactory;
+
     protected $table = 'bookmark';
+    protected $primaryKey = 'id';
+    public $incrementing = false; // penting karena id bukan auto-increment
+    protected $keyType = 'string'; // id bertipe string
     public $timestamps = false;
-    protected $keyType = 'string';
-    public $incrementing = false;
 
-    protected $fillable = [
-        'id', 'user_id', 'berita_id', 'tanggal_bookmark'
-    ];
 
-    // Generate otomatis ID dan tanggal saat data dibuat
-    public static function boot()
+    protected $fillable = ['user_id', 'tanggal_bookmark', 'bookmark_type', 'item_id'];
+
+    protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($model) {
-            $model->id = strtoupper(Str::random(12)); // ID kombinasi huruf angka
-            $model->tanggal_bookmark = Carbon::now(); // Waktu saat ini
+            $model->id = $model->id ?? Str::random(12);
+            $model->tanggal_bookmark = now();
         });
     }
 
-    public function berita()
+    public function bookmarkable()
     {
-        return $this->belongsTo(Berita::class, 'berita_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->morphTo();
     }
 }
-
