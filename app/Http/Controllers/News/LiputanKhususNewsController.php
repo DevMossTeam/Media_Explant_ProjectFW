@@ -13,13 +13,28 @@ class LiputanKhususNewsController extends Controller
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Liputan Khusus' dan visibilitas 'public'
-        $news = LiputanKhususNews::where('kategori', 'Liputan Khusus')
+        $terbaru = LiputanKhususNews::with('user')
+            ->where('kategori', 'Liputan Khusus')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
-            ->paginate(10);
+            ->take(10)
+            ->get();
 
-        return view('kategori.liputanKhusus', compact('news'));
+        $terpopuler = LiputanKhususNews::with('user')
+            ->where('kategori', 'Liputan Khusus')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(10)
+            ->get();
+
+        $rekomendasi = LiputanKhususNews::with('user')
+            ->where('kategori', 'Liputan Khusus')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(8)
+            ->get();
+
+        return view('kategori.liputanKhusus', compact('terbaru', 'terpopuler', 'rekomendasi'));
     }
 
     /**
