@@ -13,13 +13,28 @@ class KampusNewsController extends Controller
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Kampus' dan visibilitas 'public'
-        $news = KampusNews::where('kategori', 'Kampus')
+        $terbaru = KampusNews::with('user')
+            ->where('kategori', 'Kampus')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
-            ->paginate(10);
+            ->take(10)
+            ->get();
 
-        return view('kategori.kampus', compact('news'));
+        $terpopuler = KampusNews::with('user')
+            ->where('kategori', 'Kampus')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(10)
+            ->get();
+
+        $rekomendasi = KampusNews::with('user')
+            ->where('kategori', 'Kampus')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(8)
+            ->get();
+
+        return view('kategori.kampus', compact('terbaru', 'terpopuler', 'rekomendasi'));
     }
 
     /**
