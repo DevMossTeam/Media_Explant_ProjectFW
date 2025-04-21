@@ -1,45 +1,68 @@
+{{-- draft.blade.php --}}
 @extends('layouts.app')
 
 @section('content')
-    <main class="py-8">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold mb-6">Daftar Draft</h2>
+<div class="p-6">
+    <h2 class="text-xl font-semibold mb-1">Draft Karya</h2>
+    <p class="text-sm text-gray-500 mb-6">Kumpulan Karya</p>
 
-            @if (!isset($drafts))
-                <p class="text-red-600">Error: Variabel <strong>$drafts</strong> tidak tersedia.</p>
-            @elseif ($drafts->isEmpty())
-                <p class="text-gray-600">Belum ada draft berita.</p>
-            @else
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach ($drafts as $draft)
-                        <div class="bg-white shadow rounded-lg overflow-hidden">
-                            {{-- Ambil gambar pertama dari konten_berita --}}
-                            @php
-                                preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $draft->konten_berita, $matches);
-                                $firstImage = $matches[1] ?? asset('images/no-image.jpg');
-                            @endphp
-                            <img src="{{ $firstImage }}" alt="{{ $draft->judul }}" class="w-full h-48 object-cover">
+    {{-- Search and Sort --}}
+    <div class="flex justify-between items-center mb-4">
+        <input type="text" placeholder="Search" class="border px-3 py-2 rounded w-1/2 focus:outline-none">
+        <button class="bg-red-600 text-white px-4 py-2 rounded text-sm">A - Z Group</button>
+    </div>
 
-                            <div class="p-4">
-                                <h3 class="text-lg font-bold">
-                                    {{ $draft->judul }}
-                                </h3>
-                                <p class="text-sm text-gray-600 mt-2">
-                                    Dipublikasikan pada: {{ \Carbon\Carbon::parse($draft->tanggal_diterbitkan)->format('d M Y') }}
-                                </p>
-                                <p class="text-sm text-blue-600 font-semibold mt-1">
-                                    Status: {{ ucfirst($draft->visibilitas) }}
-                                </p>
-                            </div>
-                        </div>
-                    @endforeach
+    {{-- List --}}
+    <div class="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
+        @for($i = 0; $i < 15; $i++)
+        <div class="flex items-start bg-white shadow rounded-lg p-4 relative">
+            {{-- Image Thumbnail --}}
+            <img src="{{ asset($i % 2 == 0 ? 'images/tari-saman.jpg' : 'images/majalah-online.jpg') }}"
+                 class="w-32 h-20 object-cover rounded mr-4" alt="Thumbnail">
+
+            {{-- Text Content --}}
+            <div class="flex-1">
+                <div class="text-xs uppercase font-semibold text-red-600">
+                    {{ $i % 2 == 0 ? 'Kesenian' : 'Majalah' }}
+                    <span class="text-gray-500 font-normal ml-2">| Dibuat {{ $i % 2 == 0 ? '13 Feb 2025' : '07 Dec 2024' }}</span>
                 </div>
+                <h3 class="font-semibold text-sm mt-1 mb-1">
+                    {{ $i % 2 == 0 ? 'Tari Saman: Memahami Makna, Sejarah, Fungsi, dan Pola Lantai' : 'Majalah Himpunan Mahasiswa Teknik ...' }}
+                </h3>
+                <p class="text-xs text-gray-400">Diperbarui 2 jam yang lalu</p>
+            </div>
 
-                {{-- Pagination --}}
-                <div class="mt-8">
-                    {{ $drafts->links() }}
+            {{-- Dropdown Action --}}
+            <div class="relative">
+                <button onclick="toggleDropdown({{ $i }})" class="text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div id="dropdown-{{ $i }}" class="hidden absolute right-0 mt-2 w-24 bg-white border rounded shadow-lg z-10">
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Hapus</a>
                 </div>
-            @endif
+            </div>
         </div>
-    </main>
+        @endfor
+    </div>
+</div>
+
+<script>
+    function toggleDropdown(index) {
+        const dropdown = document.getElementById('dropdown-' + index);
+        document.querySelectorAll('[id^="dropdown-"]').forEach(el => {
+            if (el !== dropdown) el.classList.add('hidden');
+        });
+        dropdown.classList.toggle('hidden');
+    }
+
+    // Klik di luar menu untuk menutup
+    window.addEventListener('click', function (e) {
+        document.querySelectorAll('[id^="dropdown-"]').forEach(el => {
+            if (!el.contains(e.target) && !e.target.closest('button')) {
+                el.classList.add('hidden');
+            }
+        });
+    });
+</script>
 @endsection

@@ -9,7 +9,6 @@
         <div class="relative">
             <div class="bg-blue-500 text-white p-4 rounded-lg shadow-md text-center w-60">
                 <h2 class="text-lg font-bold">Pimpinan Umum</h2>
-                <p>Muhammad Daniel Umar</p>
             </div>
             <div class="h-6 w-1 bg-gray-700 mx-auto"></div>
         </div>
@@ -18,7 +17,6 @@
         <div class="relative flex justify-center w-full ml-96">
             <div class="bg-blue-400 text-white p-4 rounded-lg shadow-md text-center w-60">
                 <h2 class="text-lg font-bold">Biro Umum</h2>
-                <p>Hasna Haniyah Azzah</p>
             </div>
         </div>
 
@@ -30,7 +28,6 @@
             <div class="relative flex flex-col items-center">
                 <div class="bg-blue-300 text-white p-4 rounded-lg shadow-md text-center w-52">
                     <h2 class="text-lg font-bold">CO. Jaringan Kerja</h2>
-                    <p>M. Alza Tyan Setyo Hadi</p>
                 </div>
                 <div class="h-6 w-1 bg-gray-700"></div>
 
@@ -44,7 +41,6 @@
             <div class="relative flex flex-col items-center">
                 <div class="bg-blue-500 text-white p-4 rounded-lg shadow-md text-center w-52">
                     <h2 class="text-lg font-bold">Pemimpin Redaksi</h2>
-                    <p>Dimas Dharma Setiawan</p>
                 </div>
                 <div class="h-6 w-1 bg-gray-700"></div>
 
@@ -64,7 +60,6 @@
             <div class="relative flex flex-col items-center">
                 <div class="bg-blue-300 text-white p-4 rounded-lg shadow-md text-center w-52">
                     <h2 class="text-lg font-bold">CO. Penelitian dan Pengembangan</h2>
-                    <p>Reyhan Naufal Tsaqif</p>
                 </div>
                 <div class="h-6 w-1 bg-gray-700"></div>
 

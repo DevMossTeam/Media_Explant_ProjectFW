@@ -131,8 +131,18 @@ Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
 // Route untuk pengaturan profil
 Route::get('/settings', function () {
-    return view('settings.umum'); // Pastikan file 'umum.blade.php' ada di folder 'settings'
+    return redirect()->route('settings.umum');
 })->name('settings');
+
+Route::get('/settings/umum', [SettingController::class, 'umumSettings'])->name('settings.umum');
+
+Route::get('/settings/notifikasi', function () {
+    return view('settings.notifikasi');
+})->name('settings.notifikasi');
+
+Route::get('/settings/bantuan', function () {
+    return view('settings.bantuan');
+})->name('settings.bantuan');
 
 // Route fallback jika halaman tidak ditemukan
 Route::fallback(function () {
@@ -199,8 +209,6 @@ Route::post('/karya/store', [KaryaController::class, 'store'])->name('karya.stor
 Route::get('/author/drafts', [DraftController::class, 'index'])->name('authors.drafts');
 
 Route::get('/profile', [ProfileController::class, 'mainProfile'])->name('profile');
-
-Route::get('/settings/umum', [SettingController::class, 'umumSettings'])->name('settings.umum');
 
 Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
 Route::post('forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.sendOtp');

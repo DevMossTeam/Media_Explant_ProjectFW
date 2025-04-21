@@ -19,7 +19,7 @@ class SettingController extends Controller
         // Ambil data pengguna jika UID tersedia
         if ($userUid) {
             $user = User::where('uid', $userUid)
-                ->select('nama_pengguna', 'password', 'email')
+                ->select('nama_pengguna', 'password', 'email', 'nama_lengkap')
                 ->first();
         }
 
