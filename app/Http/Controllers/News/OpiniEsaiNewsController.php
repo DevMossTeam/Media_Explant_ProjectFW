@@ -13,13 +13,40 @@ class OpiniEsaiNewsController extends Controller
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Opini dan Esai' dan visibilitas 'public'
-        $news = OpiniEsaiNews::where('kategori', 'Opini', 'Esai')
+        $terbaru = OpiniEsaiNews::with('user')
+            ->whereIn('kategori', ['Opini', 'Esai'])
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
-            ->paginate(10);
+            ->take(10)
+            ->get();
 
-        return view('kategori.opini-esai', compact('news'));
+        $rekomendasi = OpiniEsaiNews::with('user')
+            ->whereIn('kategori', ['Opini', 'Esai'])
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(8)
+            ->get();
+
+        $terpopuler_opini = OpiniEsaiNews::with('user')
+            ->where('kategori', 'Opini')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(5)
+            ->get();
+
+        $terpopuler_esai = OpiniEsaiNews::with('user')
+            ->where('kategori', 'Esai')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(5)
+            ->get();
+
+        return view('kategori.opini-esai', compact(
+            'terbaru',
+            'rekomendasi',
+            'terpopuler_opini',
+            'terpopuler_esai'
+        ));
     }
 
     /**

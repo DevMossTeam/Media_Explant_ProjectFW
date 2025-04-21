@@ -13,23 +13,26 @@ class HomeNewsController extends Controller
      */
     public function index(Request $request, $category = null)
     {
-        // Jika tidak ada kategori, tampilkan homepage dengan semua berita
+        // Jika tidak ada kategori, tampilkan homepage
         if (!$category) {
             $news = HomeNews::where('visibilitas', 'public')
                 ->orderBy('tanggal_diterbitkan', 'desc')
-                ->paginate(10);
-            return view('home', compact('news'));
+                ->take(10)
+                ->get();
+
+            // Ambil berita teratas berdasarkan kategori untuk ditampilkan di bagian "Berita Teratas Hari Ini"
+            $newsList = (new HomeNews)->getBeritaTeratasHariIni();
+
+            return view('home', compact('news', 'newsList'));
         }
 
         // Daftar kategori yang valid
         $validCategories = ['siaran-pers', 'riset', 'wawancara', 'diskusi', 'agenda', 'sastra', 'opini'];
 
-        // Jika kategori tidak valid, tampilkan 404
         if (!in_array($category, $validCategories)) {
             abort(404);
         }
 
-        // Ambil berita berdasarkan kategori
         $news = HomeNews::where('kategori', str_replace('-', ' ', $category))
             ->where('visibilitas', 'public')
             ->orderBy('tanggal_diterbitkan', 'desc')
@@ -43,9 +46,7 @@ class HomeNewsController extends Controller
      */
     public function show(Request $request, $category)
     {
-        // Ambil ID dari parameter "a"
         $news = HomeNews::where('id', $request->a)->firstOrFail();
-
         return view('kategori.news-detail', compact('news'));
     }
 }

@@ -13,13 +13,40 @@ class KesenianHiburanNewsController extends Controller
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Kesenian dan Hiburan' dan visibilitas 'public'
-        $news = KesenianHiburanNews::where('kategori', 'Kesenian', 'Hiburan')
+        $terbaru = KesenianHiburanNews::with('user')
+            ->whereIn('kategori', ['Kesenian', 'Hiburan'])
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
-            ->paginate(10);
+            ->take(10)
+            ->get();
 
-        return view('kategori.kesenianHiburan', compact('news'));
+        $rekomendasi = KesenianHiburanNews::with('user')
+            ->whereIn('kategori', ['Kesenian', 'Hiburan'])
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(8)
+            ->get();
+
+        $terpopuler_kesenian = KesenianHiburanNews::with('user')
+            ->where('kategori', 'Kesenian')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(5)
+            ->get();
+
+        $terpopuler_hiburan = KesenianHiburanNews::with('user')
+            ->where('kategori', 'Hiburan')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(5)
+            ->get();
+
+        return view('kategori.kesenianHiburan', compact(
+            'terbaru',
+            'rekomendasi',
+            'terpopuler_kesenian',
+            'terpopuler_hiburan'
+        ));
     }
 
     /**

@@ -13,13 +13,40 @@ class NasionalInternasionalNewsController extends Controller
      */
     public function index()
     {
-        // Ambil berita dengan kategori 'Nasional dan Internasional' dan visibilitas 'public'
-        $news = NasionalInternasionalNews::where('kategori', 'Nasional', 'Internasional')
+        $terbaru = NasionalInternasionalNews::with('user')
+            ->whereIn('kategori', ['Nasional', 'Internasional'])
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
-            ->paginate(10);
+            ->take(10)
+            ->get();
 
-        return view('kategori.nasional-internasional', compact('news'));
+        $rekomendasi = NasionalInternasionalNews::with('user')
+            ->whereIn('kategori', ['Nasional', 'Internasional'])
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(8)
+            ->get();
+
+        $terpopuler_nasional = NasionalInternasionalNews::with('user')
+            ->where('kategori', 'Nasional')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(5)
+            ->get();
+
+        $terpopuler_internasional = NasionalInternasionalNews::with('user')
+            ->where('kategori', 'Internasional')
+            ->where('visibilitas', 'public')
+            ->latest('tanggal_diterbitkan')
+            ->take(5)
+            ->get();
+
+        return view('kategori.nasional-internasional', compact(
+            'terbaru',
+            'rekomendasi',
+            'terpopuler_nasional',
+            'terpopuler_internasional'
+        ));
     }
 
     /**

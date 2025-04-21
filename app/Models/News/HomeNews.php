@@ -22,47 +22,75 @@ class HomeNews extends Model
         'tanggal_diterbitkan',
         'kategori',
         'visibilitas',
-        'gambar'
+        'gambar',
     ];
 
+    /**
+     * Ambil 1 berita terbaru dari setiap kategori yang visibilitasnya public
+     */
+    public function getBeritaTeratasHariIni()
+    {
+        $news = HomeNews::where('visibilitas', 'public')
+            ->orderBy('kategori')
+            ->orderBy('tanggal_diterbitkan', 'desc')
+            ->get()
+            ->groupBy('kategori')
+            ->map->first();
+
+        return $news->values()->take(11);
+    }
+
+    /**
+     * Ambil gambar pertama dari konten berita atau gunakan fallback
+     */
     public function getFirstImageAttribute()
     {
         if (preg_match('/<img[^>]+src="([^">]+)"/i', $this->konten_berita, $matches)) {
             return $matches[1];
         }
+
         return $this->gambar ?? 'https://via.placeholder.com/400x200';
     }
 
+    /**
+     * Slug kategori untuk URL
+     */
     public function getCategorySlugAttribute()
     {
         $mapping = [
-            'Siaran Pers' => 'siaran-pers',
-            'Riset' => 'riset',
-            'Wawancara' => 'wawancara',
-            'Diskusi' => 'diskusi',
-            'Agenda' => 'agenda',
-            'Sastra' => 'sastra',
-            'Opini' => 'opini'
+            'Kampus' => 'kampus',
+            'Kesehatan' => 'kesehatan',
+            'KesenianHiburan' => 'kesenian-hiburan',
+            'LiputanKhusus' => 'liputan-khusus',
+            'NasionalInternasional' => 'nasional-internasional',
+            'Olahraga' => 'olahraga',
+            'OpiniEsai' => 'opini-esai',
+            'Teknologi' => 'teknologi',
         ];
 
-        return $mapping[$this->kategori] ?? 'lainnya';
+        return $mapping[$this->kategori] ?? Str::slug($this->kategori);
     }
 
+    /**
+     * URL artikel lengkap
+     */
     public function getArticleUrlAttribute()
     {
         return url("/kategori/{$this->category_slug}/read?a={$this->id}");
     }
 
     /**
-     * Ambil ringkasan berita (150 karakter pertama tanpa memotong kata dan menghilangkan entitas HTML seperti &nbsp;)
+     * Ringkasan konten berita (150 karakter)
      */
     public function getExcerptAttribute()
     {
-        // Hilangkan entitas HTML seperti &nbsp;
         $cleanedContent = preg_replace('/&nbsp;/i', ' ', strip_tags($this->konten_berita));
         return Str::limit($cleanedContent, 150);
     }
 
+    /**
+     * Relasi ke penulis berita
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'uid');
