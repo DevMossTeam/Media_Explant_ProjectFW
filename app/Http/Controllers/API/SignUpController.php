@@ -12,6 +12,8 @@ use Illuminate\Support\Str;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+// Ensure PHPMailer is installed via Composer
+
 class SignUpController extends Controller
 {
     /**

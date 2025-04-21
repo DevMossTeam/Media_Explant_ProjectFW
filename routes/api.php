@@ -24,25 +24,51 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Authentikasi
+// ✅ Autentikasi pengguna (Sanctum)
+Route::middleware('auth:sanctum')->get('/me', function (Request $request) {
+    return response()->json($request->user());
+});
+
+// ✅ Auth routes
 Route::post('/login', [SignInController::class, 'login']);
 Route::post('/logout', [SignInController::class, 'logout'])->middleware('auth:sanctum');
 
-// Pendaftaran Multi-Step
-// Step 1: Input data dasar & pengiriman OTP
+// ✅ Multi-Step Registration
 Route::post('/register-step1', [SignUpController::class, 'registerStep1']);
-// Step 2: Verifikasi OTP
 Route::post('/verify-otp', [SignUpController::class, 'verifyOtp']);
-// Step 3: Input password & pendaftaran akhir
 Route::post('/register-step3', [SignUpController::class, 'registerStep3']);
 
-// Endpoint tambahan untuk mendapatkan data user (umum)
-Route::get('/user', [SignUpController::class, 'getUsers']);
+// ✅ Data pengguna publik
+Route::get('/user', [SignUpController::class, 'getUser']);
 Route::get('/user/{uid}', [SignUpController::class, 'getUserByUid']);
 
-// Endpoint untuk mendapatkan data profil user yang terautentikasi
+// Lupa Password
+Route::post('/password/send-reset-otp',      [SecurityController::class, 'sendResetPasswordOtp']);
+Route::post('/password/verify-reset-otp',    [SecurityController::class, 'verifyResetPasswordOtp']);
+Route::post('/password/reset',               [SecurityController::class, 'resetPassword']);
+
+// ✅ Kirim Pesan (tanpa login)
+Route::post('/pesan', [PesanController::class, 'store']);
+
+// ✅ Protected routes (membutuhkan token autentikasi)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile', [GetProfileController::class, 'getProfile']);
+
+     // Profil pengguna
+     Route::get('/profile', [GetProfileController::class, 'getProfile']);
+     Route::post('/profile/update', [UpdateProfileController::class, 'updateProfile']);
+     Route::post('/profile/delete-image', [UpdateProfileController::class, 'deleteProfileImage']);
+     Route::get('profile/check-username',    [UpdateProfileController::class, 'checkUsername']);
+
+    // Ganti Password
+    Route::post('/password/change',             [SecurityController::class, 'changePassword']);
+
+    // Ganti Email - Step 1 (email lama)
+    Route::post('/email/send-change-otp',        [SecurityController::class, 'sendChangeEmailOtp']);
+    Route::post('/email/verify-old-email-otp',  [SecurityController::class, 'verifyOldEmailOtp']);
+
+    // Ganti Email - Step 2 (email baru)
+    Route::post('/email/send-new-email-otp',     [SecurityController::class, 'sendNewEmailOtp']);
+    Route::post('/email/verify-new-email-otp',  [SecurityController::class, 'verifyNewEmailOtp']);
 });
 
 // mendapatkan data berita dan relasinya
