@@ -3,55 +3,49 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\API\Reaksi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ReaksiController extends Controller
 {
     public function toggle(Request $request)
     {
-        $request->validate([
-            'user_id' => 'required|string|exists:user,uid',
-            'berita_id' => 'required|string|exists:berita,id',
-            'jenis_reaksi' => 'required|in:Suka,Tidak Suka'
+        $validated = $request->validate([
+            'user_id' => 'required|string',
+            'item_id' => 'required|string',
+            'reaksi_type' => 'required|string',
+            'jenis_reaksi' => 'required|in:Suka,Tidak Suka',
         ]);
-
-        $existing = Reaksi::where('user_id', $request->user_id)
-                          ->where('berita_id', $request->berita_id)
-                          ->first();
-
-        if ($existing) {
-            if ($existing->jenis_reaksi === $request->jenis_reaksi) {
-                $existing->delete();
-
-                return response()->json([
-                    'status' => 'removed',
-                    'message' => 'Reaksi dihapus.'
-                ]);
+    
+        $reaksi = Reaksi::where('user_id', $validated['user_id'])
+            ->where('item_id', $validated['item_id'])
+            ->where('reaksi_type', $validated['reaksi_type'])
+            ->first();
+    
+        if ($reaksi) {
+            // Jika jenis reaksi sama, maka hapus
+            if ($reaksi->jenis_reaksi === $validated['jenis_reaksi']) {
+                $reaksi->delete();
+                return response()->json(['message' => 'Reaksi dihapus']);
             } else {
-                $existing->jenis_reaksi = $request->jenis_reaksi;
-                $existing->tanggal_reaksi = now();
-                $existing->save();
-
-                return response()->json([
-                    'status' => 'updated',
-                    'message' => 'Reaksi diperbarui.',
-                    'data' => $existing
-                ]);
+                // Jika jenis reaksi beda, update
+                $reaksi->jenis_reaksi = $validated['jenis_reaksi'];
+                $reaksi->tanggal_reaksi = now();
+                $reaksi->save();
+                return response()->json(['message' => 'Reaksi diperbarui']);
             }
-        } else {
-            $reaksi = Reaksi::create([
-                'user_id' => $request->user_id,
-                'berita_id' => $request->berita_id,
-                'jenis_reaksi' => $request->jenis_reaksi,
-            ]);
-
-            return response()->json([
-                'status' => 'added',
-                'message' => 'Reaksi ditambahkan.',
-                'data' => $reaksi
-            ]);
         }
+    
+        // Jika belum ada, buat baru
+        Reaksi::create([
+            'user_id' => $validated['user_id'],
+            'item_id' => $validated['item_id'],
+            'reaksi_type' => $validated['reaksi_type'],
+            'jenis_reaksi' => $validated['jenis_reaksi'],
+            'tanggal_reaksi' => now(),
+        ]);
+    
+        return response()->json(['message' => 'Reaksi ditambahkan']);
     }
 }

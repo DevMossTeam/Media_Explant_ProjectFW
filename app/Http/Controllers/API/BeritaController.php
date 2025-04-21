@@ -21,10 +21,8 @@ class BeritaController extends Controller
         $response = $beritas->map(function ($berita) {
             $userId = Auth::id(); // Mendapatkan ID user yang sedang login
     
-            // Pastikan tanggal_diterbitkan adalah objek Carbon
             $tanggalDiterbitkan = Carbon::parse($berita->tanggal_diterbitkan);
     
-            // Menyusun data untuk setiap berita
             return [
                 'idBerita' => $berita->id,
                 'judul' => $berita->judul,
@@ -44,7 +42,6 @@ class BeritaController extends Controller
             ];
         });
     
-        // Mengirimkan response dalam format JSON
         return response()->json($response);
     }
     

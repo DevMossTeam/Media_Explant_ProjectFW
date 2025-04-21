@@ -12,8 +12,8 @@ class Bookmark extends Model
 
     protected $table = 'bookmark';
     protected $primaryKey = 'id';
-    public $incrementing = false; // penting karena id bukan auto-increment
-    protected $keyType = 'string'; // id bertipe string
+    public $incrementing = false;
+    protected $keyType = 'string';
     public $timestamps = false;
 
 
