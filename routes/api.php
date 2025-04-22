@@ -2,12 +2,15 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\PesanController;
+use App\Http\Controllers\API\BeritaController;
+use App\Http\Controllers\API\ReaksiController;
 use App\Http\Controllers\API\SignInController;
 use App\Http\Controllers\API\SignUpController;
-use App\Http\Controllers\API\GetProfileController;
-use App\Http\Controllers\API\BeritaController;
 use App\Http\Controllers\API\BookmarkController;
-use App\Http\Controllers\API\ReaksiController;
+use App\Http\Controllers\API\SecurityController;
+use App\Http\Controllers\API\GetProfileController;
+use App\Http\Controllers\API\UpdateProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,3 +82,13 @@ Route::post('/bookmark/toggle', [BookmarkController::class, 'toggle']);
 
 // toggle reaksi berita
 Route::post('/reaksi/toggle', [ReaksiController::class, 'toggle']);
+
+Route::get('/berita', [BeritaController::class, 'getAllBerita']);
+Route::get('/berita/terbaru', [BeritaController::class, 'getBeritaTerbaru']);
+Route::get('/berita/populer', [BeritaController::class, 'getBeritaPopuler']);
+Route::get('/berita/rekomendasi', [BeritaController::class, 'getBeritaRekomendasi']);
+Route::get('/berita/rekomendasi-lainnya', [BeritaController::class, 'getRekomendasiLainnya']);
+Route::get('/berita/{id}/terkait', [BeritaController::class, 'getBeritaTerkait']);
+
+
+
