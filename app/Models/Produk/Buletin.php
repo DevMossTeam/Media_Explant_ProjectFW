@@ -29,4 +29,12 @@ class Buletin extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'uid');
     }
+
+    public static function getHomeBuletin($limit = 6)
+    {
+        return self::where('kategori', 'Buletin')
+            ->orderBy('release_date', 'desc')
+            ->take($limit)
+            ->get();
+    }
 }

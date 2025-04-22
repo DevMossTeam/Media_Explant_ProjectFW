@@ -22,7 +22,6 @@ class NasionalInternasionalNews extends Model
         'tanggal_diterbitkan',
         'kategori',
         'visibilitas',
-        'gambar'
     ];
 
     protected static function boot()

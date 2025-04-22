@@ -69,4 +69,104 @@
     </div>
 </section>
 
+<!-- Bagian Majalah -->
+<section class="mt-12">
+    <div class="max-w-7xl mx-auto px-5">
+        <h2 class="text-2xl font-semibold text-gray-800">Majalah</h2>
+        <p class="text-gray-600 mb-4 text-lg">Kumpulan Majalah Terbaik</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            @foreach ($majalahList as $majalah)
+                <div class="flex flex-col items-start">
+                    <a href="{{ route('majalah.browse', ['f' => $majalah->id]) }}">
+                        <canvas id="pdf-thumbnail-majalah-{{ $majalah->id }}" class="w-full h-64 object-cover rounded-lg shadow-md"></canvas>
+                    </a>
+
+                    <div class="mt-3 text-sm text-gray-700 w-full">
+                        <div class="flex items-center space-x-2 text-xs mb-1">
+                            <span class="text-[#990505] font-semibold uppercase">MAJALAH</span>
+                            <div class="w-[2px] h-3.5 bg-[#990505]"></div>
+                            <span>{{ \Carbon\Carbon::parse($majalah->release_date)->translatedFormat('d M Y') }}</span>
+                        </div>
+                        <h3 class="text-base font-semibold leading-tight mb-1">{{ $majalah->judul }}</h3>
+                        <a href="{{ route('majalah.browse', ['f' => $majalah->id]) }}" class="text-[#5773FF] font-medium text-sm">Lihat Majalah</a>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        var pdfUrl = "{{ route('majalah.pdfPreview', ['id' => $majalah->id]) }}";
+
+                        var loadingTask = pdfjsLib.getDocument(pdfUrl);
+                        loadingTask.promise.then(function(pdf) {
+                            pdf.getPage(1).then(function(page) {
+                                var canvas = document.getElementById('pdf-thumbnail-majalah-{{ $majalah->id }}');
+                                var context = canvas.getContext('2d');
+
+                                var viewport = page.getViewport({ scale: 1.5 });
+                                canvas.width = viewport.width;
+                                canvas.height = viewport.height;
+
+                                page.render({ canvasContext: context, viewport: viewport });
+                            });
+                        });
+                    });
+                </script>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<!-- Bagian Buletin -->
+<section class="mt-16">
+    <div class="max-w-7xl mx-auto px-5">
+        <h2 class="text-2xl font-semibold text-gray-800">Buletin</h2>
+        <p class="text-gray-600 mb-4 text-lg">Kumpulan Buletin Pilihan</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            @foreach ($buletinList as $buletin)
+                <div class="flex flex-col items-start">
+                    <a href="{{ route('buletin.browse', ['f' => $buletin->id]) }}">
+                        <canvas id="pdf-thumbnail-buletin-{{ $buletin->id }}" class="w-full h-64 object-cover rounded-lg shadow-md"></canvas>
+                    </a>
+
+                    <div class="mt-3 text-sm text-gray-700 w-full">
+                        <div class="flex items-center space-x-2 text-xs mb-1">
+                            <span class="text-[#990505] font-semibold uppercase">BULETIN</span>
+                            <div class="w-[2px] h-3.5 bg-[#990505]"></div>
+                            <span>{{ \Carbon\Carbon::parse($buletin->release_date)->translatedFormat('d M Y') }}</span>
+                        </div>
+                        <h3 class="text-base font-semibold leading-tight mb-1">{{ $buletin->judul }}</h3>
+                        <a href="{{ route('buletin.browse', ['f' => $buletin->id]) }}" class="text-[#5773FF] font-medium text-sm">Lihat Buletin</a>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        var pdfUrl = "{{ route('buletin.pdfPreview', ['id' => $buletin->id]) }}";
+
+                        var loadingTask = pdfjsLib.getDocument(pdfUrl);
+                        loadingTask.promise.then(function(pdf) {
+                            pdf.getPage(1).then(function(page) {
+                                var canvas = document.getElementById('pdf-thumbnail-buletin-{{ $buletin->id }}');
+                                var context = canvas.getContext('2d');
+
+                                var viewport = page.getViewport({ scale: 1.5 });
+                                canvas.width = viewport.width;
+                                canvas.height = viewport.height;
+
+                                page.render({ canvasContext: context, viewport: viewport });
+                            });
+                        });
+                    });
+                </script>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<!-- Tambahkan Library PDF.js sekali di akhir halaman -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+
 @endsection

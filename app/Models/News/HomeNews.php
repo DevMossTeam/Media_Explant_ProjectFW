@@ -22,7 +22,6 @@ class HomeNews extends Model
         'tanggal_diterbitkan',
         'kategori',
         'visibilitas',
-        'gambar',
     ];
 
     /**

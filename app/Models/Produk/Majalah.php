@@ -29,4 +29,12 @@ class Majalah extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'uid');
     }
+
+    public static function getHomeMajalah($limit = 6)
+    {
+        return self::where('kategori', 'Majalah')
+            ->orderBy('release_date', 'desc')
+            ->take($limit)
+            ->get();
+    }
 }

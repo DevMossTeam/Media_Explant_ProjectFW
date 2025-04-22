@@ -5,6 +5,8 @@ namespace App\Http\Controllers\News;
 use App\Http\Controllers\Controller;
 use App\Models\News\HomeNews;
 use Illuminate\Http\Request;
+use App\Models\Produk\Buletin;
+use App\Models\Produk\Majalah;
 
 class HomeNewsController extends Controller
 {
@@ -13,17 +15,19 @@ class HomeNewsController extends Controller
      */
     public function index(Request $request, $category = null)
     {
-        // Jika tidak ada kategori, tampilkan homepage
         if (!$category) {
             $news = HomeNews::where('visibilitas', 'public')
                 ->orderBy('tanggal_diterbitkan', 'desc')
                 ->take(10)
                 ->get();
 
-            // Ambil berita teratas berdasarkan kategori untuk ditampilkan di bagian "Berita Teratas Hari Ini"
             $newsList = (new HomeNews)->getBeritaTeratasHariIni();
 
-            return view('home', compact('news', 'newsList'));
+            // Ambil data buletin & majalah
+            $buletinList = Buletin::getHomeBuletin();
+            $majalahList = Majalah::getHomeMajalah();
+
+            return view('home', compact('news', 'newsList', 'buletinList', 'majalahList'));
         }
 
         // Daftar kategori yang valid
