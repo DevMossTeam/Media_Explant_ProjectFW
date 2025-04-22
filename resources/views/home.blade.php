@@ -165,8 +165,157 @@
     </div>
 </section>
 
+<!-- Bagian Puisi -->
+<section class="mt-12 mb-12">
+    <div class="max-w-7xl mx-auto px-5">
+        <h2 class="text-2xl font-semibold text-gray-800">Puisi Terbaru</h2>
+        <p class="text-gray-600 mb-4 text-lg">Kumpulan Puisi Terbaru</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            @foreach ($puisiList as $puisi)
+                <div class="flex flex-col items-start">
+                    <a href="{{ route('karya.puisi.read', ['k' => $puisi->id]) }}">
+                        <img src="data:image/jpeg;base64,{{ $puisi->media }}" alt="{{ $puisi->judul }}" class="w-full h-64 object-cover rounded-lg shadow-md" />
+                    </a>
+
+                    <div class="mt-3 text-sm text-gray-700 w-full">
+                        <div class="flex items-center space-x-2 text-xs mb-1">
+                            <span class="text-[#990505] font-semibold uppercase">PUI</span>
+                            <div class="w-[2px] h-3.5 bg-[#990505]"></div>
+                            <span>{{ \Carbon\Carbon::parse($puisi->release_date)->translatedFormat('d M Y') }}</span>
+                        </div>
+                        <h3 class="text-base font-semibold leading-tight mb-1">{{ $puisi->judul }}</h3>
+                        <div class="text-xs italic font-medium text-gray-800">
+                            <span>Oleh : {{ $puisi->creator ?? '-' }}</span>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<!-- Bagian Pantun -->
+<section class="mt-12">
+    <div class="max-w-7xl mx-auto px-5">
+        <h2 class="text-2xl font-semibold text-gray-800">Pantun</h2>
+        <p class="text-gray-600 mb-4 text-lg">Kumpulan Pantun Terbaik</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            @foreach ($pantunList as $pantun)
+                <div class="flex flex-col items-start">
+                    <a href="{{ route('karya.pantun.read', ['k' => $pantun->id]) }}">
+                        <img src="data:image/jpeg;base64,{{ $pantun->media }}" alt="{{ $pantun->judul }}" class="w-full h-64 object-cover rounded-lg shadow-md" />
+                    </a>
+
+                    <div class="mt-3 text-sm text-gray-700 w-full">
+                        <div class="flex items-center space-x-2 text-xs mb-1">
+                            <span class="text-[#990505] font-semibold uppercase">PANTUN</span>
+                            <div class="w-[2px] h-3.5 bg-[#990505]"></div>
+                            <span>{{ \Carbon\Carbon::parse($pantun->release_date)->translatedFormat('d M Y') }}</span>
+                        </div>
+                        <h3 class="text-base font-semibold leading-tight mb-1">{{ $pantun->judul }}</h3>
+                        <div class="text-xs italic font-medium text-gray-800">
+                            <span>Oleh : {{ $pantun->creator ?? '-' }}</span>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<!-- Bagian Syair -->
+<section class="mt-12">
+    <div class="max-w-7xl mx-auto px-5">
+        <h2 class="text-2xl font-semibold text-gray-800">Syair</h2>
+        <p class="text-gray-600 mb-4 text-lg">Kumpulan Syair Terbaik</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            @foreach ($syairList as $syair)
+                <div class="flex flex-col items-start">
+                    <a href="{{ route('karya.syair.read', ['k' => $syair->id]) }}">
+                        <img src="data:image/jpeg;base64,{{ $syair->media }}" alt="{{ $syair->judul }}" class="w-full h-64 object-cover rounded-lg shadow-md" />
+                    </a>
+
+                    <div class="mt-3 text-sm text-gray-700 w-full">
+                        <div class="flex items-center space-x-2 text-xs mb-1">
+                            <span class="text-[#990505] font-semibold uppercase">SYAIR</span>
+                            <div class="w-[2px] h-3.5 bg-[#990505]"></div>
+                            <span>{{ \Carbon\Carbon::parse($syair->release_date)->translatedFormat('d M Y') }}</span>
+                        </div>
+                        <h3 class="text-base font-semibold leading-tight mb-1">{{ $syair->judul }}</h3>
+                        <div class="text-xs italic font-medium text-gray-800">
+                            <span>Oleh : {{ $syair->creator ?? '-' }}</span>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<!-- Bagian Fotografi -->
+<section class="mt-12">
+    <div class="max-w-7xl mx-auto px-5">
+        <h2 class="text-2xl font-semibold text-gray-800">Fotografi</h2>
+        <p class="text-gray-600 mb-4 text-lg">Kumpulan Fotografi Terbaik</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            @foreach ($fotografiList as $fotografi)
+                <div class="flex flex-col items-start">
+                    <a href="{{ route('karya.fotografi.read', ['k' => $fotografi->id]) }}">
+                        <img src="data:image/jpeg;base64,{{ $fotografi->media }}" alt="{{ $fotografi->judul }}" class="w-full h-64 object-cover rounded-lg shadow-md" />
+                    </a>
+
+                    <div class="mt-3 text-sm text-gray-700 w-full">
+                        <div class="flex items-center space-x-2 text-xs mb-1">
+                            <span class="text-[#990505] font-semibold uppercase">FOTOGRAFI</span>
+                            <div class="w-[2px] h-3.5 bg-[#990505]"></div>
+                            <span>{{ \Carbon\Carbon::parse($fotografi->release_date)->translatedFormat('d M Y') }}</span>
+                        </div>
+                        <h3 class="text-base font-semibold leading-tight mb-1">{{ $fotografi->judul }}</h3>
+                        <div class="text-xs italic font-medium text-gray-800">
+                            <span>Oleh : {{ $fotografi->creator ?? '-' }}</span>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<!-- Bagian Desain Grafis -->
+<section class="mt-12 mb-12">
+    <div class="max-w-7xl mx-auto px-5">
+        <h2 class="text-2xl font-semibold text-gray-800">Desain Grafis</h2>
+        <p class="text-gray-600 mb-4 text-lg">Kumpulan Desain Grafis Terbaik</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            @foreach ($desainGrafisList as $desainGrafis)
+                <div class="flex flex-col items-start">
+                    <a href="{{ route('karya.desain-grafis.read', ['k' => $desainGrafis->id]) }}">
+                        <img src="data:image/jpeg;base64,{{ $desainGrafis->media }}" alt="{{ $desainGrafis->judul }}" class="w-full h-64 object-cover rounded-lg shadow-md" />
+                    </a>
+
+                    <div class="mt-3 text-sm text-gray-700 w-full">
+                        <div class="flex items-center space-x-2 text-xs mb-1">
+                            <span class="text-[#990505] font-semibold uppercase">DESAIN GRAFIS</span>
+                            <div class="w-[2px] h-3.5 bg-[#990505]"></div>
+                            <span>{{ \Carbon\Carbon::parse($desainGrafis->release_date)->translatedFormat('d M Y') }}</span>
+                        </div>
+                        <h3 class="text-base font-semibold leading-tight mb-1">{{ $desainGrafis->judul }}</h3>
+                        <div class="text-xs italic font-medium text-gray-800">
+                            <span>Oleh : {{ $desainGrafis->creator ?? '-' }}</span>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
 <!-- Tambahkan Library PDF.js sekali di akhir halaman -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-
 
 @endsection
