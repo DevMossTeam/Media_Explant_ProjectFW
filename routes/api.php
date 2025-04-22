@@ -74,8 +74,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/email/verify-new-email-otp',  [SecurityController::class, 'verifyNewEmailOtp']);
 });
 
-// mendapatkan data berita dan relasinya
-Route::get('berita', [BeritaController::class, 'getAllBerita']);
 
 // toggle bookmark
 Route::post('/bookmark/toggle', [BookmarkController::class, 'toggle']);
