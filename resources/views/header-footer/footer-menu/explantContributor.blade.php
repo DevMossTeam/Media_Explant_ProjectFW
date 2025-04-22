@@ -1,62 +1,53 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Header Merah Full Width -->
+<div class="bg-[#C12122] text-white text-center py-3 w-full">
+    <h1 class="text-2xl font-semibold">Explant Contributor</h1>
+</div>
+
 <div class="container mx-auto p-6 rounded-lg shadow-lg">
-    <h1 class="text-3xl font-bold text-red-600 text-center mb-4">Explant Contributor</h1>
-
-    <!-- Sejarah UKPM Explant -->
-    <section class="mb-6 max-w-2xl mx-auto text-left">
-        <h2 class="text-2xl font-semibold text-gray-800">Sejarah UKPM Explant</h2>
+    <section class="mb-6 max-w-2xl mx-auto text-justify">
+        <h2 class="italic text-gray-800 mb-2">Penjelasan Singkat</h2>
+        <p class="border-b border-gray-400 mb-4"></p>
         <p class="text-gray-700 leading-relaxed mt-2">
-            Unit Kegiatan Pers Mahasiswa (UKPM) Explant didirikan dengan tujuan menjadi wadah bagi mahasiswa yang memiliki
-            ketertarikan dalam dunia jurnalistik, literasi, dan penyampaian informasi yang objektif. Berawal dari sebuah komunitas kecil,
-            UKPM Explant kini berkembang menjadi organisasi yang aktif dalam menyebarkan berita dan opini di lingkungan kampus serta masyarakat luas.
+            Di balik setiap karya, berita, dan visual yang terbit di MediaExplant, ada tangan-tangan mahasiswa yang bekerja dengan semangat kolektif dan idealisme. Kami menyebut mereka Explant Contributor yakni para kontributor yang percaya bahwa menulis, memotret, merancang, dan berkarya adalah bagian dari perjuangan intelektual.
+        </p>
+        <p class="text-gray-700 leading-relaxed mt-2">
+            Explant Contributor tidak hanya menciptakan konten, tetapi juga merawat gagasan, merespons isu, dan membangun ruang kritik yang sehat. Mereka datang dari berbagai latar belakang minat dan keahlian, namun disatukan oleh semangat untuk menyampaikan sesuatu yang lebih dari sekadar informasi: kesadaran.
         </p>
     </section>
 
-    <!-- Peran Kontributor -->
-    <section class="mb-6 max-w-2xl mx-auto text-left">
-        <h2 class="text-2xl font-semibold text-gray-800">Peran Kontributor di UKPM Explant</h2>
-        <ul class="list-disc pl-5 text-gray-700 leading-relaxed mt-2">
-            <li>Menulis berita, opini, dan artikel ilmiah populer terkait isu sosial, budaya, dan kehidupan kampus.</li>
-            <li>Menyajikan laporan investigatif guna memberikan informasi mendalam kepada publik.</li>
-            <li>Memproduksi konten visual dan audio, termasuk fotografi jurnalistik dan podcast.</li>
-            <li>Menjadi bagian dari tim riset dan analisis untuk mengawal isu-isu penting yang berkembang.</li>
-            <li>Menyebarluaskan informasi dengan tetap berpegang teguh pada prinsip-prinsip jurnalisme yang etis dan bertanggung jawab.</li>
-        </ul>
-    </section>
-
-    <!-- Manfaat Bergabung -->
-    <section class="mb-6 max-w-2xl mx-auto text-left">
-        <h2 class="text-2xl font-semibold text-gray-800">Manfaat Menjadi Kontributor</h2>
-        <p class="text-gray-700 leading-relaxed mt-2">
-            Bergabung dengan UKPM Explant memberikan berbagai manfaat bagi mahasiswa, di antaranya:
-        </p>
-        <ul class="list-disc pl-5 text-gray-700 leading-relaxed mt-2">
-            <li>Memperoleh pengalaman nyata di dunia jurnalistik dan media.</li>
-            <li>Meningkatkan keterampilan menulis, berpikir kritis, dan komunikasi.</li>
-            <li>Memiliki kesempatan untuk menghadiri pelatihan dan seminar jurnalistik.</li>
-            <li>Membangun jaringan dengan sesama jurnalis mahasiswa serta praktisi media profesional.</li>
-            <li>Mengasah kemampuan kepemimpinan melalui berbagai kegiatan dan proyek kolaboratif.</li>
-        </ul>
-    </section>
-
-    <!-- Cara Bergabung -->
-    <section class="mb-6 max-w-2xl mx-auto text-left">
-        <h2 class="text-2xl font-semibold text-gray-800">Cara Bergabung Menjadi Kontributor</h2>
-        <p class="text-gray-700 leading-relaxed mt-2">
-            UKPM Explant terbuka bagi mahasiswa yang ingin berkontribusi dalam dunia jurnalistik. Berikut langkah-langkah untuk bergabung:
-        </p>
-        <ol class="list-decimal pl-5 text-gray-700 leading-relaxed mt-2">
-            <li>Mendaftarkan diri melalui formulir pendaftaran yang tersedia di situs atau media sosial UKPM Explant.</li>
-            <li>Mengikuti pelatihan dasar jurnalistik yang diselenggarakan oleh tim redaksi.</li>
-            <li>Menulis artikel atau membuat karya jurnalistik pertama sebagai bentuk latihan.</li>
-            <li>Menjadi bagian dari tim dengan mengikuti kegiatan dan proyek yang sedang berjalan.</li>
+    <section class="mb-6 max-w-2xl mx-auto text-justify">
+        <h2 class="italic text-gray-800 mb-2">Siapa Saja Mereka?</h2>
+        <p class="border-b border-gray-400 mb-4"></p>
+        <p class="text-gray-700 leading-relaxed mt-2">Explant Contributor terdiri dari:</p>
+        <ol class="list-decimal pl-6 text-gray-700 space-y-2 mt-2">
+            <li><b>Penulis</b><br>Mahasiswa yang menulis berita, opini, puisi, pantun, atau esai mendalam. Mereka memadukan observasi lapangan dan refleksi pemikiran untuk menghasilkan karya yang bermakna.</li>
+            <li><b>Fotografer</b><br>Kontributor yang menangkap realitas melalui lensa. Mereka menghadirkan perspektif visual dari isu sosial, kehidupan kampus, hingga momen-momen yang sering luput dari perhatian.</li>
+            <li><b>Desainer Grafis</b><br>Mereka merancang visualisasi pesan, membuat poster kritik, infografis, hingga ilustrasi untuk memperkuat narasi yang dibangun oleh redaksi.</li>
+            <li><b>Editor & Kurator</b><br>Kontributor yang bertugas menyunting, memilih, dan menyusun karya yang masuk agar tetap sejalan dengan visi MediaExplant. Mereka memastikan setiap konten layak tayang dari segi kualitas dan etika.</li>
+            <li><b>Distributor & Social Media Handler</b><br>Mereka membantu menyebarluaskan konten MediaExplant melalui kanal media sosial, menjaga interaksi dengan pembaca, serta memastikan karya sampai ke publik yang lebih luas.</li>
         </ol>
-        <p class="text-gray-700 mt-4">
-            Untuk informasi lebih lanjut, silakan hubungi kami melalui email:
-            <a href="mailto:ukpmexplant@gmail.com" class="text-red-500 hover:underline">ukpmexplant@gmail.com</a>
+    </section>
+
+    <section class="mb-6 max-w-2xl mx-auto text-justify">
+        <h2 class="italic text-gray-800 mb-2">Bergabung Jadi Explant Contributor</h2>
+        <p class="border-b border-gray-400 mb-4"></p>
+        <p class="text-gray-700 leading-relaxed mt-2">
+            Kami membuka ruang kolaborasi bagi mahasiswa yang ingin ikut menulis, memotret, mendesain, atau bahkan sekadar berbagi ide. Tak perlu jadi “ahli” yang kami cari adalah keberanian untuk berbicara dan semangat untuk belajar bersama.
         </p>
+
+        <div class="mt-4 space-y-2">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-[#000000] mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M21 8V7l-3 2-2-2-2 2-2-2-2 2-2-2-3 2V8l3-2 2 2 2-2 2 2 2-2 2 2 3-2zM3 20V10h18v10H3zm2-8v6h14v-6H5z"/></svg>
+                <span class="text-gray-700">Kirim pertanyaanmu ke : <b>ukpmexplant@journalist.com</b></span>
+            </div>
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-[#000000] mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M7.75 2A5.75 5.75 0 0 0 2 7.75v8.5A5.75 5.75 0 0 0 7.75 22h8.5A5.75 5.75 0 0 0 22 16.25v-8.5A5.75 5.75 0 0 0 16.25 2h-8.5Zm0 1.5h8.5A4.25 4.25 0 0 1 20.5 7.75v8.5A4.25 4.25 0 0 1 16.25 20.5h-8.5A4.25 4.25 0 0 1 3.5 16.25v-8.5A4.25 4.25 0 0 1 7.75 3.5Zm7.62 2.08a.75.75 0 1 0-1.44.34.75.75 0 0 0 1.44-.34ZM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 1.5A3.5 3.5 0 1 1 8.5 12 3.5 3.5 0 0 1 12 8.5Z"/></svg>
+                <span class="text-gray-700">Atau DM kami di Instagram : <b>@ukpmexplant</b></span>
+            </div>
+        </div>
     </section>
 </div>
 @endsection
