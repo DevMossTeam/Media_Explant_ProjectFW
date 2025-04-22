@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
+<div class="container mx-auto p-6 rounded-lg shadow-lg">
     <h1 class="text-3xl font-bold text-red-600 text-center mb-4">Tentang Kami</h1>
 
     <!-- Sejarah Organisasi -->

@@ -18,7 +18,6 @@
             <a href="{{ url('/kode-etik') }}" class="hover:underline">Kode Etik</a>
             <a href="{{ url('/explant-contributor') }}" class="hover:underline">Explant Contributor</a>
             <a href="{{ url('/struktur-organisasi') }}" class="hover:underline">Struktur Organisasi</a>
-            <a href="{{ url('/pusat-bantuan') }}" class="hover:underline">Pusat Bantuan</a>
         </div>
 
         <!-- Tombol Menu (Mobile) di Kanan -->
@@ -40,7 +39,6 @@
             <a href="{{ url('/kode-etik') }}" class="block hover:underline">Kode Etik</a>
             <a href="{{ url('/explant-contributor') }}" class="block hover:underline">Explant Contributor</a>
             <a href="{{ url('/struktur-organisasi') }}" class="block hover:underline">Struktur Organisasi</a>
-            <a href="{{ url('/pusat-bantuan') }}" class="block hover:underline">Pusat Bantuan</a>
         </nav>
     </div>
 </div>
