@@ -86,7 +86,8 @@ Route::get('/berita/terbaru', [BeritaController::class, 'getBeritaTerbaru']);
 Route::get('/berita/populer', [BeritaController::class, 'getBeritaPopuler']);
 Route::get('/berita/rekomendasi', [BeritaController::class, 'getBeritaRekomendasi']);
 Route::get('/berita/rekomendasi-lainnya', [BeritaController::class, 'getRekomendasiLainnya']);
-Route::get('/berita/{id}/terkait', [BeritaController::class, 'getBeritaTerkait']);
+Route::get('/berita/terkait', [BeritaController::class, 'getBeritaTerkait']);
+Route::get('/berita/status', [BeritaController::class, 'getStatusBeritaByUser']);
 
-
+                   
 

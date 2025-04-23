@@ -33,7 +33,7 @@ class Berita extends Model
 
     public function bookmarks()
     {
-        return $this->morphMany(Bookmark::class, 'bookmarkable', 'item_id', 'bookmark_type');
+        return $this->morphMany(Bookmark::class, 'bookmarkable','bookmark_type','item_id');
     }
 
     public function reaksis()

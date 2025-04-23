@@ -31,6 +31,6 @@ class Bookmark extends Model
 
     public function bookmarkable()
     {
-        return $this->morphTo();
+        return $this->morphTo(__FUNCTION__, 'bookmark_type', 'item_id');
     }
 }
