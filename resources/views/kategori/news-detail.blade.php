@@ -1,129 +1,168 @@
 @extends('layouts.app')
 
 @section('content')
-    <main class="py-8">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row gap-8 max-w-7xl mx-auto">
+    <main class="py-1">
+        <div
+            class="container mx-auto px-4 lg:px-16 xl:px-24 2xl:px-32 py-6 max-w-screen-2xl flex flex-col lg:flex-row gap-8">
 
-            <!-- Konten Berita -->
-            <div class="w-full md:w-2/3 lg:w-3/4">
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center">{{ $news->judul }}</h1>
+            <!-- Bagian Konten Kiri -->
+            <div class="w-full lg:w-3/5">
+                <!-- Label Kategori -->
+                <div class="mt-6">
+                    <div class="flex flex-col mb-8">
+                        <div class="flex items-center">
+                            <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
+                            <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605] flex items-center justify-center text-center"
+                                style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                                {{ $news->kategori }}
+                            </h2>
+                        </div>
+                        <div class="w-full h-[2px] bg-gray-300"></div>
+                    </div>
+                </div>
 
-                <p class="text-gray-600 text-xs md:text-sm mb-4 text-center">
-                    {{ $news->user->nama_lengkap ?? 'Tidak Diketahui' }} -
-                    {{ \Carbon\Carbon::parse($news->tanggal_diterbitkan)->format('d M Y') }} |
-                    Kategori: {{ $news->kategori }}
-                </p>
+                <!-- Judul dan Info -->
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{{ $news->judul }}</h1>
+                <div class="flex items-center justify-between text-sm text-gray-600 mb-4">
+                    <div>
+                        Oleh: {{ $news->user->nama_lengkap ?? 'Tidak Diketahui' }} -
+                        {{ \Carbon\Carbon::parse($news->tanggal_diterbitkan)->format('d F Y - H.i') }} WIB
+                    </div>
+                    <button class="flex items-center gap-2 text-gray-400 hover:text-gray-800" title="Simpan dan baca nanti">
+                        <span class="text-sm">Simpan dan baca nanti</span>
+                        <i class="far fa-bookmark text-xl"></i>
+                    </button>
+                </div>
 
+                <!-- Gambar Utama -->
                 @if (!str_contains($news->konten_berita, '<img'))
-                    <div class="flex justify-center mb-6">
+                    <div class="mb-6">
                         <img src="{{ $news->first_image }}" alt="Gambar Ilustrasi"
-                            class="rounded-lg shadow-md max-w-full h-auto pointer-events-none select-none">
+                            class="rounded-lg shadow-md w-full max-w-full mx-auto pointer-events-none select-none">
                     </div>
                 @endif
 
-                {!! preg_replace([
-        '/<a[^>]*>\s*(<img[^>]*>)\s*<\/a>/i',
-        '/<img(.*?)>/i'
-    ], [
-        '$1',
-        '<img$1 class="mx-auto pointer-events-none select-none">'
-    ], $news->konten_berita) !!}
+                <!-- Konten Berita -->
+                {!! preg_replace(
+                    ['/<a[^>]*>\s*(<img[^>]*>)\s*<\/a>/i', '/<img(.*?)>/i'],
+                    ['$1', '<img$1 class="mx-auto pointer-events-none select-none mb-6 rounded-lg w-full h-auto">'],
+                    $news->konten_berita,
+                ) !!}
 
-                <div class="flex flex-wrap justify-between items-center mt-6 border-t pt-4">
-                    <div class="flex flex-wrap space-x-2">
-                        <button id="likeButton" class="flex items-center bg-gray-100 px-3 py-2 rounded-lg text-gray-600 hover:bg-blue-100">
-                            <i class="fas fa-thumbs-up mr-2"></i> <span id="likeCount">0</span>
+                <!-- Tanggapan -->
+                <div class="mt-5">
+                    <div class="text-sm font-semibold text-black mb-2">Beri Tanggapanmu :</div>
+                    <div class="flex items-center gap-6 text-[#ABABAB]">
+                        <button class="flex items-center gap-2 hover:text-gray-700">
+                            <i class="fas fa-thumbs-up"></i> 107
                         </button>
-                        <button id="dislikeButton" class="flex items-center bg-gray-100 px-3 py-2 rounded-lg text-gray-600 hover:bg-red-100">
-                            <i class="fas fa-thumbs-down mr-2"></i> <span id="dislikeCount">0</span>
+                        <button class="flex items-center gap-2 hover:text-gray-700">
+                            <i class="fas fa-thumbs-down"></i> 0
                         </button>
-                        <button class="flex items-center bg-gray-100 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-200">
-                            <i class="fas fa-share mr-2"></i>
+                        <button class="flex items-center gap-2 hover:text-gray-700">
+                            <i class="fas fa-share-nodes"></i> <span>Share</span>
                         </button>
-                        <button class="flex items-center bg-gray-100 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-200">
-                            <i class="fas fa-bookmark mr-2"></i>
-                        </button>
-                        <button class="flex items-center bg-gray-100 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-200">
-                            <i class="fas fa-flag mr-2"></i>
+                        <button class="ml-auto text-red-600 hover:text-red-800 bg-red-100 rounded-full p-2"
+                            title="Laporkan">
+                            <i class="fas fa-flag"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Area Komentar -->
-                <h2 class="text-lg md:text-xl font-bold text-gray-800 mt-8 mb-4">Komentar (0)</h2>
-                <div class="flex items-center border rounded-lg p-2 bg-gray-100">
-                    <input type="text" class="w-full p-2 rounded-lg border-none outline-none bg-gray-100"
-                        placeholder="Tulis komentarmu disini">
-                    <button
-                        class="ml-2 bg-red-600 hover:bg-red-700 text-white p-3 rounded-full shadow-md transition-all duration-200 ease-in-out flex items-center justify-center">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                <div class="mt-4 p-6 bg-gray-50 border rounded-lg text-center text-gray-500">
-                    <i class="fas fa-comments text-2xl"></i>
-                    <p class="mt-2">Belum ada komentar. Jadilah yang pertama untuk memberikan komentar!</p>
+                <!-- Komentar -->
+                <div class="mt-5">
+                    <form action="#" method="POST">
+                        @csrf
+                        <div class="relative w-full">
+                            <input type="text" name="komentar" placeholder="Tulis komentarmu disini"
+                                class="w-full border border-[#9A0605] rounded-full pr-12 pl-4 py-2 text-sm focus:outline-none" />
+                            <button type="submit"
+                                class="absolute right-0 top-0 bottom-0 w-10 flex items-center justify-center bg-[#9A0605] rounded-full rounded-l-none text-white hover:bg-red-800">
+                                <i class="fas fa-paper-plane text-sm"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-3 border border-gray-200 rounded-lg p-4 bg-gray-50 text-sm text-gray-500 text-center">
+                        Belum Ada Komentar
+                    </div>
                 </div>
             </div>
 
-            <!-- Sidebar: Daftar Berita Lainnya -->
-            <div class="w-full md:w-1/3 lg:w-1/4">
-                <h2 class="text-lg md:text-xl font-bold text-gray-800 mb-4 text-center">Berita Lainnya</h2>
-
-                <!-- PRODUK (Grid 2 Kolom) -->
-                <h3 class="text-md md:text-lg font-semibold text-gray-700 mt-4">Produk</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    @for ($i = 1; $i <= 2; $i++)
-                        <div class="bg-gray-100 p-3 rounded-lg shadow-md hover:bg-gray-200 transition cursor-pointer">
-                            <img src="https://via.placeholder.com/150" alt="Thumbnail" class="w-full rounded-md object-cover">
-                            <h3 class="font-semibold text-gray-700 text-sm mt-2">Judul Produk {{ $i }}</h3>
-                            <p class="text-xs text-gray-600">Kategori | {{ now()->subDays($i)->format('d M Y') }}</p>
+            <!-- Bagian Samping Kanan -->
+            <div class="w-full lg:w-2/5">
+                <!-- Berita Terkait -->
+                @if (isset($relatedNews))
+                    <div class="mb-6">
+                        <div class="flex items-center mb-2">
+                            <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
+                            <h3 class="text-white bg-[#9A0605] px-6 py-1 font-semibold text-lg"
+                                style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                                Berita Terkait
+                            </h3>
                         </div>
-                    @endfor
-                </div>
-
-                <!-- KARYA (Daftar Vertikal) -->
-                <h3 class="text-md md:text-lg font-semibold text-gray-700 mt-4">Karya</h3>
-                <div class="space-y-3">
-                    @for ($i = 1; $i <= 2; $i++)
-                        <div
-                            class="flex items-center bg-gray-100 p-3 rounded-lg shadow-md hover:bg-gray-200 transition cursor-pointer">
-                            <img src="https://via.placeholder.com/80" alt="Thumbnail"
-                                class="w-16 h-16 rounded-md object-cover mr-3">
-                            <div>
-                                <h3 class="font-semibold text-gray-700 text-sm">Judul Karya {{ $i }}</h3>
-                                <p class="text-xs text-gray-600">Kategori | {{ now()->subDays($i)->format('d M Y') }}</p>
-                            </div>
+                        <div class="grid grid-cols-1 gap-4">
+                            @foreach ($relatedNews as $item)
+                                <div class="bg-white shadow-sm rounded-md overflow-hidden">
+                                    <a href="?a={{ $item->id }}" class="block">
+                                        <img src="{{ $item->thumbnail ?? $item->first_image }}"
+                                            class="w-full h-36 object-cover" alt="{{ $item->judul }}">
+                                        <div class="p-3 text-sm font-semibold text-gray-700">{{ $item->judul }}</div>
+                                    </a>
+                                </div>
+                            @endforeach
                         </div>
-                    @endfor
-                </div>
+                    </div>
+                @endif
 
-                <!-- BERITA POPULER (Slider Horizontal) -->
-                <h3 class="text-md md:text-lg font-semibold text-gray-700 mt-4">Berita Populer</h3>
-                <div class="flex overflow-x-auto space-x-3 py-2">
-                    @for ($i = 1; $i <= 3; $i++)
-                        <div
-                            class="min-w-[120px] md:min-w-[160px] bg-gray-100 p-3 rounded-lg shadow-md hover:bg-gray-200 transition cursor-pointer">
-                            <img src="https://via.placeholder.com/120" alt="Thumbnail" class="w-full rounded-md object-cover">
-                            <h3 class="font-semibold text-gray-700 text-xs md:text-sm mt-2">Populer {{ $i }}</h3>
+                <!-- Mungkin Anda Suka -->
+                @if (isset($recommendedNews))
+                    <div class="mb-6">
+                        <div class="flex items-center mb-2">
+                            <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
+                            <h3 class="text-white bg-[#9A0605] px-6 py-1 font-semibold text-lg"
+                                style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                                Mungkin Anda Suka
+                            </h3>
                         </div>
-                    @endfor
-                </div>
-
-                <!-- BERITA RANDOM (Kartu Besar) -->
-                <h3 class="text-md md:text-lg font-semibold text-gray-700 mt-4">Berita Random</h3>
-                <div class="space-y-4">
-                    @for ($i = 1; $i <= 3; $i++)
-                        <div class="bg-gray-100 p-4 rounded-lg shadow-md hover:bg-gray-200 transition cursor-pointer">
-                            <img src="https://via.placeholder.com/200" alt="Thumbnail" class="w-full rounded-md object-cover">
-                            <h3 class="font-semibold text-gray-700 text-base mt-2">Judul Random {{ $i }}</h3>
-                            <p class="text-xs text-gray-600">Kategori | {{ now()->subDays($i)->format('d M Y') }}</p>
+                        <div class="grid grid-cols-1 gap-4">
+                            @foreach ($recommendedNews as $item)
+                                <div class="bg-white shadow-sm rounded-md overflow-hidden">
+                                    <a href="?a={{ $item->id }}" class="block">
+                                        <img src="{{ $item->thumbnail ?? $item->first_image }}"
+                                            class="w-full h-36 object-cover" alt="{{ $item->judul }}">
+                                        <div class="p-3 text-sm font-semibold text-gray-700">{{ $item->judul }}</div>
+                                    </a>
+                                </div>
+                            @endforeach
                         </div>
-                    @endfor
-                </div>
-
+                    </div>
+                @endif
             </div>
-
         </div>
+
+        <!-- Topik Lainnya -->
+        @if (isset($otherTopics))
+            <div class="container mx-auto px-4 lg:px-16 xl:px-24 2xl:px-32 mt-10">
+                <div class="flex items-center mb-4">
+                    <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
+                    <h3 class="text-white bg-[#9A0605] px-6 py-1 font-semibold text-lg"
+                        style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                        Topik Lainnya
+                    </h3>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    @foreach ($otherTopics as $item)
+                        <div class="bg-white shadow rounded overflow-hidden">
+                            <a href="?a={{ $item->id }}" class="block">
+                                <img src="{{ $item->thumbnail ?? $item->first_image }}" class="w-full h-36 object-cover"
+                                    alt="{{ $item->judul }}">
+                                <div class="p-3 text-sm font-semibold text-gray-700">{{ $item->judul }}</div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </main>
 
     <script>
@@ -132,7 +171,7 @@
         let likeCount = 0;
         let dislikeCount = 0;
 
-        document.getElementById('likeButton').addEventListener('click', function () {
+        document.getElementById('likeButton').addEventListener('click', function() {
             if (!liked) {
                 likeCount = 1;
                 dislikeCount = 0;
@@ -145,7 +184,7 @@
             updateCounts();
         });
 
-        document.getElementById('dislikeButton').addEventListener('click', function () {
+        document.getElementById('dislikeButton').addEventListener('click', function() {
             if (!disliked) {
                 dislikeCount = 1;
                 likeCount = 0;

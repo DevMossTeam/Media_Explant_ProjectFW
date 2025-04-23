@@ -42,10 +42,29 @@ class OlahragaNewsController extends Controller
      */
     public function show(Request $request)
     {
-        // Ambil ID dari query string ?a=id
         $newsId = $request->query('a');
         $news = OlahragaNews::where('id', $newsId)->firstOrFail();
 
-        return view('kategori.news-detail', compact('news'));
+        // Berita terkait berdasarkan kategori yang sama
+        $relatedNews = OlahragaNews::where('kategori', $news->kategori)
+            ->where('id', '!=', $news->id)
+            ->latest('tanggal_diterbitkan')
+            ->take(4)
+            ->get();
+
+        // Berita rekomendasi (bisa gunakan kriteria lain)
+        $recommendedNews = OlahragaNews::where('kategori', $news->kategori)
+            ->where('id', '!=', $news->id)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
+        // Topik lainnya (berita dari kategori berbeda)
+        $otherTopics = OlahragaNews::where('kategori', '!=', $news->kategori)
+            ->latest('tanggal_diterbitkan')
+            ->take(8)
+            ->get();
+
+        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics'));
     }
 }
