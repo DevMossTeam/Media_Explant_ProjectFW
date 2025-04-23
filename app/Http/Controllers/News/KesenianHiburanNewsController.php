@@ -61,14 +61,14 @@ class KesenianHiburanNewsController extends Controller
         $relatedNews = KesenianHiburanNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->latest('tanggal_diterbitkan')
-            ->take(4)
+            ->take(6)
             ->get();
 
         // Berita rekomendasi (bisa gunakan kriteria lain)
         $recommendedNews = KesenianHiburanNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->inRandomOrder()
-            ->take(4)
+            ->take(6)
             ->get();
 
         // Topik lainnya (berita dari kategori berbeda)

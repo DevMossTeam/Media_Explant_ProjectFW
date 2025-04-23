@@ -94,9 +94,31 @@ class HomeNewsController extends Controller
     /**
      * Tampilkan detail berita
      */
-    public function show(Request $request, $category)
+    public function show(Request $request)
     {
-        $news = HomeNews::where('id', $request->a)->firstOrFail();
-        return view('kategori.news-detail', compact('news'));
+        $newsId = $request->query('a');
+        $news = HomeNews::where('id', $newsId)->firstOrFail();
+
+        // Berita terkait berdasarkan kategori yang sama
+        $relatedNews = HomeNews::where('kategori', $news->kategori)
+            ->where('id', '!=', $news->id)
+            ->latest('tanggal_diterbitkan')
+            ->take(6)
+            ->get();
+
+        // Berita rekomendasi (bisa gunakan kriteria lain)
+        $recommendedNews = HomeNews::where('kategori', $news->kategori)
+            ->where('id', '!=', $news->id)
+            ->inRandomOrder()
+            ->take(6)
+            ->get();
+
+        // Topik lainnya (berita dari kategori berbeda)
+        $otherTopics = HomeNews::where('kategori', '!=', $news->kategori)
+            ->latest('tanggal_diterbitkan')
+            ->take(8)
+            ->get();
+
+        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics'));
     }
 }

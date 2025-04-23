@@ -49,14 +49,14 @@ class OlahragaNewsController extends Controller
         $relatedNews = OlahragaNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->latest('tanggal_diterbitkan')
-            ->take(4)
+            ->take(6)
             ->get();
 
         // Berita rekomendasi (bisa gunakan kriteria lain)
         $recommendedNews = OlahragaNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->inRandomOrder()
-            ->take(4)
+            ->take(6)
             ->get();
 
         // Topik lainnya (berita dari kategori berbeda)
