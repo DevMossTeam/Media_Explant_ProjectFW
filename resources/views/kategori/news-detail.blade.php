@@ -90,7 +90,7 @@
                             <div class="flex items-center">
                                 <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
                                 <h3 class="text-white font-bold bg-[#9A0605] px-6 py-1 text-lg"
-                                    style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                                    style="clip-path: polygon(0 0, 100% 0, 90% 100%, 0% 100%)">
                                     Berita Terkait
                                 </h3>
                             </div>
@@ -129,7 +129,7 @@
                             <div class="flex items-center">
                                 <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
                                 <h3 class="text-white font-bold bg-[#9A0605] px-6 py-1 text-lg"
-                                    style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                                    style="clip-path: polygon(0 0, 100% 0, 90% 100%, 0% 100%)">
                                     Mungkin Anda Suka
                                 </h3>
                             </div>
@@ -166,14 +166,16 @@
         <!-- Topik Lainnya -->
         @if (isset($otherTopics))
             <div class="container mx-auto px-4 lg:px-16 xl:px-24 2xl:px-32 mt-10 mb-20">
-                <div class="flex items-center mb-4">
-                    <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
-                    <h3 class="text-white font-bold bg-[#9A0605] px-6 py-1 text-lg"
-                        style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
-                        Topik Lainnya
-                    </h3>
+                <div class="flex flex-col mb-4">
+                    <div class="flex items-center">
+                        <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
+                        <h3 class="text-white font-bold bg-[#9A0605] px-6 py-1 text-lg"
+                            style="clip-path: polygon(0 0, 100% 0, 90% 100%, 0% 100%)">
+                            Topik Lainnya
+                        </h3>
+                    </div>
+                    <div class="w-full h-[2px] bg-gray-300"></div>
                 </div>
-                <div class="w-full h-[2px] bg-gray-300 mb-4"></div>
 
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     @foreach ($otherTopics as $item)

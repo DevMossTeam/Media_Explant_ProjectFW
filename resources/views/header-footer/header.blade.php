@@ -138,8 +138,10 @@
                         Profil <i class="fa-solid fa-chevron-down float-right"></i>
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li><a href="{{ route('profile') }}" class="text-gray-600 hover:text-[#990505]">Profil</a></li>
                         <li><a href="{{ route('settings') }}" class="text-gray-600 hover:text-[#990505]">Pengaturan</a>
+                        </li>
+                        <li><a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a></li>
+                        <li><a href="{{ route('bookmarked') }}" class="text-gray-600 hover:text-[#990505]">Disimpan</a>
                         </li>
                         <li><a href="{{ route('logout') }}" class="text-gray-600 hover:text-[#990505]">Keluar</a></li>
                     </ul>
@@ -161,7 +163,8 @@
                         Berita <i class="fa-solid fa-chevron-down float-right"></i>
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li><a href="{{ route('kampus') }}" class="text-gray-600 hover:text-[#990505]">Kampus</a></li>
+                        <li><a href="{{ route('kampus') }}" class="text-gray-600 hover:text-[#990505]">Kampus</a>
+                        </li>
                         <li><a href="{{ route('nasional-internasional') }}"
                                 class="text-gray-600 hover:text-[#990505]">Nasional dan Internasional</a></li>
                         <li><a href="{{ route('liputan-khusus') }}"
@@ -333,8 +336,9 @@
                 <div id="profileDropdown"
                     class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
                     @if ($user)
-                        <a href="{{ route('profile') }}" class="block px-4 py-2 hover:bg-gray-100">Profil</a>
                         <a href="{{ route('settings') }}" class="block px-4 py-2 hover:bg-gray-100">Pengaturan</a>
+                        <a href="{{ route('liked') }}" class="block px-4 py-2 hover:bg-gray-100">Disukai</a>
+                        <a href="{{ route('bookmarked') }}" class="block px-4 py-2 hover:bg-gray-100">Disimpan</a>
                         <a href="{{ route('draft-media') }}" class="block px-4 py-2 hover:bg-gray-100">Draf</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
