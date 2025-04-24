@@ -11,7 +11,7 @@
 </head>
 
 <body class="bg-gray-100 flex flex-col min-h-screen">
-    <header class="bg-blue-600 text-white py-4">
+    <header class="bg-blue-600 text-white py-4 relative">
         <div class="container mx-auto px-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold">Admin Dashboard</h1>
             <!-- Profil Dropdown -->
