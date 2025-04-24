@@ -90,7 +90,7 @@
                 <div class="flex items-center gap-3">
                     <img src="https://i.pravatar.cc/40" alt="avatar" class="w-10 h-10 rounded-full" />
                     <div>
-                        <h2 class="font-semibold">Contact For “Website Design”</h2>
+                        <h2 class="font-semibold">Feedback</h2>
                         <p class="text-sm text-gray-500">Codescandy &lt;hello@example.com&gt;</p>
                     </div>
                 </div>
@@ -125,11 +125,11 @@
                 </div> --}}
 
                 <!-- Action Buttons -->
-                <div class="flex gap-2 mt-6">
+                {{-- <div class="flex gap-2 mt-6">
                     <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm hover:bg-gray-200">↩️ Reply</button>
                     <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm hover:bg-gray-200">⤴️ Reply All</button>
                     <button class="bg-gray-100 px-4 py-2 rounded-lg text-sm hover:bg-gray-200">➡️ Forward</button>
-                </div>
+                </div> --}}
             </div>
         </div>
 
