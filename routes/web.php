@@ -172,27 +172,58 @@ Route::get('/kategori/news-detail/{id}', function ($id) {
 })->name('news.detail');
 
 // Route untuk dashboard Admin
-Route::get('/dashboard-admin', function () {
-    return view('dashboard-admin.index'); // View untuk dashboard Admin
-})->name('dashboard-admin');
+// Route::get('/dashboard-admin', function () {
+//     return view('dashboard-admin.index'); // View untuk dashboard Admin
+// })->name('dashboard-admin');
 
-Route::prefix('dashboard-admin')->group(function () {
-    Route::get('/', function () {
-        return view('dashboard-admin.index');
-    })->name('dashboard-admin');
 
-    Route::get('/articles', function () {
-        return view('dashboard-admin.articles');
-    })->name('dashboard-admin.articles');
+//prefix
 
-    Route::get('/members', function () {
-        return view('dashboard-admin.members');
-    })->name('dashboard-admin.members');
+// Route::prefix('dashboard-admin')->group(function () {
+//     Route::get('/', function () {
+//         return view('dashboard-admin.index');
+//     })->name('dashboard-admin');
 
-    Route::get('/events', function () {
-        return view('dashboard-admin.events');
-    })->name('dashboard-admin.events');
-});
+//     Route::get('/articles', function () {
+//         return view('dashboard-admin.articles');
+//     })->name('dashboard-admin.articles');
+
+//     Route::get('/members', function () {
+//         return view('dashboard-admin.members');
+//     })->name('dashboard-admin.members');
+
+//     Route::get('/events', function () {
+//         return view('dashboard-admin.events');
+//     })->name('dashboard-admin.events');
+// });
+
+// Rotute Tampilan Dashboard Admin
+Route::get('/dashboard-admin/berita', [AdminBeritaController::class, 'index'])->name('admin.berita.index');
+Route::post('/dashboard-admin/berita', [AdminBeritaController::class, 'store'])->name('admin.berita.store');
+Route::delete('/dashboard-admin/berita', [AdminBeritaController::class, 'delete'])->name('admin.berita.delete');
+Route::put('/dashboard-admin/berita', [AdminBeritaController::class, 'put'])->name('admin.berita.update');
+Route::get('/dashboard-admin/kotak-masuk', function () {
+    return view('dashboard-admin.menu.kotak_masuk');
+})->name('kotak_masuk');
+Route::get('/dashboard-admin/detail-kotak-masuk', function () {
+    return view('dashboard-admin.menu.detail_kotak_masuk');
+})->name('detail_kotak_masuk');
+
+Route::get('/dashboard-admin/settings', function () {
+    return view('dashboard-admin.menu.settings');
+})->name('admin.settings');
+
+Route::get('/dashboard-admin/edit_profile', function () {
+    return view('dashboard-admin.menu.edit_profile');
+})->name('admin.edit_profile');
+
+Route::get('/dashboard-admin/edit_profile', function () {
+    return view('dashboard-admin.menu.edit_profile');
+})->name('admin.edit_profile');
+
+Route::get('/dashboard-admin/berita', function () {
+    return view('dashboard-admin.menu.berita');
+})->name('admin.berita');
 
 // Route untuk menyimpan berita
 Route::post('/author/berita/store', [BeritaController::class, 'store'])->name('author.berita.store');
