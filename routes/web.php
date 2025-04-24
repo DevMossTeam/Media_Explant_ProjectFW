@@ -171,10 +171,10 @@ Route::get('/kategori/news-detail/{id}', function ($id) {
     return view('kategori.news-detail', compact('id'));
 })->name('news.detail');
 
-// Route untuk dashboard Admin
-// Route::get('/dashboard-admin', function () {
-//     return view('dashboard-admin.index'); // View untuk dashboard Admin
-// })->name('dashboard-admin');
+Route untuk dashboard Admin
+Route::get('/dashboard-admin', function () {
+     return view('dashboard-admin.index'); // View untuk dashboard Admin
+ })->name('dashboard-admin');
 
 
 //prefix
