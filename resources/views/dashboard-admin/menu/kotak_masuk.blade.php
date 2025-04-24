@@ -104,21 +104,22 @@
             <div class="h-96">
                 <div class="divide-y">
                     <!-- Sample row -->
-
-                    <div class="flex items-center justify-between py-3 hover:bg-gray-50">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" />
-                            <span class="text-gray-400">☆</span>
-                            <span class="font-medium text-gray-800">Search Console</span>
-                            <span class="text-sm text-gray-500 truncate max-w-xs">Lorem ipsum dolor sit amet,
-                                consectetur
-                                adipiscing elit...</span>
+                    <a href="/dashboard-admin/detail-kotak-masuk">
+                        <div class="flex items-center justify-between py-3 hover:bg-gray-50">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" />
+                                <span class="text-gray-400">☆</span>
+                                <span class="font-medium text-gray-800">Search Console</span>
+                                <span class="text-sm text-gray-500 truncate max-w-xs">Lorem ipsum dolor sit amet,
+                                    consectetur
+                                    adipiscing elit...</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Feedback</span>
+                                <span class="text-sm text-gray-400">Apr, 24</span>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Feedback</span>
-                            <span class="text-sm text-gray-400">Apr, 24</span>
-                        </div>
-                    </div>
+                    </a>
                     <!-- Example 2 -->
                     <div class="flex items-center justify-between py-3 hover:bg-gray-50">
                         <div class="flex items-center gap-3">
