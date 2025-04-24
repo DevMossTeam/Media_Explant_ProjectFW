@@ -1,83 +1,3 @@
-{{-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>@yield('title', 'Dashboard Admin')</title>
-  <!-- Tambahkan link CSS, misalnya Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}">
-<link rel="shortcut icon" href="{{ asset('assets/ukpm-explant-ic.png') }}" type="image/png">
-</head>
-
-<body class="bg-gray-100 flex flex-col min-h-screen">
-    <header class="bg-blue-600 text-white py-4 relative">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-            <!-- Profil Dropdown -->
-            <div class="relative">
-                @php
-                $userUid = Cookie::get('user_uid'); // Ambil UID pengguna dari cookie
-                $user = $userUid ? \App\Models\User::where('uid', $userUid)->first() : null;
-                @endphp
-                <button id="profileButton" class="flex items-center space-x-2 focus:outline-none">
-                    @if($user && $user->profile_pic)
-                    <img src="{{ asset($user->profile_pic) }}" alt="Profil" class="w-8 h-8 rounded-full">
-                    @else
-                    <i class="fa-solid fa-user-circle text-2xl"></i>
-                    @endif
-                    @if($user)
-                    <span class="text-sm">{{ $user->nama_pengguna ?? 'Admin' }}</span>
-                    @endif
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
-                        <path d="M7 10l5 5 5-5H7z" />
-                    </svg>
-                </button>
-                <div id="profileDropdown"
-                    class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Keluar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </header>
-    <main class="py-6 flex-grow">
-        @yield('content')
-        <!-- Section yang akan diisi oleh setiap halaman -->
-    </main>
-    <footer class="bg-gray-800 text-white py-4">
-        <div class="container mx-auto px-4 text-center">
-            &copy; 2025 UKM Eksplan Dashboard Admin. All Rights Reserved.
-        </div>
-    </footer>
-
-    <script>
-        // Toggle untuk dropdown profil
-        const profileButton = document.getElementById('profileButton');
-        const profileDropdown = document.getElementById('profileDropdown');
-
-        profileButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // Hentikan propagasi klik ke elemen lain
-            profileDropdown.classList.toggle('hidden');
-        });
-
-        // Tutup dropdown ketika klik di luar
-        document.addEventListener('click', (e) => {
-            if (!profileButton.contains(e.target) && !profileDropdown.contains(e.target)) {
-                profileDropdown.classList.add('hidden');
-            }
-        });
-
-    </script>
-
-    <!-- Tambahkan FontAwesome -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
-</body>
-
-</html> --}}
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -110,9 +30,9 @@
             display: none;
         }
 
-        /* Hover to expand:
+        /* Hover to expand: 
        We wrap the aside in a .group so that .group:hover can expand the sidebar.
-       Then we check if it’s “collapsed” but also hovered.
+       Then we check if it’s “collapsed” but also hovered. 
        If hovered, set width back to 64, show text, show submenus. */
         .group:hover .sidebar.collapsed {
             width: 16rem;
@@ -220,29 +140,34 @@
                         </li>
 
                         <li>
-                          <!-- Toggle for Submenu -->
-                          <div
-                              class="tableToggle flex items-center justify-between px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer transition-colors duration-300">
-                              <div class="flex items-center gap-2">
-                                  <i
-                                      class="tableIcon fa-solid fa-newspaper text-xl text-gray-500 w-8 text-center transition-colors duration-300"></i>
-                                  <span
-                                      class="tableText sidebar-text ml-1 text-base font-medium transition-colors duration-300">
-                                      Berita
-                                  </span>
-                              </div>
-                              <i
-                                  class="tableChevron fas fa-chevron-down text-sm text-gray-500 submenu-arrow transition-transform duration-300"></i>
-                          </div>
+                            <!-- Toggle for Submenu -->
+                            <div
+                                class="tableToggle flex items-center justify-between px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer transition-colors duration-300">
+                                <div class="flex items-center gap-2">
+                                    <i
+                                        class="tableIcon fa-solid fa-newspaper text-xl text-gray-500 w-8 text-center transition-colors duration-300"></i>
+                                    <span
+                                        class="tableText sidebar-text ml-1 text-base font-medium transition-colors duration-300">
+                                        Berita
+                                    </span>
+                                </div>
+                                <i
+                                    class="tableChevron fas fa-chevron-down text-sm text-gray-500 submenu-arrow transition-transform duration-300"></i>
+                            </div>
 
-                          <!-- Submenu -->
+                            <!-- Submenu -->
                             <ul
                                 class="tableSubmenu ml-12 mt-1 overflow-hidden transition-[max-height] duration-500 ease-in-out space-y-2 max-h-0">
-                                <li><a href="/dashboard-admin/berita" class="block py-2 text-gray-600 hover:text-gray-800">Kampus</a></li>
-                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Kesehatan & Atletik</a></li>
-                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Kesenian & Sejarah</a></li>
-                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Nasional International</a></li>
-                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Opini & Esai</a></li>
+                                <li><a href="/dashboard-admin/berita"
+                                        class="block py-2 text-gray-600 hover:text-gray-800">Kampus</a></li>
+                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Kesehatan &
+                                        Atletik</a></li>
+                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Kesenian &
+                                        Sejarah</a></li>
+                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Nasional
+                                        International</a></li>
+                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Opini & Esai</a>
+                                </li>
                                 <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Teknologi</a></li>
                             </ul>
                         </li>
@@ -273,7 +198,7 @@
         <!-- ========== MAIN CONTENT AREA ========== -->
         <div class="flex flex-col flex-1">
             <!-- HEADER (TOP BAR) -->
-            <header class="bg-white shadow-md flex items-center justify-between px-4 py-2">
+            <header class="bg-white shadow-md flex items-center justify-between px-4 py-2 z-50 relative">
                 <!-- Left side: Sidebar toggle button and search bar -->
                 <div class="flex items-center space-x-4">
                     <!-- Mobile: show sidebar toggle button -->
@@ -339,7 +264,13 @@
                             <!-- Dropdown content here -->
                             <a href="/dashboard-admin/user_profile"
                                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
-                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                    Logout
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -432,7 +363,7 @@
 
                 if (isOpen) {
                     submenu.style.maxHeight = submenu.scrollHeight +
-                    'px'; // force to full height before collapse
+                        'px'; // force to full height before collapse
                     requestAnimationFrame(() => {
                         submenu.style.maxHeight = '0';
                     });
