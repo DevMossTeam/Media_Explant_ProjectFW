@@ -110,9 +110,9 @@
             display: none;
         }
 
-        /* Hover to expand: 
+        /* Hover to expand:
        We wrap the aside in a .group so that .group:hover can expand the sidebar.
-       Then we check if it’s “collapsed” but also hovered. 
+       Then we check if it’s “collapsed” but also hovered.
        If hovered, set width back to 64, show text, show submenus. */
         .group:hover .sidebar.collapsed {
             width: 16rem;
@@ -238,7 +238,7 @@
                           <!-- Submenu -->
                             <ul
                                 class="tableSubmenu ml-12 mt-1 overflow-hidden transition-[max-height] duration-500 ease-in-out space-y-2 max-h-0">
-                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Kampus</a></li>
+                                <li><a href="/dashboard-admin/berita" class="block py-2 text-gray-600 hover:text-gray-800">Kampus</a></li>
                                 <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Kesehatan & Atletik</a></li>
                                 <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Kesenian & Sejarah</a></li>
                                 <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Nasional International</a></li>
