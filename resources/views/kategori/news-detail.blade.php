@@ -97,22 +97,24 @@
                             <div class="w-full h-[2px] bg-gray-300"></div>
                         </div>
 
-                        <div class="flex flex-col gap-4">
+                        <div class="grid grid-cols-2 gap-4">
                             @foreach ($relatedNews as $item)
-                                <div class="flex gap-3">
-                                    <img src="{{ $item->thumbnail ?? $item->first_image }}"
-                                        class="w-36 h-24 object-cover rounded-md flex-shrink-0" alt="{{ $item->judul }}">
-                                    <div class="flex flex-col">
-                                        <div class="font-bold text-sm text-gray-800 leading-snug">{{ $item->judul }}</div>
-                                        <div class="flex items-center gap-3 text-xs text-[#ABABAB] font-semibold mt-1">
-                                            <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
-                                            <div class="flex gap-2">
-                                                <div class="flex items-center gap-1">
-                                                    <i class="fa-regular fa-thumbs-up"></i><span>107</span>
-                                                </div>
-                                                <div class="flex items-center gap-1">
-                                                    <i class="fa-solid fa-share-nodes"></i><span>Share</span>
-                                                </div>
+                                <div>
+                                    <a href="?a={{ $item->id }}">
+                                        <img src="{{ $item->thumbnail ?? $item->first_image }}"
+                                            class="w-full h-36 object-cover rounded-md" alt="{{ $item->judul }}">
+                                    </a>
+                                    <a href="?a={{ $item->id }}">
+                                        <div class="font-bold text-sm text-gray-700 mt-2">{{ $item->judul }}</div>
+                                    </a>
+                                    <div class="flex items-center gap-3 text-xs text-[#ABABAB] font-semibold mt-1">
+                                        <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
+                                        <div class="flex gap-2">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fa-solid fa-share-nodes"></i><span>Share</span>
                                             </div>
                                         </div>
                                     </div>
@@ -143,7 +145,9 @@
                                         <img src="{{ $item->thumbnail ?? $item->first_image }}"
                                             class="w-full h-36 object-cover rounded-md" alt="{{ $item->judul }}">
                                     </a>
+                                    <a href="?a={{ $item->id }}">
                                     <div class="font-bold text-sm text-gray-700 mt-2">{{ $item->judul }}</div>
+                                    </a>
                                     <div class="flex items-center gap-3 text-xs text-[#ABABAB] font-semibold mt-1">
                                         <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                         <div class="flex gap-2">
@@ -184,7 +188,9 @@
                                 <img src="{{ $item->thumbnail ?? $item->first_image }}"
                                     class="w-full h-36 object-cover rounded-md" alt="{{ $item->judul }}">
                             </a>
+                            <a href="?a={{ $item->id }}">
                             <div class="font-bold text-sm text-gray-700 mt-2">{{ $item->judul }}</div>
+                            </a>
                             <div class="flex items-center gap-3 text-xs text-[#ABABAB] font-semibold mt-1">
                                 <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                 <div class="flex gap-2">
