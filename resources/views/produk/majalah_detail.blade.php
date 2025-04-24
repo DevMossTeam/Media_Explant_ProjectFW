@@ -66,8 +66,8 @@
             </div>
         </div>
 
-        <!-- Reaksi -->
-        <div class="mt-6">
+        {{-- Tanggapan --}}
+        <div class="mt-5">
             <div class="text-sm font-semibold text-black mb-2">Beri Tanggapanmu :</div>
             <div class="flex items-center gap-6 text-[#ABABAB]">
                 <button class="flex items-center gap-2 hover:text-gray-700">
@@ -77,11 +77,29 @@
                     <i class="fas fa-thumbs-down"></i> 0
                 </button>
                 <button class="flex items-center gap-2 hover:text-gray-700">
-                    <i class="fas fa-share-nodes"></i> 0
+                    <i class="fas fa-share-nodes"></i> <span>Share</span>
                 </button>
                 <button class="ml-auto text-red-600 hover:text-red-800 bg-red-100 rounded-full p-2" title="Laporkan">
                     <i class="fas fa-flag"></i>
                 </button>
+            </div>
+        </div>
+
+        {{-- Komentar --}}
+        <div class="mt-5">
+            <form action="#" method="POST">
+                @csrf
+                <div class="relative w-full">
+                    <input type="text" name="komentar" placeholder="Tulis komentarmu disini"
+                        class="w-full border border-[#9A0605] rounded-full pr-12 pl-4 py-2 text-sm focus:outline-none" />
+                    <button type="submit"
+                        class="absolute right-0 top-0 bottom-0 w-10 flex items-center justify-center bg-[#9A0605] rounded-full rounded-l-none text-white hover:bg-red-800">
+                        <i class="fas fa-paper-plane text-sm"></i>
+                    </button>
+                </div>
+            </form>
+            <div class="mt-3 border border-gray-200 rounded-lg p-4 bg-gray-50 text-sm text-gray-500 text-center">
+                Belum Ada Komentar
             </div>
         </div>
 
