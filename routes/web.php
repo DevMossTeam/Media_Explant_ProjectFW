@@ -158,6 +158,11 @@ Route::get('/authors/draft', function () {
     return view('authors.draft');
 })->name('draft-media');
 
+// Route untuk publikasi berita
+Route::get('/authors/published', function () {
+    return view('authors.published');
+})->name('published-media');
+
 Route::get('/authors/create-product', function () {
     return view('authors.create-product');
 })->name('create-product');

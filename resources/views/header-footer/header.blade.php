@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-yadaYadaHashKey" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <header class="bg-white shadow-md w-full flex items-center justify-between px-6 md:px-12 lg:px-24">
     <div class="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-3">
         <!-- Logo -->
@@ -120,7 +122,7 @@
                 <!-- Media Dropdown -->
                 <div class="group">
                     <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
-                        Buat <i class="fa-solid fa-chevron-down ml-1 text-sm text-gray-500"></i>
+                        Buat <i class="fa-solid fa-chevron-down float-right"></i>
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
                         <li><a href="{{ route('create-news') }}" class="text-gray-600 hover:text-[#990505]">Buat
@@ -142,6 +144,12 @@
                         </li>
                         <li><a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a></li>
                         <li><a href="{{ route('bookmarked') }}" class="text-gray-600 hover:text-[#990505]">Disimpan</a>
+                        </li>
+                        <li><a href="{{ route('draft-media') }}" class="text-gray-600 hover:text-[#990505]">Draf
+                                Karya</a>
+                        </li>
+                        <li><a href="{{ route('published-media') }}"
+                                class="text-gray-600 hover:text-[#990505]">Publikasi Karya</a>
                         </li>
                         <li><a href="{{ route('logout') }}" class="text-gray-600 hover:text-[#990505]">Keluar</a></li>
                     </ul>
@@ -299,10 +307,6 @@
                 <button id="articleButton"
                     class="flex items-center space-x-2 text-gray-700 hover:text-red-700 focus:outline-none">
                     <i class="fa-solid fa-square-plus text-lg text-gray-500 hover:text-red-700 focus:outline-none"></i>
-                    <span class="text-sm">Buat</span>
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M7 10l5 5 5-5H7z" />
-                    </svg>
                 </button>
                 <div id="articleDropdown"
                     class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
@@ -319,31 +323,61 @@
                     $userUid = Cookie::get('user_uid');
                     $user = $userUid ? \App\Models\User::where('uid', $userUid)->first() : null;
                 @endphp
-                <button id="profileButton"
-                    class="flex items-center space-x-2 text-gray-700 hover:text-red-700 focus:outline-none">
+
+                <button id="profileButton" class="flex items-center focus:outline-none">
                     @if ($user && $user->profile_pic)
-                        <img src="{{ asset($user->profile_pic) }}" alt="Profil" class="w-8 h-8 rounded-full">
+                        <img src="{{ asset($user->profile_pic) }}" alt="Profil" class="w-10 h-10 rounded-full">
                     @else
-                        <i class="fa-solid fa-user-circle text-lg"></i>
+                        <i class="fa-solid fa-user-circle text-2xl text-gray-700 hover:text-red-700"></i>
                     @endif
-                    @if ($user)
-                        <span class="text-sm">{{ $user->nama_pengguna }}</span>
-                    @endif
-                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M7 10l5 5 5-5H7z" />
-                    </svg>
                 </button>
+
                 <div id="profileDropdown"
-                    class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
+                    class="absolute right-0 mt-2 w-64 bg-white text-gray-800 shadow-lg rounded-md hidden z-50">
                     @if ($user)
-                        <a href="{{ route('settings') }}" class="block px-4 py-2 hover:bg-gray-100">Pengaturan</a>
-                        <a href="{{ route('liked') }}" class="block px-4 py-2 hover:bg-gray-100">Disukai</a>
-                        <a href="{{ route('bookmarked') }}" class="block px-4 py-2 hover:bg-gray-100">Disimpan</a>
-                        <a href="{{ route('draft-media') }}" class="block px-4 py-2 hover:bg-gray-100">Draf</a>
+                        <div class="px-4 py-4 border-b flex flex-col items-center">
+                            @if ($user->profile_pic)
+                                <img src="{{ asset($user->profile_pic) }}" alt="Profil"
+                                    class="w-16 h-16 rounded-full mb-2">
+                            @else
+                                <i class="fa-solid fa-user-circle text-4xl text-gray-700 mb-2"></i>
+                            @endif
+                            <div class="text-center">
+                                <p class="font-bold text-red-700 uppercase">{{ $user->nama_lengkap }}</p>
+                                <p class="text-sm text-gray-500">{{ $user->email }}</p>
+                            </div>
+                        </div>
+
+                        <a href="{{ route('settings') }}" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                            <img src="https://img.icons8.com/ios-filled/24/808080/settings.png" alt="Settings Icon"
+                                class="w-5 h-5 mr-3"> Pengaturan
+                        </a>
+                        <a href="{{ route('bookmarked') }}" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                            <img src="https://img.icons8.com/ios-filled/24/808080/bookmark-ribbon.png"
+                                alt="Bookmark Icon" class="w-5 h-5 mr-3"> Bookmark
+                        </a>
+                        <a href="{{ route('liked') }}" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                            <img src="https://img.icons8.com/ios-filled/24/808080/agreement.png"
+                                alt="Agreement Like Icon" class="w-5 h-5 mr-3"> Disukai
+                        </a>
+                        <a href="{{ route('draft-media') }}" class="flex items-center px-4 py-2 hover:bg-gray-100">
+                            <img src="https://img.icons8.com/ios-filled/24/808080/edit-property.png"
+                                alt="Edit Property Icon" class="w-5 h-5 mr-3"> Draft Karya
+                        </a>
+                        <a href="{{ route('published-media') }}"
+                            class="flex items-center px-4 py-2 hover:bg-gray-100">
+                            <img src="https://img.icons8.com/ios-filled/24/808080/internet.png"
+                                alt="Publikasi Karya Icon" class="w-5 h-5 mr-3"> publikasi Karya
+                        </a>
+
+                        <div class="border-t my-2"></div>
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
-                                class="block w-full text-left px-4 py-2 hover:bg-gray-100">Keluar</button>
+                                class="flex items-center w-full text-left px-4 py-2 hover:bg-gray-100">
+                                <i class="fa-solid fa-right-from-bracket w-5 text-gray-500 mr-3"></i> Keluar
+                            </button>
                         </form>
                     @else
                         <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-gray-100">Login</a>
