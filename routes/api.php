@@ -10,6 +10,7 @@ use App\Http\Controllers\API\SignUpController;
 use App\Http\Controllers\API\BookmarkController;
 use App\Http\Controllers\API\SecurityController;
 use App\Http\Controllers\API\GetProfileController;
+use App\Http\Controllers\API\ProdukController;
 use App\Http\Controllers\API\UpdateProfileController;
 
 /*
@@ -87,7 +88,9 @@ Route::get('/berita/populer', [BeritaController::class, 'getBeritaPopuler']);
 Route::get('/berita/rekomendasi', [BeritaController::class, 'getBeritaRekomendasi']);
 Route::get('/berita/rekomendasi-lainnya', [BeritaController::class, 'getRekomendasiLainnya']);
 Route::get('/berita/terkait', [BeritaController::class, 'getBeritaTerkait']);
-Route::get('/berita/status', [BeritaController::class, 'getStatusBeritaByUser']);
 
-                   
+
+Route::get('/produk-majalah', [ProdukController::class, 'getProdukMajalah']);
+Route::get('/produk-majalah/{id}/media', [ProdukController::class, 'getProdukMedia']);
+
 
