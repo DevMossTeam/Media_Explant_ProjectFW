@@ -10,7 +10,7 @@
         </div>
 
         <!-- Navigation -->
-        <nav class="hidden md:flex space-x-8">
+        <nav class="hidden lg:flex space-x-8">
             <ul class="flex space-x-8">
                 @php
                     $currentRoute = Route::currentRouteName();
@@ -213,9 +213,9 @@
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
                         <li><a href="{{ route('karya.puisi.index') }}"
-                                class="block px-4 py-2 hover:bg-gray-100">Puisi</a></li>
+                                class="text-gray-600 hover:text-[#990505]">Puisi</a></li>
                         <li><a href="{{ route('karya.pantun.index') }}"
-                                class="block px-4 py-2 hover:bg-gray-100">Pantun</a></li>
+                                class="text-gray-600 hover:text-[#990505]">Pantun</a></li>
                         <li><a href="{{ route('karya.syair.index') }}"
                                 class="text-gray-600 hover:text-[#990505]">Syair</a></li>
                         <li><a href="{{ route('karya.fotografi.index') }}"
@@ -229,7 +229,7 @@
         </div>
 
         <!-- Toggle Button for Sidebar -->
-        <button id="toggleSearchNotif" class="md:hidden text-gray-500 hover:text-red-700">
+        <button id="toggleSearchNotif" class="lg:hidden text-gray-500 hover:text-red-700">
             <i class="fa-solid fa-bars text-lg"></i>
         </button>
 
@@ -252,7 +252,7 @@
 
         <!-- Search & Notifications -->
         <div id="searchNotifContainer"
-            class="fixed top-0 right-0 w-48 h-screen bg-white shadow-lg transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center space-y-4 md:flex-row md:relative md:w-auto md:h-auto md:bg-transparent md:translate-x-0 md:shadow-none md:space-x-4 md:space-y-0 hidden md:flex">
+            class="ffixed top-0 right-0 w-48 h-screen bg-white shadow-lg transform translate-x-full transition-transform duration-300 flex flex-col items-center justify-center space-y-4 lg:flex-row lg:relative lg:w-auto lg:h-auto lg:bg-transparent lg:translate-x-0 lg:shadow-none lg:space-x-4 lg:space-y-0 hidden lg:flex">
             <!-- Tombol Search -->
             <button id="searchButton" class="text-gray-500 hover:text-red-700">
                 <i class="fa-solid fa-magnifying-glass text-lg"></i>
