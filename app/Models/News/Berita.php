@@ -2,11 +2,16 @@
 
 namespace App\Models\News;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use App\Models\User;
 use App\Models\UserReact\Reaksi;
 
 class Berita extends Model
 {
+    use HasFactory;
+
     protected $table = 'berita';
     protected $primaryKey = 'id';
     public $incrementing = false;
@@ -19,6 +24,27 @@ class Berita extends Model
         'kategori',
         'visibilitas',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($article) {
+            $article->id = (string) Str::uuid();
+        });
+    }
+
+    public function getFirstImageAttribute(): string
+    {
+        if (preg_match('/<img[^>]+src="([^">]+)"/i', $this->konten_berita, $matches)) {
+            return $matches[1];
+        }
+        return 'https://via.placeholder.com/400x200';
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'uid');
+    }
 
     public function reaksi()
     {

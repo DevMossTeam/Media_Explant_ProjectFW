@@ -305,3 +305,4 @@ Route::prefix('karya/desain-grafis')->name('karya.desain-grafis.')->group(functi
 });
 
 Route::post('/reaksi', [ReaksiController::class, 'store'])->name('reaksi.store');
+Route::get('/api/cek-reaksi/{newsId}', [ReaksiController::class, 'cekReaksi']);

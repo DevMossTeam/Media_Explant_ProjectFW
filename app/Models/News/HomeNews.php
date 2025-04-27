@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Models\User;
 
-class HomeNews extends Model
+class HomeNews extends Berita
 {
     use HasFactory;
 
@@ -42,7 +42,7 @@ class HomeNews extends Model
     /**
      * Ambil gambar pertama dari konten berita atau gunakan fallback
      */
-    public function getFirstImageAttribute()
+    public function getFirstImageAttribute(): string
     {
         if (preg_match('/<img[^>]+src="([^">]+)"/i', $this->konten_berita, $matches)) {
             return $matches[1];

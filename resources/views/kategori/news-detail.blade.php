@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <main class="py-1">
         <div
             class="container mx-auto px-4 lg:px-16 xl:px-24 2xl:px-32 py-6 max-w-screen-2xl flex flex-col lg:flex-row gap-8">
@@ -44,14 +45,16 @@
                 ) !!}
 
                 <!-- Tanggapan -->
-                <div class="mt-5">
+                <div class="mt-5" data-news-id="{{ $news->id }}">
                     <div class="text-sm font-semibold text-black mb-2">Beri Tanggapanmu :</div>
                     <div class="flex items-center gap-6 text-[#ABABAB]">
                         <button id="likeButton" class="flex items-center gap-2 hover:text-gray-700">
-                            <i class="fas fa-thumbs-up"></i> <span id="likeCount">0</span>
+                            <i class="fas fa-thumbs-up"></i>
+                            <span id="likeCount">{{ $news->reaksi->where('jenis_reaksi', 'Suka')->count() }}</span>
                         </button>
                         <button id="dislikeButton" class="flex items-center gap-2 hover:text-gray-700">
-                            <i class="fas fa-thumbs-down"></i> <span id="dislikeCount">0</span>
+                            <i class="fas fa-thumbs-down"></i>
+                            <span id="dislikeCount">{{ $news->reaksi->where('jenis_reaksi', 'Tidak Suka')->count() }}</span>
                         </button>
 
                         <!-- Tombol Share -->
@@ -233,7 +236,8 @@
                 </button>
 
                 <!-- Slide Icon Bagikan -->
-                <div id="iconContainer" class="flex overflow-x-auto space-x-6 px-10 py-2 scrollbar-none snap-x snap-mandatory">
+                <div id="iconContainer"
+                    class="flex overflow-x-auto space-x-6 px-10 py-2 scrollbar-none snap-x snap-mandatory">
                     <!-- WhatsApp -->
                     <a href="https://wa.me/?text={{ urlencode(request()->fullUrl()) }}" target="_blank"
                         class="flex flex-col items-center min-w-max">
@@ -355,42 +359,73 @@
 
 
     <script>
-        // Like/Dislike Logic
-        let liked = false;
-        let disliked = false;
-        let likeCount = 0;
-        let dislikeCount = 0;
+        document.addEventListener('DOMContentLoaded', function () {
+            let liked = false;
+            let disliked = false;
+            let likeCount = {{ $news->reaksi->where('jenis_reaksi', 'Suka')->count() }};
+            let dislikeCount = {{ $news->reaksi->where('jenis_reaksi', 'Tidak Suka')->count() }};
+            const newsId = "{{ $news->id }}";
+            const likeButton = document.getElementById('likeButton');
+            const dislikeButton = document.getElementById('dislikeButton');
+            const likeCountElement = document.getElementById('likeCount');
+            const dislikeCountElement = document.getElementById('dislikeCount');
 
-        document.getElementById('likeButton').addEventListener('click', function() {
-            if (!liked) {
-                likeCount = 1;
-                dislikeCount = 0;
-                liked = true;
-                disliked = false;
-            } else {
-                likeCount = 0;
-                liked = false;
+            likeButton.addEventListener('click', function () {
+                if (!liked) {
+                    likeCount++;
+                    disliked = false;
+                    dislikeCount = Math.max(dislikeCount - 1, 0); // Prevent negative dislike count
+                    liked = true;
+                } else {
+                    likeCount--;
+                    liked = false;
+                }
+                updateCounts();
+                submitReaction('Suka');
+            });
+
+            dislikeButton.addEventListener('click', function () {
+                if (!disliked) {
+                    dislikeCount++;
+                    liked = false;
+                    likeCount = Math.max(likeCount - 1, 0); // Prevent negative like count
+                    disliked = true;
+                } else {
+                    dislikeCount--;
+                    disliked = false;
+                }
+                updateCounts();
+                submitReaction('Tidak Suka');
+            });
+
+            function updateCounts() {
+                likeCountElement.textContent = likeCount;
+                dislikeCountElement.textContent = dislikeCount;
             }
-            updateCounts();
-        });
 
-        document.getElementById('dislikeButton').addEventListener('click', function() {
-            if (!disliked) {
-                dislikeCount = 1;
-                likeCount = 0;
-                disliked = true;
-                liked = false;
-            } else {
-                dislikeCount = 0;
-                disliked = false;
+            function submitReaction(jenisReaksi) {
+                fetch("{{ route('reaksi.store') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        jenis_reaksi: jenisReaksi,
+                        item_id: newsId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Reaction saved');
+                    } else {
+                        console.error('Error saving reaction');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             }
-            updateCounts();
         });
-
-        function updateCounts() {
-            document.getElementById('likeCount').textContent = likeCount;
-            document.getElementById('dislikeCount').textContent = dislikeCount;
-        }
 
         const shareModal = document.getElementById('shareModal');
         const openShareModal = document.getElementById('openShareModal');

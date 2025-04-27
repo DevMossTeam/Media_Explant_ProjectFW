@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Models\User;
 
-class LiputanKhususNews extends Model
+class LiputanKhususNews extends Berita
 {
     use HasFactory;
 

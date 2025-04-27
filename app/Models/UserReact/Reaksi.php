@@ -2,26 +2,27 @@
 
 namespace App\Models\UserReact;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Reaksi extends Model
 {
+    use HasFactory;
+
     protected $table = 'reaksi';
     protected $primaryKey = 'id';
-    public $incrementing = false;
-    protected $keyType = 'string';
+    public $timestamps = false;
 
     protected $fillable = [
-        'id',
         'user_id',
         'jenis_reaksi',
-        'tanggal_reaksi',
         'reaksi_type',
         'item_id',
+        'tanggal_reaksi',
     ];
 
     public function reaksiable()
     {
-        return $this->morphTo(__FUNCTION__, 'reaksi_type', 'item_id');
+        return $this->morphTo();
     }
 }
