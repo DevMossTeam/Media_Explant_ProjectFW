@@ -29,6 +29,7 @@ use App\Http\Controllers\Karya\PantunController;
 use App\Http\Controllers\Karya\SyairController;
 use App\Http\Controllers\Karya\FotografiController;
 use App\Http\Controllers\Karya\DesainGrafisController;
+use App\Http\Controllers\UserReact\ReaksiController;
 
 
 /*
@@ -302,3 +303,5 @@ Route::prefix('karya/desain-grafis')->name('karya.desain-grafis.')->group(functi
     Route::get('/', [DesainGrafisController::class, 'index'])->name('index');
     Route::get('/read', [DesainGrafisController::class, 'show'])->name('read');
 });
+
+Route::post('/reaksi', [ReaksiController::class, 'store'])->name('reaksi.store');
