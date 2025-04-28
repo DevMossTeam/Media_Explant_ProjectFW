@@ -48,33 +48,36 @@ class BeritaController extends Controller
     }
 
     public function getBeritaTerkait(Request $request)
-    {
-        $beritaId = $request->query('berita_id');
+{
+    // Ambil parameter dari query string
+    $userId = $request->query('user_id');
+    $beritaId = $request->query('berita_id');
+    $kategori = $request->query('kategori'); // kategori sebagai parameter
 
-        // Ambil berita utama berdasarkan ID
-        $beritaUtama = Berita::with('tags')->find($beritaId);
-
-        if (!$beritaUtama) {
-            return response()->json(['message' => 'Berita tidak ditemukan'], 404);
-        }
-
-        // Ambil tag id dari berita utama
-        $tagIds = $beritaUtama->tags->pluck('id')->toArray();
-
-        // Ambil berita terkait berdasarkan kategori atau tag yang sama, dan pastikan bukan berita utama
-        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-            ->where('id', '!=', $beritaId) // Pastikan berita utama tidak muncul
-            ->where(function ($query) use ($beritaUtama, $tagIds) {
-                $query->where('kategori', $beritaUtama->kategori)
-                    ->orWhereHas('tags', function ($q) use ($tagIds) {
-                        $q->whereIn('id', $tagIds);
-                    });
-            })
-            ->inRandomOrder()
-            ->get();
-
-        return response()->json($this->formatBeritaResponse($beritas, null)); // Tidak perlu user_id lagi
+    // Pastikan kategori ada dalam parameter
+    if (!$kategori) {
+        return response()->json(['message' => 'Kategori tidak ditemukan'], 400);
     }
+
+    // Ambil berita utama berdasarkan ID
+    $beritaUtama = Berita::find($beritaId);
+
+    if (!$beritaUtama) {
+        return response()->json(['message' => 'Berita tidak ditemukan'], 404);
+    }
+
+    // Ambil berita terkait berdasarkan kategori yang sama dan pastikan bukan berita utama
+    $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+        ->where('id', '!=', $beritaId) // Pastikan berita utama tidak muncul
+        ->where('kategori', $kategori) // Filter berdasarkan kategori yang sama
+        ->orderByDesc('tanggal_diterbitkan')
+        ->get();
+
+    // Format dan kembalikan response
+    return response()->json($this->formatBeritaResponse($beritas, $userId));
+}
+
+    
 
 
     public function getBeritaRekomendasi(Request $request)
