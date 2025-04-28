@@ -50,14 +50,13 @@
                     <div class="flex items-center gap-6 text-[#ABABAB]">
                         <button id="likeButton" class="flex items-center gap-2 hover:text-gray-700">
                             <i class="fas fa-thumbs-up"></i>
-                            <span id="likeCount">{{ $news->reaksi->where('jenis_reaksi', 'Suka')->count() }}</span>
+                            <span id="likeCount">{{ $likeCount ?? 0 }}</span> <!-- Jika belum ada, default 0 -->
                         </button>
                         <button id="dislikeButton" class="flex items-center gap-2 hover:text-gray-700">
                             <i class="fas fa-thumbs-down"></i>
-                            <span id="dislikeCount">{{ $news->reaksi->where('jenis_reaksi', 'Tidak Suka')->count() }}</span>
+                            <span id="dislikeCount">{{ $dislikeCount ?? 0 }}</span>
                         </button>
 
-                        <!-- Tombol Share -->
                         <div class="relative">
                             <button id="openShareModal" class="flex items-center gap-2 hover:text-gray-700">
                                 <i class="fas fa-share-nodes"></i> Share
@@ -359,22 +358,24 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             let liked = false;
             let disliked = false;
-            let likeCount = {{ $news->reaksi->where('jenis_reaksi', 'Suka')->count() }};
-            let dislikeCount = {{ $news->reaksi->where('jenis_reaksi', 'Tidak Suka')->count() }};
+            let likeCount = {{ $likeCount ?? 0 }};
+            let dislikeCount = {{ $dislikeCount ?? 0 }};
             const newsId = "{{ $news->id }}";
             const likeButton = document.getElementById('likeButton');
             const dislikeButton = document.getElementById('dislikeButton');
             const likeCountElement = document.getElementById('likeCount');
             const dislikeCountElement = document.getElementById('dislikeCount');
 
-            likeButton.addEventListener('click', function () {
+            likeButton.addEventListener('click', function() {
                 if (!liked) {
                     likeCount++;
-                    disliked = false;
-                    dislikeCount = Math.max(dislikeCount - 1, 0); // Prevent negative dislike count
+                    if (disliked) {
+                        dislikeCount = Math.max(dislikeCount - 1, 0);
+                        disliked = false;
+                    }
                     liked = true;
                 } else {
                     likeCount--;
@@ -384,11 +385,13 @@
                 submitReaction('Suka');
             });
 
-            dislikeButton.addEventListener('click', function () {
+            dislikeButton.addEventListener('click', function() {
                 if (!disliked) {
                     dislikeCount++;
-                    liked = false;
-                    likeCount = Math.max(likeCount - 1, 0); // Prevent negative like count
+                    if (liked) {
+                        likeCount = Math.max(likeCount - 1, 0);
+                        liked = false;
+                    }
                     disliked = true;
                 } else {
                     dislikeCount--;
@@ -405,25 +408,34 @@
 
             function submitReaction(jenisReaksi) {
                 fetch("{{ route('reaksi.store') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        jenis_reaksi: jenisReaksi,
-                        item_id: newsId
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        credentials: 'same-origin', // <- WAJIB ADA AGAR COOKIE LOGIN TERKIRIM
+                        body: JSON.stringify({
+                            jenis_reaksi: jenisReaksi,
+                            item_id: newsId
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log('Reaction saved');
-                    } else {
-                        console.error('Error saving reaction');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error('Server error:', response.status);
+                            throw new Error('HTTP error ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Reaction saved successfully.');
+                        } else {
+                            console.error('Failed to save reaction:', data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error submitting reaction:', error);
+                    });
             }
         });
 

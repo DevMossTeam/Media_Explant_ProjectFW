@@ -4,6 +4,7 @@ namespace App\Http\Controllers\News;
 
 use App\Http\Controllers\Controller;
 use App\Models\News\KampusNews;
+use App\Models\UserReact\Reaksi;
 use Illuminate\Http\Request;
 
 class KampusNewsController extends Controller
@@ -13,7 +14,7 @@ class KampusNewsController extends Controller
      */
     public function index()
     {
-        $terbaru = KampusNews::with('user')
+        $terbaru = KampusNews::with(relations: 'user')
             ->where('kategori', 'Kampus')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
@@ -45,26 +46,31 @@ class KampusNewsController extends Controller
         $newsId = $request->query('a');
         $news = KampusNews::where('id', $newsId)->firstOrFail();
 
-        // Berita terkait berdasarkan kategori yang sama
+        $likeCount = Reaksi::where('item_id', $news->id)
+            ->where('jenis_reaksi', 'Suka')
+            ->count();
+
+        $dislikeCount = Reaksi::where('item_id', $news->id)
+            ->where('jenis_reaksi', 'Tidak Suka')
+            ->count();
+
         $relatedNews = KampusNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->latest('tanggal_diterbitkan')
             ->take(6)
             ->get();
 
-        // Berita rekomendasi (bisa gunakan kriteria lain)
         $recommendedNews = KampusNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->inRandomOrder()
             ->take(6)
             ->get();
 
-        // Topik lainnya (berita dari kategori berbeda)
         $otherTopics = KampusNews::where('kategori', '!=', $news->kategori)
             ->latest('tanggal_diterbitkan')
             ->take(8)
             ->get();
 
-        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics'));
+        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount'));
     }
 }

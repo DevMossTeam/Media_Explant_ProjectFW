@@ -5,6 +5,7 @@ namespace App\Http\Controllers\News;
 use App\Http\Controllers\Controller;
 use App\Models\News\NasionalInternasionalNews;
 use Illuminate\Http\Request;
+use App\Models\UserReact\Reaksi;
 
 class NasionalInternasionalNewsController extends Controller
 {
@@ -56,6 +57,14 @@ class NasionalInternasionalNewsController extends Controller
     {
         $newsId = $request->query('a');
         $news = NasionalInternasionalNews::where('id', $newsId)->firstOrFail();
+
+        $likeCount = Reaksi::where('item_id', $news->id)
+            ->where('jenis_reaksi', 'Suka')
+            ->count();
+
+        $dislikeCount = Reaksi::where('item_id', $news->id)
+            ->where('jenis_reaksi', 'Tidak Suka')
+            ->count();
 
         // Berita terkait berdasarkan kategori yang sama
         $relatedNews = NasionalInternasionalNews::where('kategori', $news->kategori)

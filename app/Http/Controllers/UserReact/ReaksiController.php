@@ -4,16 +4,13 @@ namespace App\Http\Controllers\UserReact;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use App\Models\News\Berita;
 use App\Models\UserReact\Reaksi;
 
 class ReaksiController extends Controller
 {
     public function store(Request $request)
     {
-        // Pastikan user sudah login
         if (!Auth::check()) {
             return response()->json(['error' => 'User not authenticated'], 401);
         }
@@ -23,29 +20,40 @@ class ReaksiController extends Controller
             'item_id' => 'required|string|max:255',
         ]);
 
-        $berita = Berita::findOrFail($request->item_id);
-        $userId = Auth::id();  // Ambil user_id yang sedang login
+        $userId = Auth::id();
+        $itemId = $request->item_id;
+        $reaksiType = 'Berita';
 
-        // Periksa apakah user sudah memberikan reaksi
-        $existingReaksi = $berita->reaksi()->where('user_id', $userId)->first();
+        $existingReaksi = Reaksi::where('user_id', $userId)
+            ->where('item_id', $itemId)
+            ->where('reaksi_type', $reaksiType)
+            ->first();
 
         if ($existingReaksi) {
-            // Jika sudah ada reaksi, update jenis reaksi
-            $existingReaksi->update([
-                'jenis_reaksi' => $request->jenis_reaksi,
-                'tanggal_reaksi' => now(),
-            ]);
+            if ($existingReaksi->jenis_reaksi == $request->jenis_reaksi) {
+                $existingReaksi->delete();
+            } else {
+                $existingReaksi->update([
+                    'jenis_reaksi' => $request->jenis_reaksi,
+                    'tanggal_reaksi' => now(),
+                ]);
+            }
         } else {
-            // Jika belum ada reaksi, simpan reaksi baru
-            $berita->reaksi()->create([
+            Reaksi::create([
+                'id' => $this->generateId(12),
                 'user_id' => $userId,
                 'jenis_reaksi' => $request->jenis_reaksi,
+                'reaksi_type' => $reaksiType,
+                'item_id' => $itemId,
                 'tanggal_reaksi' => now(),
-                'reaksi_type' => 'Berita',
-                'item_id' => $berita->id,
             ]);
         }
 
         return response()->json(['success' => true]);
+    }
+
+    private function generateId($length = 12)
+    {
+        return substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
     }
 }

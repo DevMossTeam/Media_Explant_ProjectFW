@@ -4,6 +4,7 @@ namespace App\Models\UserReact;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Reaksi extends Model
 {
@@ -11,9 +12,12 @@ class Reaksi extends Model
 
     protected $table = 'reaksi';
     protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
     public $timestamps = false;
 
     protected $fillable = [
+        'id',
         'user_id',
         'jenis_reaksi',
         'reaksi_type',
@@ -21,8 +25,20 @@ class Reaksi extends Model
         'tanggal_reaksi',
     ];
 
-    public function reaksiable()
+    // Bikin ID pendek 12 karakter
+    protected static function boot()
     {
-        return $this->morphTo();
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = self::generateShortId();
+            }
+        });
+    }
+
+    private static function generateShortId()
+    {
+        return substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 12);
     }
 }

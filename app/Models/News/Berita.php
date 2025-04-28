@@ -5,7 +5,6 @@ namespace App\Models\News;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use App\Models\User;
 use App\Models\UserReact\Reaksi;
 
 class Berita extends Model
@@ -29,25 +28,13 @@ class Berita extends Model
     {
         parent::boot();
         static::creating(function ($article) {
-            $article->id = (string) Str::uuid();
+            // Generate UUID yang akan dikonversi menjadi 12 karakter acak
+            $article->id = substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 12)), 0, 12);
         });
-    }
-
-    public function getFirstImageAttribute(): string
-    {
-        if (preg_match('/<img[^>]+src="([^">]+)"/i', $this->konten_berita, $matches)) {
-            return $matches[1];
-        }
-        return 'https://via.placeholder.com/400x200';
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'uid');
     }
 
     public function reaksi()
     {
-        return $this->morphMany(Reaksi::class, 'reaksiable', 'reaksi_type', 'item_id');
+        return $this->morphMany(\App\Models\UserReact\Reaksi::class, 'reaksiable', 'reaksi_type', 'item_id');
     }
 }

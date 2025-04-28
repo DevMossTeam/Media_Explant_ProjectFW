@@ -5,6 +5,7 @@ namespace App\Http\Controllers\News;
 use App\Http\Controllers\Controller;
 use App\Models\News\KesehatanNews;
 use Illuminate\Http\Request;
+use App\Models\UserReact\Reaksi;
 
 class KesehatanNewsController extends Controller
 {
@@ -44,6 +45,14 @@ class KesehatanNewsController extends Controller
     {
         $newsId = $request->query('a');
         $news = KesehatanNews::where('id', $newsId)->firstOrFail();
+
+        $likeCount = Reaksi::where('item_id', $news->id)
+            ->where('jenis_reaksi', 'Suka')
+            ->count();
+
+        $dislikeCount = Reaksi::where('item_id', $news->id)
+            ->where('jenis_reaksi', 'Tidak Suka')
+            ->count();
 
         // Berita terkait berdasarkan kategori yang sama
         $relatedNews = KesehatanNews::where('kategori', $news->kategori)
