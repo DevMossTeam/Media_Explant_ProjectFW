@@ -9,21 +9,43 @@ use App\Http\Controllers\Controller;
 
 class ProdukController extends Controller
 {
-    // 1. Endpoint ambil daftar produk (tanpa BLOB media)
-    public function getProdukMajalah(Request $request)
-    {
-        $userId = $request->query('user_id') ?? null;
 
-        // Mengambil data produk kategori majalah
-        $produk = Produk::where('kategori', 'majalah')
-            ->with(['user', 'bookmarks', 'reaksis', 'komentars'])
+    public function getProdukMajalah(Request $request){
+    $userId = $request->query('user_id') ?? null;
+    $produk = Produk::select([
+                'id', 
+                'user_id', 
+                'judul', 
+                'deskripsi', 
+                'release_date', 
+                'kategori'
+            ])
+            ->where('kategori', 'Majalah')
+            ->with(['user:id,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
             ->orderBy('release_date', 'desc')
-            ->limit(2)
             ->get();
 
-        // Format dan kirimkan response
-        return response()->json($this->formatProdukResponse($produk, $userId));
-    }
+    return response()->json($this->formatProdukResponse($produk, $userId));
+}
+
+public function getProdukBuletin(Request $request){
+    $userId = $request->query('user_id') ?? null;
+    $produk = Produk::select([
+                'id', 
+                'user_id', 
+                'judul', 
+                'deskripsi', 
+                'release_date', 
+                'kategori'
+            ])
+            ->where('kategori', 'Buletin')
+            ->with(['user:id,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
+            ->orderBy('release_date', 'desc')
+            ->get();
+
+    return response()->json($this->formatProdukResponse($produk, $userId));
+}
+
 
     // Fungsi format data produk
     private function formatProdukResponse($produks, $userId)
@@ -31,6 +53,7 @@ class ProdukController extends Controller
         return $produks->map(function ($produk) use ($userId) {
             $tanggalDiterbitkan = Carbon::parse($produk->release_date);
 
+        
             return [
                 'idproduk' => $produk->id,
                 'penulis' => $produk->user_id,
@@ -39,7 +62,6 @@ class ProdukController extends Controller
                 'release_date' => $tanggalDiterbitkan->toDateTimeString(),
                 'profil' => $produk->user->profile_pic ?? null,
                 'kategori' => $produk->kategori,
-                // Hanya kirimkan link untuk ambil media
                 'media_url' => url('/api/produk-majalah/'.$produk->id.'/media'),
                 'jumlahLike' => $produk->reaksis->where('jenis_reaksi', 'Suka')->count(),
                 'jumlahDislike' => $produk->reaksis->where('jenis_reaksi', 'Tidak Suka')->count(),
@@ -64,4 +86,6 @@ class ProdukController extends Controller
             ->header('Content-Type', 'application/pdf')
             ->header('Content-Disposition', 'inline; filename="produk-'.$produk->id.'.pdf"');
     }
+
+   
 }
