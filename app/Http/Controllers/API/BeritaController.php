@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\API;
 
 use App\Models\API\Berita;
@@ -10,7 +11,8 @@ use Carbon\Carbon;
 class BeritaController extends Controller
 {
     // Mengambil semua berita
-    public function getAllBerita(Request $request){
+    public function getAllBerita(Request $request)
+    {
         $userId = $request->query('user_id');
         $userId = $userId ? $userId : null;
         $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])->get();
@@ -18,33 +20,35 @@ class BeritaController extends Controller
     }
 
     // Mengambil berita terbaru
-    public function getBeritaTerbaru(Request $request){
+    public function getBeritaTerbaru(Request $request)
+    {
         $userId = $request->query('user_id');
         $userId = $userId ? $userId : null;
         $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-                    ->orderByDesc('tanggal_diterbitkan')
-                    ->limit(10)
-                    ->get();
+            ->orderByDesc('tanggal_diterbitkan')
+            ->get();
         return response()->json($this->formatBeritaResponse($beritas, $userId));
     }
 
     // Mengambil berita populer (berdasarkan jumlah "like".
-    public function getBeritaPopuler(Request $request){
+    public function getBeritaPopuler(Request $request)
+    {
         $userId = $request->query('user_id');
         $userId = $userId ? $userId : null;
 
         $beritas = Berita::withCount(['reaksis as jumlah_like' => function ($q) {
-                            $q->where('jenis_reaksi', 'Suka');
-                        }])
-                        ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-                        ->orderByDesc('jumlah_like')
-                        ->orderByDesc('view_count')
-                        ->limit(10)
-                        ->get();
+            $q->where('jenis_reaksi', 'Suka');
+        }])
+            ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->orderByDesc('jumlah_like')
+            ->orderByDesc('view_count')
+            ->limit(5)
+            ->get();
         return response()->json($this->formatBeritaResponse($beritas, $userId));
     }
 
-    public function getBeritaTerkait(Request $request){
+    public function getBeritaTerkait(Request $request)
+    {
         $beritaId = $request->query('berita_id');
 
         // Ambil berita utama berdasarkan ID
@@ -67,14 +71,14 @@ class BeritaController extends Controller
                     });
             })
             ->inRandomOrder()
-            ->limit(6)
             ->get();
 
         return response()->json($this->formatBeritaResponse($beritas, null)); // Tidak perlu user_id lagi
     }
 
 
-    public function getBeritaRekomendasi(Request $request){
+    public function getBeritaRekomendasi(Request $request)
+    {
         $userId = $request->query('user_id');
 
         // Ambil kategori berita yang pernah dibookmark user (jika user login)
@@ -89,22 +93,20 @@ class BeritaController extends Controller
         // Jika ada kategori favorit, ambil berita berdasarkan kategori tersebut
         if ($kategoriFavorit->isNotEmpty()) {
             $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-                        ->whereIn('kategori', $kategoriFavorit)
-                        ->inRandomOrder()
-                        ->limit(10)
-                        ->get();
+                ->whereIn('kategori', $kategoriFavorit)
+                ->inRandomOrder()
+                ->get();
         } else {
             // Jika tidak ada (user belum login atau belum pernah bookmark), ambil berdasarkan view & like
             $beritas = Berita::withCount([
-                            'reaksis as like_count' => function ($q) {
-                                $q->where('jenis_reaksi', 'Suka');
-                            }
-                        ])
-                        ->orderByDesc('view_count')
-                        ->orderByDesc('like_count')
-                        ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-                        ->limit(10)
-                        ->get();
+                'reaksis as like_count' => function ($q) {
+                    $q->where('jenis_reaksi', 'Suka');
+                }
+            ])
+                ->orderByDesc('view_count')
+                ->orderByDesc('like_count')
+                ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+                ->get();
         }
 
         return response()->json($this->formatBeritaResponse($beritas, $userId));
@@ -113,19 +115,19 @@ class BeritaController extends Controller
 
 
     // Mengambil berita lain yang belum dibookmark oleh pengguna.
-    public function getRekomendasiLainnya(Request $request){
+    public function getRekomendasiLainnya(Request $request)
+    {
         $userId = $request->query('user_id');
         $userId = $userId ? $userId : null;
 
         $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-                    ->whereDoesntHave('bookmarks', function ($q) use ($userId) {
-                        if ($userId) {
-                            $q->where('user_id', $userId);
-                        }
-                    })
-                    ->inRandomOrder()
-                    ->limit(5)
-                    ->get();
+            ->whereDoesntHave('bookmarks', function ($q) use ($userId) {
+                if ($userId) {
+                    $q->where('user_id', $userId);
+                }
+            })
+            ->inRandomOrder()
+            ->get();
         return response()->json($this->formatBeritaResponse($beritas, $userId));
     }
 
@@ -133,14 +135,14 @@ class BeritaController extends Controller
     {
         return $beritas->map(function ($berita) use ($userId) {
             $tanggalDiterbitkan = Carbon::parse($berita->tanggal_diterbitkan);
-            
+
             return [
                 'idBerita' => $berita->id,
                 'judul' => $berita->judul,
                 'kontenBerita' => $berita->konten_berita,
                 'gambar' => $berita->gambar ?? null,
                 'tanggalDibuat' => $tanggalDiterbitkan->toDateTimeString(),
-                'penulis' => $berita->user_id,
+                'penulis' => $berita->user->nama_lengkap ?? null, // <- ini
                 'profil' => $berita->user->profile_pic ?? null,
                 'kategori' => $berita->kategori,
                 'jumlahLike' => $berita->reaksis->where('jenis_reaksi', 'Suka')->count(),
