@@ -413,7 +413,7 @@
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                         },
-                        credentials: 'same-origin', // <- WAJIB ADA AGAR COOKIE LOGIN TERKIRIM
+                        credentials: 'include', // PENTING
                         body: JSON.stringify({
                             jenis_reaksi: jenisReaksi,
                             item_id: newsId
