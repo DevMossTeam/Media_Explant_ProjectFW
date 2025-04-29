@@ -22,11 +22,17 @@ class RegisterController extends Controller
     {
         // Validasi input
         $request->validate([
-            'nama_pengguna' => 'required|unique:user,nama_pengguna|max:60',
+            'nama_pengguna' => [
+                'required',
+                'unique:user,nama_pengguna',
+                'max:60',
+                'regex:/^\S*$/', 
+            ],
             'email' => 'required|email|max:100|unique:user,email',
             'nama_lengkap' => 'required|max:100',
         ], [
             'nama_pengguna.unique' => 'Nama pengguna sudah terdaftar, silakan gunakan nama lain.',
+            'nama_pengguna.regex' => 'Nama pengguna tidak boleh mengandung spasi.',
             'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain.',
         ]);
 

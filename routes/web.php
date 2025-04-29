@@ -149,6 +149,10 @@ Route::fallback(function () {
     return view('404'); // Pastikan Anda membuat file view '404.blade.php'
 });
 
+Route::get('/forbidden', function () {
+    return response()->view('403', [], 403);
+});
+
 // Route untuk membuat berita
 Route::get('/authors/create', function () {
     return view('authors.create');
