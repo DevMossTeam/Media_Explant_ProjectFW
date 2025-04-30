@@ -149,6 +149,10 @@ Route::fallback(function () {
     return view('404'); // Pastikan Anda membuat file view '404.blade.php'
 });
 
+Route::get('/forbidden', function () {
+    return response()->view('403', [], 403);
+});
+
 // Route untuk Penulis
 Route::middleware(['checkRole:Penulis'])->group(function () {
     // Route untuk membuat berita
@@ -314,5 +318,4 @@ Route::middleware(['checkRole:Admin'])->group(function () {
     // Berita
     Route::get('/dashboard-admin/berita', [AdminContentController::class, 'berita'])->name('admin.berita.index');
     Route::delete('/dashboard-admin/berita/delete/{id}', [AdminContentController::class, 'delete'])->name('admin.berita.delete');
-
 });    
