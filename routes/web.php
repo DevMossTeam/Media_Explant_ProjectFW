@@ -30,6 +30,11 @@ use App\Http\Controllers\Karya\SyairController;
 use App\Http\Controllers\Karya\FotografiController;
 use App\Http\Controllers\Karya\DesainGrafisController;
 use App\Http\Controllers\UserReact\ReaksiController;
+use App\Http\Controllers\Admin\AdminContentController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\KotakMasukController;
+
 
 
 /*
@@ -290,21 +295,16 @@ Route::post('/reaksi', [ReaksiController::class, 'store'])->name('reaksi.store')
 
 // Route untuk Admin
 
-use App\Http\Controllers\Admin\AdminContentController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\AdminUserController;
-use App\Http\Controllers\Admin\KotakMasukController;
-
 Route::middleware(['checkRole:Admin'])->group(function () {
     // Dashboard admin utama
-    Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('admin.dashboard');   
+    Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('admin.dashboard');
 
     Route::prefix('dashboard-admin/kotak-masuk')->name('kotak-masuk.')->group(function () {
         Route::get('/', [KotakMasukController::class, 'index'])->name('index');
         Route::get('/{id}', [KotakMasukController::class, 'show'])->name('show');
         Route::delete('/{id}', [KotakMasukController::class, 'destroy'])->name('destroy');
     });
-    
+
     Route::get('/dashboard-admin/settings', function () {
     return view('dashboard-admin.menu.settings');
     })->name('admin.settings');
@@ -318,4 +318,4 @@ Route::middleware(['checkRole:Admin'])->group(function () {
     // Berita
     Route::get('/dashboard-admin/berita', [AdminContentController::class, 'berita'])->name('admin.berita.index');
     Route::delete('/dashboard-admin/berita/delete/{id}', [AdminContentController::class, 'delete'])->name('admin.berita.delete');
-});    
+});
