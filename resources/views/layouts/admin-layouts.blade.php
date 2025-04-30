@@ -8,12 +8,19 @@
 
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
+    <!-- Flowbite CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@1.4.6/dist/flowbite.min.css" rel="stylesheet" />
+
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <!-- Custom CSS (e.g. scrollbar, etc.) -->
     <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}" />
     <link rel="shortcut icon" href="{{ asset('assets/ukpm-explant-ic.png') }}" type="image/png" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {{-- sweet alert pop up --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         /* Transition for sidebar width */
@@ -51,6 +58,17 @@
 </head>
 
 <body class="min-h-screen bg-gray-100">
+    @php
+        $userUid = Cookie::get('user_uid');
+        $user = $userUid ? \App\Models\User::where('uid', $userUid)->first() : null;
+    @endphp
+
+    {{-- cek user admin --}}
+    @if($user)
+        <script>
+            console.log(@json($user->nama_lengkap));
+        </script>
+    @endif
 
     <!-- ========== WRAPPER ========== -->
     <div class="flex h-screen">
@@ -159,17 +177,18 @@
                             <ul
                                 class="tableSubmenu ml-12 mt-1 overflow-hidden transition-[max-height] duration-500 ease-in-out space-y-2 max-h-0">
                                 <li><a href="/dashboard-admin/berita"
-                                        class="block py-2 text-gray-600 hover:text-gray-800">Kampus</a></li>
-                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Kesehatan &
-                                        Atletik</a></li>
-                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Kesenian &
-                                        Sejarah</a></li>
-                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Nasional
-                                        International</a></li>
-                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Opini & Esai</a>
-                                </li>
-                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Teknologi</a></li>
+                                        class="block py-2 text-gray-600 hover:text-gray-800">Berita</a></li>
+                                <li>                                
                             </ul>
+                        </li>
+                        <li>
+                            <a href="/dashboard-admin/pengguna"
+                                class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                                <i class="fa-solid fa-user text-xl text-gray-500 w-8 text-center"></i>
+                                <span class="sidebar-text ml-3 text-base font-medium">
+                                    User
+                                </span>
+                            </a>
                         </li>
 
                         <li>
@@ -249,9 +268,9 @@
                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb2F1sRrmj0rFgZyVmC8yBgXxyccFRJf7LPQ&s"
                                 alt="Profil" class="w-10 h-10 rounded-full object-cover border" />
                             <div class="ml-2 text-left">
-                                <span class="text-gray-700 font-medium">Admin</span>
+                                <span class="text-gray-700 font-medium">{{$user->nama_pengguna}}</span>
                                 <br />
-                                <span class="text-gray-500 text-sm">satria.uno@gmail.com</span>
+                                <span class="text-gray-500 text-sm">{{$user->email}}</span>
                             </div>
                             <svg class="w-4 h-4 ml-2 text-gray-700" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" fill="currentColor">

@@ -1,6 +1,8 @@
 @extends('layouts.admin-layouts')
 
 @section('content')
+{{-- @if(auth()->check() && auth()->user()->role == 'Admin') --}}
+
 <div class="container mx-auto px-1 py-1">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         <!-- Card Container -->
@@ -375,4 +377,8 @@
     });
 
 </script>
+
+{{-- @else
+    <p>You do not have permission to access this page.</p>
+@endif --}}
 @endsection

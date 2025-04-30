@@ -149,84 +149,62 @@ Route::fallback(function () {
     return view('404'); // Pastikan Anda membuat file view '404.blade.php'
 });
 
-// Route untuk membuat berita
-Route::get('/authors/create', function () {
-    return view('authors.create');
-})->name('create-news');
+// Route untuk Penulis
+Route::middleware(['checkRole:Penulis'])->group(function () {
+    // Route untuk membuat berita
+    Route::get('/authors/create', function () {
+        return view('authors.create');
+    })->name('create-news');
 
-// Route untuk draf berita
-Route::get('/authors/draft', function () {
-    return view('authors.draft');
-})->name('draft-media');
+    // Route untuk draf berita
+    Route::get('/authors/draft', function () {
+        return view('authors.draft');
+    })->name('draft-media');
 
-// Route untuk publikasi berita
-Route::get('/authors/published', function () {
-    return view('authors.published');
-})->name('published-media');
+    // Route untuk publikasi berita
+    Route::get('/authors/published', function () {
+        return view('authors.published');
+    })->name('published-media');
 
-Route::get('/authors/create-product', function () {
-    return view('authors.create-product');
-})->name('create-product');
+    Route::get('/authors/create-product', function () {
+        return view('authors.create-product');
+    })->name('create-product');
 
-Route::get('/authors/creation', function () {
-    return view('authors.creation');
-})->name('creation');
+    Route::get('/authors/creation', function () {
+        return view('authors.creation');
+    })->name('creation');
 
-// Route untuk detail berita
-Route::get('/kategori/news-detail/{id}', function ($id) {
-    return view('kategori.news-detail', compact('id'));
-})->name('news.detail');
+    // Route untuk detail berita
+    Route::get('/kategori/news-detail/{id}', function ($id) {
+        return view('kategori.news-detail', compact('id'));
+    })->name('news.detail');
 
-// Route untuk dashboard Admin
- Route::get('/dashboard-admin', function () {
-     return view('dashboard-admin.index'); // View untuk dashboard Admin
- })->name('dashboard-admin');
 
-Route::get('/dashboard-admin/kotak-masuk', function () {
-    return view('dashboard-admin.menu.kotak_masuk');
-})->name('kotak_masuk');
-Route::get('/dashboard-admin/detail-kotak-masuk', function () {
-    return view('dashboard-admin.menu.detail_kotak_masuk');
-})->name('detail_kotak_masuk');
+    // Route untuk menyimpan berita
+    Route::post('/author/berita/store', [BeritaController::class, 'store'])->name('author.berita.store');
 
-Route::get('/dashboard-admin/settings', function () {
-    return view('dashboard-admin.menu.settings');
-})->name('admin.settings');
+    // Route untuk menyimpan produk
+    Route::get('/create-product', [ProdukController::class, 'create'])->name('produk.create');
+    Route::post('/create-product', [ProdukController::class, 'store'])->name('produk.store');
 
-Route::get('/dashboard-admin/edit_profile', function () {
-    return view('dashboard-admin.menu.edit_profile');
-})->name('admin.edit_profile');
+    // Route untuk menyimpan karya
+    Route::post('/karya/store', [KaryaController::class, 'store'])->name('karya.store');
 
-Route::get('/dashboard-admin/edit_profile', function () {
-    return view('dashboard-admin.menu.edit_profile');
-})->name('admin.edit_profile');
-
-Route::get('/dashboard-admin/berita', function () {
-    return view('dashboard-admin.menu.berita');
-})->name('admin.berita');
-
-// Route untuk menyimpan berita
-Route::post('/author/berita/store', [BeritaController::class, 'store'])->name('author.berita.store');
-
-// Route untuk menyimpan produk
-Route::get('/create-product', [ProdukController::class, 'create'])->name('produk.create');
-Route::post('/create-product', [ProdukController::class, 'store'])->name('produk.store');
-
-// Route untuk menyimpan karya
-Route::post('/karya/store', [KaryaController::class, 'store'])->name('karya.store');
-
-// Route untuk pengelolaan draft oleh author
-Route::get('/author/drafts', [DraftController::class, 'index'])->name('authors.drafts');
+    // Route untuk pengelolaan draft oleh author
+    Route::get('/author/drafts', [DraftController::class, 'index'])->name('authors.drafts');
+});
 
 // Halaman Karya yang Disukai
-Route::get('/profile/liked', function () {
-    return view('profile.liked');
-})->name('liked');
+Route::middleware(['checkRole:Penulis,Pembaca'])->group(function () {
+    Route::get('/profile/liked', function () {
+        return view('profile.liked');
+    })->name('liked');
 
-// Halaman Karya yang Disimpan
-Route::get('/profile/bookmarked', function () {
-    return view('profile.bookmarked');
-})->name('bookmarked');
+    // Halaman Karya yang Disimpan
+    Route::get('/profile/bookmarked', function () {
+        return view('profile.bookmarked');
+    })->name('bookmarked');
+});
 
 Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
 Route::post('forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.sendOtp');
@@ -305,3 +283,36 @@ Route::prefix('karya/desain-grafis')->name('karya.desain-grafis.')->group(functi
 });
 
 Route::post('/reaksi', [ReaksiController::class, 'store'])->name('reaksi.store');
+
+// Route untuk Admin
+
+use App\Http\Controllers\Admin\AdminContentController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\KotakMasukController;
+
+Route::middleware(['checkRole:Admin'])->group(function () {
+    // Dashboard admin utama
+    Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('admin.dashboard');   
+
+    Route::prefix('dashboard-admin/kotak-masuk')->name('kotak-masuk.')->group(function () {
+        Route::get('/', [KotakMasukController::class, 'index'])->name('index');
+        Route::get('/{id}', [KotakMasukController::class, 'show'])->name('show');
+        Route::delete('/{id}', [KotakMasukController::class, 'destroy'])->name('destroy');
+    });
+    
+    Route::get('/dashboard-admin/settings', function () {
+    return view('dashboard-admin.menu.settings');
+    })->name('admin.settings');
+
+    Route::get('/dashboard-admin/berita/{id}/detail', [AdminContentController::class, '_detail_berita'])->name('admin.berita.detail');;
+
+    // Halaman daftar user
+    Route::get('/dashboard-admin/pengguna', [AdminUserController::class, 'user'])->name('admin.users');
+    // Route::delete('/dashboard-admin/pengguna', [AdminController::class, 'user_delete'])->name('admin.users.delete');
+
+    // Berita
+    Route::get('/dashboard-admin/berita', [AdminContentController::class, 'berita'])->name('admin.berita.index');
+    Route::delete('/dashboard-admin/berita/delete/{id}', [AdminContentController::class, 'delete'])->name('admin.berita.delete');
+
+});    
