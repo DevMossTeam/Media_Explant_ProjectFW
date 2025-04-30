@@ -48,7 +48,7 @@ class LoginController extends Controller
         // Cek role pengguna dan arahkan ke halaman sesuai
         if ($user->role === 'Admin') {
             // Jika pengguna adalah Admin
-            return redirect()->route('dashboard-admin')->with('success', 'Selamat datang, Admin!');
+            return redirect()->route('admin.dashboard')->with('success', 'Selamat datang, Admin!');
         } elseif (in_array($user->role, ['Penulis', 'Pembaca'])) {
             // Jika pengguna adalah Penulis atau Pembaca
             return redirect('/')->with('success', 'Login berhasil!');
