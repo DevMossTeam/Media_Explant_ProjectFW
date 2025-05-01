@@ -10,41 +10,43 @@ use App\Http\Controllers\Controller;
 class ProdukController extends Controller
 {
 
-    public function getProdukMajalah(Request $request){
-    $userId = $request->query('user_id') ?? null;
-    $produk = Produk::select([
-                'id', 
-                'user_id', 
-                'judul', 
-                'deskripsi', 
-                'release_date', 
-                'kategori'
-            ])
+    public function getProdukMajalah(Request $request)
+    {
+        $userId = $request->query('user_id') ?? null;
+        $produk = Produk::select([
+            'id',
+            'user_id',
+            'judul',
+            'deskripsi',
+            'release_date',
+            'kategori'
+        ])
             ->where('kategori', 'Majalah')
-            ->with(['user:id,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
+            ->with(['user:uid,nama_lengkap,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
             ->orderBy('release_date', 'desc')
             ->get();
 
-    return response()->json($this->formatProdukResponse($produk, $userId));
-}
+        return response()->json($this->formatProdukResponse($produk, $userId));
+    }
 
-public function getProdukBuletin(Request $request){
-    $userId = $request->query('user_id') ?? null;
-    $produk = Produk::select([
-                'id', 
-                'user_id', 
-                'judul', 
-                'deskripsi', 
-                'release_date', 
-                'kategori'
-            ])
+    public function getProdukBuletin(Request $request)
+    {
+        $userId = $request->query('user_id') ?? null;
+        $produk = Produk::select([
+            'id',
+            'user_id',
+            'judul',
+            'deskripsi',
+            'release_date',
+            'kategori'
+        ])
             ->where('kategori', 'Buletin')
-            ->with(['user:id,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
+            ->with(['user:uid,nama_lengkap,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
             ->orderBy('release_date', 'desc')
             ->get();
 
-    return response()->json($this->formatProdukResponse($produk, $userId));
-}
+        return response()->json($this->formatProdukResponse($produk, $userId));
+    }
 
 
     // Fungsi format data produk
@@ -53,16 +55,16 @@ public function getProdukBuletin(Request $request){
         return $produks->map(function ($produk) use ($userId) {
             $tanggalDiterbitkan = Carbon::parse($produk->release_date);
 
-        
+
             return [
                 'idproduk' => $produk->id,
-                'penulis' => $produk->user_id,
                 'judul' => $produk->judul,
                 'deskripsi' => $produk->deskripsi,
                 'release_date' => $tanggalDiterbitkan->toDateTimeString(),
+                'penulis' => $produk->user->nama_lengkap ?? null,
                 'profil' => $produk->user->profile_pic ?? null,
                 'kategori' => $produk->kategori,
-                'media_url' => url('/api/produk-majalah/'.$produk->id.'/media'),
+                'media_url' => url('/api/produk-majalah/' . $produk->id . '/media'),
                 'jumlahLike' => $produk->reaksis->where('jenis_reaksi', 'Suka')->count(),
                 'jumlahDislike' => $produk->reaksis->where('jenis_reaksi', 'Tidak Suka')->count(),
                 'jumlahKomentar' => $produk->komentars->count(),
@@ -84,8 +86,6 @@ public function getProdukBuletin(Request $request){
 
         return response($produk->media)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="produk-'.$produk->id.'.pdf"');
+            ->header('Content-Disposition', 'inline; filename="produk-' . $produk->id . '.pdf"');
     }
-
-   
 }

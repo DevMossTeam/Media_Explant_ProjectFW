@@ -19,7 +19,7 @@ class Produk extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id', 'uid');
     }
 
     public function bookmarks()
