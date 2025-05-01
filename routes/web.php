@@ -34,6 +34,8 @@ use App\Http\Controllers\Admin\AdminContentController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\KotakMasukController;
+use Illuminate\Support\Facades\Cookie;
+use App\Models\User;
 
 
 
@@ -146,6 +148,27 @@ Route::get('/settings/notifikasi', function () {
 Route::get('/settings/bantuan', function () {
     return view('settings.bantuan');
 })->name('settings.bantuan');
+
+Route::get('/settings/modal/{section}', function ($section) {
+    $userUid = Cookie::get('user_uid');
+    $user = null;
+
+    if ($userUid) {
+        $user = User::where('uid', $userUid)
+            ->select('nama_pengguna', 'password', 'email', 'nama_lengkap')
+            ->first();
+    }
+
+    $viewMap = [
+        'umum' => 'settings.partials.umum',
+        'notifikasi' => 'settings.partials.notifikasi',
+        'bantuan' => 'settings.partials.bantuan',
+    ];
+
+    $view = $viewMap[$section] ?? 'settings.partials.umum';
+
+    return view($view, compact('user'));
+});
 
 Route::get('/settings/umum', [SettingController::class, 'umumSettings'])->name('settings.umum');
 
