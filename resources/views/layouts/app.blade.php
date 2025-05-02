@@ -41,15 +41,15 @@
             <div class="flex flex-col sm:flex-row flex-1 overflow-hidden">
                 <!-- Sidebar -->
                 <div class="w-full sm:w-1/3 bg-gray-100 p-4 border-r overflow-y-auto max-h-[calc(90vh-4rem)]">
-                    <a href="#" onclick="loadSettingContent('umum')"
+                    <a href="javascript:void(0)" onclick="loadSettingContent('umum')"
                         class="block py-2 text-gray-600 hover:text-blue-600" id="link-umum">
                         <i class="fas fa-user mr-2"></i>Akun
                     </a>
-                    <a href="#" onclick="loadSettingContent('notifikasi')"
+                    <a href="javascript:void(0)" onclick="loadSettingContent('notifikasi')"
                         class="block py-2 text-gray-600 hover:text-blue-600" id="link-notifikasi">
                         <i class="fas fa-bell mr-2"></i>Notifikasi
                     </a>
-                    <a href="#" onclick="loadSettingContent('bantuan')"
+                    <a href="javascript:void(0)" onclick="loadSettingContent('bantuan')"
                         class="block py-2 text-gray-600 hover:text-blue-600" id="link-bantuan">
                         <i class="fas fa-question-circle mr-2"></i>Pusat Bantuan
                     </a>
@@ -79,6 +79,7 @@
                 .then(html => {
                     document.getElementById('setting-content').innerHTML = html;
                     updateActiveLink(menu);
+                    history.pushState(null, '', `/settings/${menu}`);
                 });
         }
 
