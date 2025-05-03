@@ -44,15 +44,16 @@
                 ) !!}
 
                 <!-- Tanggapan -->
-                <div class="mt-5" data-news-id="{{ $news->id }}" data-reaksi-type="Berita"
-                    data-item-id="{{ $news->id }}">
+                <div class="mt-5" data-news-id="{{ $news->id }}">
                     <div class="text-sm font-semibold text-black mb-2">Beri Tanggapanmu :</div>
                     <div class="flex items-center gap-6 text-[#ABABAB]">
-                        <button id="likeButton" class="flex items-center gap-2 hover:text-gray-700">
+                        <button id="likeButton"
+                            class="flex items-center gap-2 hover:text-gray-700 {{ $userReaksi && $userReaksi->jenis_reaksi === 'Suka' ? 'text-blue-600' : '' }}">
                             <i class="fas fa-thumbs-up"></i>
                             <span id="likeCount">{{ $likeCount ?? 0 }}</span>
                         </button>
-                        <button id="dislikeButton" class="flex items-center gap-2 hover:text-gray-700">
+                        <button id="dislikeButton"
+                            class="flex items-center gap-2 hover:text-gray-700 {{ $userReaksi && $userReaksi->jenis_reaksi === 'Tidak Suka' ? 'text-blue-600' : '' }}">
                             <i class="fas fa-thumbs-down"></i>
                             <span id="dislikeCount">{{ $dislikeCount ?? 0 }}</span>
                         </button>
@@ -358,68 +359,67 @@
 
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener('DOMContentLoaded', function() {
             const likeButton = document.getElementById('likeButton');
             const dislikeButton = document.getElementById('dislikeButton');
+            const likeCountSpan = document.getElementById('likeCount');
+            const dislikeCountSpan = document.getElementById('dislikeCount');
+            const newsId = document.querySelector('[data-news-id]').getAttribute('data-news-id');
 
-            const container = document.querySelector('[data-news-id]');
-            const itemId = container.getAttribute('data-news-id');
-            const reaksiType = "Berita";
+            likeButton.addEventListener('click', function() {
+                sendReaction('Suka');
+            });
 
-            // Ambil CSRF token dari tag <meta>
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            dislikeButton.addEventListener('click', function() {
+                sendReaction('Tidak Suka');
+            });
 
-            function fetchCounts() {
-                fetch(`/reaksi/counts?item_id=${itemId}&reaksi_type=${reaksiType}`, {
-                        credentials: 'same-origin'
-                    })
-                    .then(res => {
-                        if (!res.ok) {
-                            throw new Error("Gagal mengambil data jumlah reaksi.");
-                        }
-                        return res.json();
-                    })
-                    .then(data => {
-                        document.getElementById('likeCount').textContent = data.likeCount;
-                        document.getElementById('dislikeCount').textContent = data.dislikeCount;
-                    })
-                    .catch(err => {
-                        console.error("Gagal memuat jumlah reaksi:", err);
-                    });
-            }
-
-            function sendReaction(jenis) {
-                fetch("/reaksi", {
-                        method: "POST",
-                        credentials: "same-origin",
+            function sendReaction(jenisReaksi) {
+                fetch('/reaksi', {
+                        method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
                         },
+                        credentials: 'same-origin', // Pastikan cookie dikirim
                         body: JSON.stringify({
-                            item_id: itemId,
-                            reaksi_type: reaksiType,
-                            jenis_reaksi: jenis
+                            item_id: newsId,
+                            jenis_reaksi: jenisReaksi,
+                            reaksi_type: 'Berita'
                         })
                     })
-                    .then(res => {
-                        if (!res.ok) throw new Error("Gagal mengirim reaksi.");
-                        return res.json();
+                    .then(async response => {
+                        const contentType = response.headers.get('Content-Type');
+
+                        if (!response.ok) {
+                            if (contentType && contentType.includes('application/json')) {
+                                const data = await response.json();
+                                throw new Error(data.message || 'Gagal memproses reaksi.');
+                            } else {
+                                throw new Error('Terjadi kesalahan pada server (bukan respons JSON).');
+                            }
+                        }
+
+                        return response.json();
                     })
-                    .then(() => {
-                        fetchCounts(); // Refresh jumlah reaksi
+                    .then(data => {
+                        likeCountSpan.textContent = data.likeCount;
+                        dislikeCountSpan.textContent = data.dislikeCount;
+
+                        if (jenisReaksi === 'Suka') {
+                            likeButton.classList.add('text-blue-600');
+                            dislikeButton.classList.remove('text-blue-600');
+                        } else {
+                            dislikeButton.classList.add('text-blue-600');
+                            likeButton.classList.remove('text-blue-600');
+                        }
                     })
-                    .catch(err => {
-                        console.error("Error saat mengirim reaksi:", err);
+                    .catch(error => {
+                        console.error('Error:', error.message);
+                        alert(error.message); // Bisa dihapus kalau tidak ingin tampilkan alert
                     });
             }
-
-            // Event listener tombol like/dislike
-            likeButton.addEventListener('click', () => sendReaction('Suka'));
-            dislikeButton.addEventListener('click', () => sendReaction('Tidak Suka'));
-
-            // Load awal jumlah like/dislike
-            fetchCounts();
         });
 
         const shareModal = document.getElementById('shareModal');

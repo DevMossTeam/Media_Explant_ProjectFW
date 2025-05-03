@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\News\KampusNews;
 use App\Models\UserReact\Reaksi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class KampusNewsController extends Controller
 {
@@ -54,6 +55,14 @@ class KampusNewsController extends Controller
             ->where('jenis_reaksi', 'Tidak Suka')
             ->count();
 
+        $userReaksi = null;
+        if (Auth::check()) {
+            $userReaksi = Reaksi::where('user_id', Auth::user()->uid)
+                ->where('item_id', $news->id)
+                ->where('reaksi_type', 'Berita')
+                ->first();
+        }
+
         $relatedNews = KampusNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->latest('tanggal_diterbitkan')
@@ -71,6 +80,6 @@ class KampusNewsController extends Controller
             ->take(8)
             ->get();
 
-        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount'));
+        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi'));
     }
 }

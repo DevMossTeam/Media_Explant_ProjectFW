@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\News\OpiniEsaiNews;
 use Illuminate\Http\Request;
 use App\Models\UserReact\Reaksi;
+use Illuminate\Support\Facades\Auth;
 
 class OpiniEsaiNewsController extends Controller
 {
@@ -66,6 +67,14 @@ class OpiniEsaiNewsController extends Controller
             ->where('jenis_reaksi', 'Tidak Suka')
             ->count();
 
+        $userReaksi = null;
+        if (Auth::check()) {
+            $userReaksi = Reaksi::where('user_id', Auth::user()->uid)
+                ->where('item_id', $news->id)
+                ->where('reaksi_type', 'Berita')
+                ->first();
+        }
+
         // Berita terkait berdasarkan kategori yang sama
         $relatedNews = OpiniEsaiNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
@@ -86,6 +95,6 @@ class OpiniEsaiNewsController extends Controller
             ->take(8)
             ->get();
 
-        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics'));
+        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi'));
     }
 }
