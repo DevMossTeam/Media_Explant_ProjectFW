@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <main class="py-1">
         <div
             class="container mx-auto px-4 lg:px-16 xl:px-24 2xl:px-32 py-6 max-w-screen-2xl flex flex-col lg:flex-row gap-8">
@@ -50,7 +49,7 @@
                     <div class="flex items-center gap-6 text-[#ABABAB]">
                         <button id="likeButton" class="flex items-center gap-2 hover:text-gray-700">
                             <i class="fas fa-thumbs-up"></i>
-                            <span id="likeCount">{{ $likeCount ?? 0 }}</span> <!-- Jika belum ada, default 0 -->
+                            <span id="likeCount">{{ $likeCount ?? 0 }}</span>
                         </button>
                         <button id="dislikeButton" class="flex items-center gap-2 hover:text-gray-700">
                             <i class="fas fa-thumbs-down"></i>
@@ -358,86 +357,41 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let liked = false;
-            let disliked = false;
-            let likeCount = {{ $likeCount ?? 0 }};
-            let dislikeCount = {{ $dislikeCount ?? 0 }};
-            const newsId = "{{ $news->id }}";
-            const likeButton = document.getElementById('likeButton');
-            const dislikeButton = document.getElementById('dislikeButton');
-            const likeCountElement = document.getElementById('likeCount');
-            const dislikeCountElement = document.getElementById('dislikeCount');
+        let newsId = "{{ $news->id }}";
+        let reaksiType = "Berita";
 
-            likeButton.addEventListener('click', function() {
-                if (!liked) {
-                    likeCount++;
-                    if (disliked) {
-                        dislikeCount = Math.max(dislikeCount - 1, 0);
-                        disliked = false;
-                    }
-                    liked = true;
-                } else {
-                    likeCount--;
-                    liked = false;
-                }
-                updateCounts();
-                submitReaction('Suka');
-            });
-
-            dislikeButton.addEventListener('click', function() {
-                if (!disliked) {
-                    dislikeCount++;
-                    if (liked) {
-                        likeCount = Math.max(likeCount - 1, 0);
-                        liked = false;
-                    }
-                    disliked = true;
-                } else {
-                    dislikeCount--;
-                    disliked = false;
-                }
-                updateCounts();
-                submitReaction('Tidak Suka');
-            });
-
-            function updateCounts() {
-                likeCountElement.textContent = likeCount;
-                dislikeCountElement.textContent = dislikeCount;
-            }
-
-            function submitReaction(jenisReaksi) {
-                fetch("{{ route('reaksi.store') }}", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        credentials: 'include', // PENTING
-                        body: JSON.stringify({
-                            jenis_reaksi: jenisReaksi,
-                            item_id: newsId
-                        })
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            console.error('Server error:', response.status);
-                            throw new Error('HTTP error ' + response.status);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            console.log('Reaction saved successfully.');
-                        } else {
-                            console.error('Failed to save reaction:', data.error);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error submitting reaction:', error);
-                    });
-            }
+        document.getElementById('likeButton').addEventListener('click', function() {
+            sendReaction('Suka');
         });
+
+        document.getElementById('dislikeButton').addEventListener('click', function() {
+            sendReaction('Tidak Suka');
+        });
+
+        function sendReaction(jenisReaksi) {
+            fetch('{{ route('reaksi.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        jenis_reaksi: jenisReaksi,
+                        reaksi_type: reaksiType,
+                        item_id: newsId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('likeCount').textContent = data.likeCount;
+                        document.getElementById('dislikeCount').textContent = data.dislikeCount;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
 
         const shareModal = document.getElementById('shareModal');
         const openShareModal = document.getElementById('openShareModal');
