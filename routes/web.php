@@ -314,7 +314,10 @@ Route::prefix('karya/desain-grafis')->name('karya.desain-grafis.')->group(functi
     Route::get('/read', [DesainGrafisController::class, 'show'])->name('read');
 });
 
-Route::post('/reaksi', [ReaksiController::class, 'store'])->name('reaksi.store');
+Route::middleware(['auth'])->group(function () {
+    Route::post('/reaksi', [ReaksiController::class, 'store'])->name('reaksi.store');
+    Route::get('/reaksi/counts', [ReaksiController::class, 'getCounts'])->name('reaksi.counts');
+});
 
 // Route untuk Admin
 

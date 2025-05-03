@@ -9,22 +9,16 @@ class Reaksi extends Model
 {
     protected $table = 'reaksi';
     public $incrementing = false;
-    public $timestamps = false;
-
+    protected $keyType = 'string';
     protected $fillable = [
-        'id',
-        'user_id',
-        'jenis_reaksi',
-        'tanggal_reaksi',
-        'reaksi_type',
-        'item_id'
+        'id', 'user_id', 'jenis_reaksi', 'tanggal_reaksi', 'reaksi_type', 'item_id'
     ];
 
     protected static function boot()
     {
         parent::boot();
-        static::creating(function ($reaksi) {
-            $reaksi->id = Str::random(12);
+        static::creating(function ($model) {
+            $model->id = Str::random(12);
         });
     }
 }

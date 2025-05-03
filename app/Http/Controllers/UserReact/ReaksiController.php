@@ -5,47 +5,57 @@ namespace App\Http\Controllers\UserReact;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\UserReact\Reaksi;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class ReaksiController extends Controller
 {
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'jenis_reaksi' => 'required|in:Suka,Tidak Suka',
-            'reaksi_type' => 'required|string',
-            'item_id' => 'required|string',
-        ]);
+        $userId = Auth::id();
+        $existing = Reaksi::where('user_id', $userId)
+                          ->where('item_id', $request->item_id)
+                          ->where('reaksi_type', $request->reaksi_type)
+                          ->first();
 
-        $userId = auth()->id();
+        if ($existing) {
+            // Toggle behavior
+            if ($existing->jenis_reaksi === $request->jenis_reaksi) {
+                $existing->delete();
+                return response()->json(['status' => 'deleted']);
+            } else {
+                $existing->jenis_reaksi = $request->jenis_reaksi;
+                $existing->tanggal_reaksi = now();
+                $existing->save();
+                return response()->json(['status' => 'updated']);
+            }
+        } else {
+            Reaksi::create([
+                'user_id' => $userId,
+                'jenis_reaksi' => $request->jenis_reaksi,
+                'tanggal_reaksi' => now(),
+                'reaksi_type' => $request->reaksi_type,
+                'item_id' => $request->item_id
+            ]);
+            return response()->json(['status' => 'created']);
+        }
+    }
 
-        // Hapus reaksi sebelumnya oleh user pada item yg sama
-        Reaksi::where('user_id', $userId)
-            ->where('reaksi_type', $validated['reaksi_type'])
-            ->where('item_id', $validated['item_id'])
-            ->delete();
+    public function getCounts(Request $request)
+    {
+        $likes = Reaksi::where('item_id', $request->item_id)
+                    ->where('reaksi_type', $request->reaksi_type)
+                    ->where('jenis_reaksi', 'Suka')
+                    ->count();
 
-        $reaksi = Reaksi::create([
-            'user_id' => $userId,
-            'jenis_reaksi' => $validated['jenis_reaksi'],
-            'tanggal_reaksi' => Carbon::now(),
-            'reaksi_type' => $validated['reaksi_type'],
-            'item_id' => $validated['item_id'],
-        ]);
-
-        // Hitung total suka dan tidak suka
-        $likeCount = Reaksi::where('reaksi_type', $validated['reaksi_type'])
-                        ->where('item_id', $validated['item_id'])
-                        ->where('jenis_reaksi', 'Suka')->count();
-        $dislikeCount = Reaksi::where('reaksi_type', $validated['reaksi_type'])
-                        ->where('item_id', $validated['item_id'])
-                        ->where('jenis_reaksi', 'Tidak Suka')->count();
+        $dislikes = Reaksi::where('item_id', $request->item_id)
+                    ->where('reaksi_type', $request->reaksi_type)
+                    ->where('jenis_reaksi', 'Tidak Suka')
+                    ->count();
 
         return response()->json([
-            'success' => true,
-            'likeCount' => $likeCount,
-            'dislikeCount' => $dislikeCount,
+            'likeCount' => $likes,
+            'dislikeCount' => $dislikes
         ]);
     }
 }

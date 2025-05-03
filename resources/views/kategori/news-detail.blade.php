@@ -44,7 +44,8 @@
                 ) !!}
 
                 <!-- Tanggapan -->
-                <div class="mt-5" data-news-id="{{ $news->id }}">
+                <div class="mt-5" data-news-id="{{ $news->id }}" data-reaksi-type="Berita"
+                    data-item-id="{{ $news->id }}">
                     <div class="text-sm font-semibold text-black mb-2">Beri Tanggapanmu :</div>
                     <div class="flex items-center gap-6 text-[#ABABAB]">
                         <button id="likeButton" class="flex items-center gap-2 hover:text-gray-700">
@@ -357,41 +358,69 @@
 
 
     <script>
-        let newsId = "{{ $news->id }}";
-        let reaksiType = "Berita";
+        document.addEventListener("DOMContentLoaded", function() {
+            const likeButton = document.getElementById('likeButton');
+            const dislikeButton = document.getElementById('dislikeButton');
 
-        document.getElementById('likeButton').addEventListener('click', function() {
-            sendReaction('Suka');
-        });
+            const container = document.querySelector('[data-news-id]');
+            const itemId = container.getAttribute('data-news-id');
+            const reaksiType = "Berita";
 
-        document.getElementById('dislikeButton').addEventListener('click', function() {
-            sendReaction('Tidak Suka');
-        });
+            // Ambil CSRF token dari tag <meta>
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        function sendReaction(jenisReaksi) {
-            fetch('{{ route('reaksi.store') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        jenis_reaksi: jenisReaksi,
-                        reaksi_type: reaksiType,
-                        item_id: newsId
+            function fetchCounts() {
+                fetch(`/reaksi/counts?item_id=${itemId}&reaksi_type=${reaksiType}`, {
+                        credentials: 'same-origin'
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
+                    .then(res => {
+                        if (!res.ok) {
+                            throw new Error("Gagal mengambil data jumlah reaksi.");
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
                         document.getElementById('likeCount').textContent = data.likeCount;
                         document.getElementById('dislikeCount').textContent = data.dislikeCount;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
+                    })
+                    .catch(err => {
+                        console.error("Gagal memuat jumlah reaksi:", err);
+                    });
+            }
+
+            function sendReaction(jenis) {
+                fetch("/reaksi", {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({
+                            item_id: itemId,
+                            reaksi_type: reaksiType,
+                            jenis_reaksi: jenis
+                        })
+                    })
+                    .then(res => {
+                        if (!res.ok) throw new Error("Gagal mengirim reaksi.");
+                        return res.json();
+                    })
+                    .then(() => {
+                        fetchCounts(); // Refresh jumlah reaksi
+                    })
+                    .catch(err => {
+                        console.error("Error saat mengirim reaksi:", err);
+                    });
+            }
+
+            // Event listener tombol like/dislike
+            likeButton.addEventListener('click', () => sendReaction('Suka'));
+            dislikeButton.addEventListener('click', () => sendReaction('Tidak Suka'));
+
+            // Load awal jumlah like/dislike
+            fetchCounts();
+        });
 
         const shareModal = document.getElementById('shareModal');
         const openShareModal = document.getElementById('openShareModal');
