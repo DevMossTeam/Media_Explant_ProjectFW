@@ -30,6 +30,7 @@ use App\Http\Controllers\Karya\SyairController;
 use App\Http\Controllers\Karya\FotografiController;
 use App\Http\Controllers\Karya\DesainGrafisController;
 use App\Http\Controllers\UserReact\ReaksiController;
+use App\Http\Controllers\Author\PublishedController;
 use App\Http\Controllers\Admin\AdminContentController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
@@ -194,9 +195,7 @@ Route::middleware(['checkRole:Penulis'])->group(function () {
     })->name('draft-media');
 
     // Route untuk publikasi berita
-    Route::get('/authors/published', function () {
-        return view('authors.published');
-    })->name('published-media');
+    Route::get('/authors/published', [PublishedController::class, 'index'])->name('published-media');
 
     Route::get('/authors/create-product', function () {
         return view('authors.create-product');

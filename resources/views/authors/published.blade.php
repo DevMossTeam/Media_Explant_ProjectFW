@@ -1,4 +1,3 @@
-{{-- draft.blade.php --}}
 @extends('layouts.app')
 
 @section('content')
@@ -17,32 +16,13 @@
     </div>
 
     <div class="overflow-y-scroll h-[75vh] pr-2 space-y-4">
-        @for($i = 0; $i < 10; $i++)
-        {{-- Draft Kesenian --}}
+        @forelse ($berita as $item)
         <div class="flex items-start space-x-4 bg-white p-4 rounded shadow-sm">
-            <img src="{{ asset('images/saman.jpg') }}" alt="Tari Saman" class="w-28 h-20 object-cover rounded">
+            <img src="{{ $item['thumbnail'] ?? asset('images/default-thumbnail.jpg') }}" alt="Thumbnail" class="w-28 h-20 object-cover rounded">
             <div class="flex-1">
-                <p class="text-red-600 text-xs font-semibold">KESENIAN | Dibuat 13 Feb 2025</p>
-                <p class="font-medium">Tari Saman: Memahami Makna, Sejarah, Fungsi, dan Pola Lantai</p>
-                <p class="text-xs text-gray-500 mt-1">Diperbarui 2 jam yang lalu</p>
-            </div>
-            <div class="relative">
-                <button class="text-gray-600 hover:text-black">&#8942;</button>
-                {{-- Simulasi dropdown menu --}}
-                <div class="absolute right-0 mt-1 bg-white border rounded shadow w-24 text-sm hidden group-hover:block">
-                    <a href="#" class="block px-3 py-2 hover:bg-gray-100">Edit</a>
-                    <a href="#" class="block px-3 py-2 hover:bg-gray-100 text-red-500">Hapus</a>
-                </div>
-            </div>
-        </div>
-
-        {{-- Draft Majalah --}}
-        <div class="flex items-start space-x-4 bg-white p-4 rounded shadow-sm">
-            <img src="{{ asset('images/majalah.jpg') }}" alt="Majalah Online" class="w-28 h-20 object-cover rounded">
-            <div class="flex-1">
-                <p class="text-pink-600 text-xs font-semibold">MAJALAH | Dibuat 07 Dec 2024</p>
-                <p class="font-medium">Majalah Himpunan Mahasiswa Teknik ...</p>
-                <p class="text-xs text-gray-500 mt-1">Diperbarui 2 jam yang lalu</p>
+                <p class="text-red-600 text-xs font-semibold">{{ strtoupper($item['kategori']) }} | Dipublikasikan {{ $item['tanggal'] }}</p>
+                <p class="font-medium">{{ $item['judul'] }}</p>
+                <p class="text-xs text-gray-500 mt-1">Diperbarui {{ $item['published_ago'] }}</p>
             </div>
             <div class="relative">
                 <button class="text-gray-600 hover:text-black">&#8942;</button>
@@ -52,7 +32,9 @@
                 </div>
             </div>
         </div>
-        @endfor
+        @empty
+        <p class="text-center text-gray-500">Tidak ada publikasi yang tersedia.</p>
+        @endforelse
     </div>
 </div>
 @endsection
