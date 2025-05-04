@@ -10,15 +10,7 @@ use Carbon\Carbon;
 
 class BeritaController extends Controller
 {
-    // Mengambil semua berita
-    public function getAllBerita(Request $request)
-    {
-        $userId = $request->query('user_id');
-        $userId = $userId ? $userId : null;
-        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])->get();
-        return response()->json($this->formatBeritaResponse($beritas, $userId));
-    }
-
+   
     // Mengambil berita terbaru
     public function getBeritaTerbaru(Request $request)
     {
@@ -26,7 +18,7 @@ class BeritaController extends Controller
         $userId = $userId ? $userId : null;
         $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
             ->orderByDesc('tanggal_diterbitkan')
-            ->get();
+            ->paginate(10);
         return response()->json($this->formatBeritaResponse($beritas, $userId));
     }
 
@@ -71,7 +63,7 @@ class BeritaController extends Controller
         ->where('id', '!=', $beritaId) // Pastikan berita utama tidak muncul
         ->where('kategori', $kategori) // Filter berdasarkan kategori yang sama
         ->orderByDesc('tanggal_diterbitkan')
-        ->get();
+        ->paginate(10);
 
     // Format dan kembalikan response
     return response()->json($this->formatBeritaResponse($beritas, $userId));
@@ -98,7 +90,7 @@ class BeritaController extends Controller
             $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
                 ->whereIn('kategori', $kategoriFavorit)
                 ->inRandomOrder()
-                ->get();
+                ->paginate(10);
         } else {
             // Jika tidak ada (user belum login atau belum pernah bookmark), ambil berdasarkan view & like
             $beritas = Berita::withCount([
@@ -109,7 +101,7 @@ class BeritaController extends Controller
                 ->orderByDesc('view_count')
                 ->orderByDesc('like_count')
                 ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-                ->get();
+                ->paginate(10);
         }
 
         return response()->json($this->formatBeritaResponse($beritas, $userId));
@@ -130,7 +122,7 @@ class BeritaController extends Controller
                 }
             })
             ->inRandomOrder()
-            ->get();
+            ->paginate(10);
         return response()->json($this->formatBeritaResponse($beritas, $userId));
     }
 
@@ -159,3 +151,6 @@ class BeritaController extends Controller
         });
     }
 }
+
+// php artisan serve --host=0.0.0.0 --port=8000
+

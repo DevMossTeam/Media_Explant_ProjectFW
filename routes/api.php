@@ -91,6 +91,9 @@ Route::get('/berita/terkait', [BeritaController::class, 'getBeritaTerkait']);
 
 
 Route::get('/produk-majalah', [ProdukController::class, 'getProdukMajalah']);
+Route::get('/produk-buletin', [ProdukController::class, 'getProdukBuletin']);
+
+// download produk
 Route::get('/produk-majalah/{id}/media', [ProdukController::class, 'getProdukMedia']);
 
 

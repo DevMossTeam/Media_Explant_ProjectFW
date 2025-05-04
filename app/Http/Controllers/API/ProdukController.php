@@ -24,7 +24,7 @@ class ProdukController extends Controller
             ->where('kategori', 'Majalah')
             ->with(['user:uid,nama_lengkap,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
             ->orderBy('release_date', 'desc')
-            ->get();
+            ->paginate(5);
 
         return response()->json($this->formatProdukResponse($produk, $userId));
     }
@@ -43,7 +43,7 @@ class ProdukController extends Controller
             ->where('kategori', 'Buletin')
             ->with(['user:uid,nama_lengkap,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
             ->orderBy('release_date', 'desc')
-            ->get();
+            ->paginate(5);
 
         return response()->json($this->formatProdukResponse($produk, $userId));
     }
@@ -74,18 +74,19 @@ class ProdukController extends Controller
             ];
         })->toArray();
     }
-
-    // 2. Endpoint khusus download media produk
+    
     public function getProdukMedia($id)
-    {
-        $produk = Produk::findOrFail($id);
+{
+    $produk = Produk::findOrFail($id);
 
-        if (!$produk->media) {
-            return response()->json(['message' => 'Media tidak ditemukan'], 404);
-        }
-
-        return response($produk->media)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="produk-' . $produk->id . '.pdf"');
+    if (!$produk->media) {
+        return response()->json(['message' => 'Media tidak ditemukan'], 404);
     }
+
+    return response($produk->media)
+        ->header('Content-Type', 'application/pdf')
+        ->header('Content-Disposition', 'inline; filename="produk-' . $produk->id . '.pdf"')
+        ->header('Accept-Ranges', 'bytes'); // penting agar browser bisa render
+}
+
 }
