@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     integrity="sha512-yadaYadaHashKey" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<header class="bg-white shadow-md w-full flex items-center justify-between px-6 md:px-12 lg:px-24">
+<header class="relative z-50 bg-white shadow-md w-full flex items-center justify-between px-6 md:px-12 lg:px-24">
     <div class="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-3">
         <!-- Logo -->
         <div class="flex items-center">
@@ -141,7 +141,8 @@
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
                         <li>
-                            <button onclick="openSettingsModal()" class="text-gray-600 hover:text-[#990505]">Pengaturan</button>
+                            <button onclick="openSettingsModal()"
+                                class="text-gray-600 hover:text-[#990505]">Pengaturan</button>
                         </li>
                         <li><a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a></li>
                         <li><a href="{{ route('bookmarked') }}" class="text-gray-600 hover:text-[#990505]">Disimpan</a>
@@ -319,7 +320,7 @@
             </div>
 
             <!-- Profil Dropdown -->
-            <div class="relative">
+            <div class="relative z-50">
                 @php
                     $userUid = Cookie::get('user_uid');
                     $user = $userUid ? \App\Models\User::where('uid', $userUid)->first() : null;
@@ -349,7 +350,8 @@
                             </div>
                         </div>
 
-                        <a onclick="openSettingsModal()" class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                        <a onclick="openSettingsModal()"
+                            class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
                             <img src="https://img.icons8.com/ios-filled/24/808080/settings.png" alt="Settings Icon"
                                 class="w-5 h-5 mr-3"> Pengaturan
                         </a>

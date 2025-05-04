@@ -196,6 +196,8 @@ Route::middleware(['checkRole:Penulis'])->group(function () {
 
     // Route untuk publikasi berita
     Route::get('/authors/published', [PublishedController::class, 'index'])->name('published-media');
+    Route::get('/authors/published/{id}/edit', [PublishedController::class, 'edit'])->name('published.edit');
+    Route::delete('/authors/published/{id}', [PublishedController::class, 'destroy'])->name('published.destroy');
 
     Route::get('/authors/create-product', function () {
         return view('authors.create-product');
