@@ -190,9 +190,9 @@ Route::middleware(['checkRole:Penulis'])->group(function () {
     })->name('create-news');
 
     // Route untuk draf berita
-    Route::get('/authors/draft', function () {
-        return view('authors.draft');
-    })->name('draft-media');
+    Route::get('/authors/draft', [DraftController::class, 'index'])->name('draft-media');
+    Route::get('/authors/draft/{id}/edit', [DraftController::class, 'edit'])->name('draft.edit');
+    Route::delete('/authors/draft/{id}', [DraftController::class, 'destroy'])->name('draft.destroy');
 
     // Route untuk publikasi berita
     Route::get('/authors/published', [PublishedController::class, 'index'])->name('published-media');
@@ -222,9 +222,6 @@ Route::middleware(['checkRole:Penulis'])->group(function () {
 
     // Route untuk menyimpan karya
     Route::post('/karya/store', [KaryaController::class, 'store'])->name('karya.store');
-
-    // Route untuk pengelolaan draft oleh author
-    Route::get('/author/drafts', [DraftController::class, 'index'])->name('authors.drafts');
 });
 
 // Halaman Karya yang Disukai
@@ -330,7 +327,7 @@ Route::middleware(['checkRole:Admin'])->group(function () {
     });
 
     Route::get('/dashboard-admin/settings', function () {
-    return view('dashboard-admin.menu.settings');
+        return view('dashboard-admin.menu.settings');
     })->name('admin.settings');
 
     Route::get('/dashboard-admin/berita/{id}/detail', [AdminContentController::class, '_detail_berita'])->name('admin.berita.detail');;
