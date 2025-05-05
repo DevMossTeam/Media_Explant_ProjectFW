@@ -53,17 +53,18 @@ class ForgotPasswordController extends Controller
         try {
             // Konfigurasi SMTP
             $mail->isSMTP();
-            $mail->Host = env('MAIL_HOST');
+            $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = env('MAIL_USERNAME');
-            $mail->Password = env('MAIL_PASSWORD');
-            $mail->SMTPSecure = env('MAIL_ENCRYPTION', PHPMailer::ENCRYPTION_STARTTLS);
-            $mail->Port = env('MAIL_PORT');
+            $mail->Username = 'devmossteam@gmail.com';
+            $mail->Password = 'auarutsuzgpwtriy';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
 
-            // Pengaturan email
-            $mail->setFrom(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+            // Penerima
+            $mail->setFrom('devmossteam@gmail.com', 'Media Explant');
             $mail->addAddress($email);
 
+            // Konten email
             $mail->isHTML(true);
             $mail->Subject = 'Kode OTP Anda untuk Reset Password';
 

@@ -26,7 +26,7 @@ class RegisterController extends Controller
                 'required',
                 'unique:user,nama_pengguna',
                 'max:60',
-                'regex:/^\S*$/', 
+                'regex:/^\S*$/',
             ],
             'email' => 'required|email|max:100|unique:user,email',
             'nama_lengkap' => 'required|max:100',
@@ -61,16 +61,18 @@ class RegisterController extends Controller
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
-            $mail->Host = env('MAIL_HOST');
+            $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = env('MAIL_USERNAME');
-            $mail->Password = env('MAIL_PASSWORD');
-            $mail->SMTPSecure = env('MAIL_ENCRYPTION', PHPMailer::ENCRYPTION_STARTTLS);
-            $mail->Port = env('MAIL_PORT');
+            $mail->Username = 'devmossteam@gmail.com';
+            $mail->Password = 'auarutsuzgpwtriy';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
 
-            $mail->setFrom(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+            // Penerima
+            $mail->setFrom('devmossteam@gmail.com', 'Media Explant');
             $mail->addAddress($email);
 
+            // Konten email
             $mail->isHTML(true);
             $mail->Subject = 'Kode OTP Anda';
             $mail->Body = "

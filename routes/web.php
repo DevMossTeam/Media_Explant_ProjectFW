@@ -35,9 +35,9 @@ use App\Http\Controllers\Admin\AdminContentController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\KotakMasukController;
+use App\Http\Controllers\UserReact\BookmarkController;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
-
 
 
 /*
@@ -313,6 +313,10 @@ Route::prefix('karya/desain-grafis')->name('karya.desain-grafis.')->group(functi
 });
 
 Route::post('/reaksi', [ReaksiController::class, 'store'])->name('reaksi.store');
+
+Route::middleware('web')->group(function () {
+    Route::post('/bookmark/toggle', [BookmarkController::class, 'toggle']);
+});
 
 // Route untuk Admin
 

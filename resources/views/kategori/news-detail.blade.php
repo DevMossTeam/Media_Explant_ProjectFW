@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <main class="py-1">
         <div
             class="container mx-auto px-4 lg:px-16 xl:px-24 2xl:px-32 py-6 max-w-screen-2xl flex flex-col lg:flex-row gap-8">
@@ -18,15 +19,32 @@
                     <div class="w-full h-[2px] bg-gray-300"></div>
                 </div>
 
+                @php
+                    $user = session('user');
+                    $isBookmarked = \App\Models\UserReact\Bookmark::where('user_id', $user->uid ?? null)
+                        ->where('item_id', $news->id)
+                        ->where('bookmark_type', 'Berita')
+                        ->exists();
+                @endphp
+
                 <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{{ $news->judul }}</h1>
                 <div class="flex items-center justify-between text-sm text-gray-600 mb-4">
                     <div>
                         Oleh: {{ $news->user->nama_lengkap ?? 'Tidak Diketahui' }} -
                         {{ \Carbon\Carbon::parse($news->tanggal_diterbitkan)->format('d F Y - H.i') }} WIB
                     </div>
-                    <button class="flex items-center gap-2 text-gray-400 hover:text-gray-800">
-                        <span class="text-sm">Simpan dan baca nanti</span>
-                        <i class="far fa-bookmark text-xl"></i>
+                    <button id="bookmark-btn" class="flex items-center gap-2 text-gray-400 hover:text-gray-800"
+                        data-item-id="{{ $news->id }}" data-bookmarked="{{ $isBookmarked ? 'true' : 'false' }}">
+                        <span class="text-sm">
+                            {{ $isBookmarked ? 'Batalkan Bookmark' : 'Simpan dan baca nanti' }}
+                        </span>
+                        <span id="bookmark-icon">
+                            @if ($isBookmarked)
+                                <i class="fa-solid fa-bookmark text-xl text-black"></i>
+                            @else
+                                <i class="fa-regular fa-bookmark text-xl text-gray-400"></i>
+                            @endif
+                        </span>
                     </button>
                 </div>
 
@@ -359,6 +377,43 @@
 
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const bookmarkBtn = document.getElementById('bookmark-btn');
+            const text = bookmarkBtn.querySelector('span');
+            const iconContainer = document.getElementById('bookmark-icon');
+
+            bookmarkBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const itemId = this.dataset.itemId;
+
+                fetch('/bookmark/toggle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({
+                            item_id: itemId
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.status === 'bookmarked') {
+                            iconContainer.innerHTML =
+                                '<i class="fa-solid fa-bookmark text-xl text-black"></i>';
+                            text.textContent = 'Batalkan Bookmark';
+                            bookmarkBtn.setAttribute('data-bookmarked', 'true');
+                        } else {
+                            iconContainer.innerHTML =
+                                '<i class="fa-regular fa-bookmark text-xl text-gray-400"></i>';
+                            text.textContent = 'Simpan dan baca nanti';
+                            bookmarkBtn.setAttribute('data-bookmarked', 'false');
+                        }
+                    });
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const likeButton = document.getElementById('likeButton');
             const dislikeButton = document.getElementById('dislikeButton');

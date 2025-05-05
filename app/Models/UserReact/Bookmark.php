@@ -2,10 +2,19 @@
 
 namespace App\Models\UserReact;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Bookmark extends Model
 {
-    use HasFactory;
+    protected $table = 'bookmark';
+
+    protected $fillable = [
+        'id', 'user_id', 'tanggal_bookmark', 'bookmark_type', 'item_id',
+    ];
+
+    public $timestamps = false;
+
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 }

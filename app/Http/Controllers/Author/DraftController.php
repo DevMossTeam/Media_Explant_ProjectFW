@@ -35,14 +35,14 @@ class DraftController extends Controller
             $thumbnail = $matches[1] ?? asset('images/default-thumbnail.jpg');
 
             $tanggalDiterbitkan = Carbon::parse($item->tanggal_diterbitkan);
-            $publishedAgo = $tanggalDiterbitkan->diffForHumans(now(), ['parts' => 1, 'syntax' => \Carbon\CarbonInterface::DIFF_RELATIVE_TO_NOW]);
+            $draftAgo = $tanggalDiterbitkan->diffForHumans(now(), ['parts' => 1, 'syntax' => \Carbon\CarbonInterface::DIFF_RELATIVE_TO_NOW]);
 
             return [
                 'id' => $item->id,
                 'judul' => $item->judul,
                 'kategori' => $item->kategori,
                 'thumbnail' => $thumbnail,
-                'published_ago' => $publishedAgo,
+                'draft_ago' => $draftAgo,
                 'tanggal_dibuat' => $item->tanggal_diterbitkan,
             ];
         });
