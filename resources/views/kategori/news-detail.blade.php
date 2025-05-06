@@ -89,11 +89,11 @@
                 </div>
 
                 <!-- Komentar -->
-                <div class="mt-5">
-                    <form action="#" method="POST">
+                <div class="mt-10">
+                    <form id="komentarForm" method="POST">
                         @csrf
                         <div class="relative w-full">
-                            <input type="text" name="komentar" placeholder="Tulis komentarmu disini"
+                            <input type="text" name="komentar" id="komentarInput" placeholder="Tulis komentarmu disini"
                                 class="w-full border border-[#9A0605] rounded-full pr-12 pl-4 py-2 text-sm focus:outline-none" />
                             <button type="submit"
                                 class="absolute right-0 top-0 bottom-0 w-10 flex items-center justify-center bg-[#9A0605] rounded-full rounded-l-none text-white hover:bg-red-800">
@@ -101,8 +101,44 @@
                             </button>
                         </div>
                     </form>
-                    <div class="mt-3 border border-gray-200 rounded-lg p-4 bg-gray-50 text-sm text-gray-500 text-center">
-                        Belum Ada Komentar
+
+                    <div class="mt-5 border border-gray-200 rounded-lg bg-gray-50 p-4">
+                        <div id="komentarContainer"
+                            class="space-y-4 text-sm text-gray-700 max-h-[300px] overflow-y-auto transition-all duration-300">
+                            @forelse ($komentarList->where('parent_id', null)->take(5) as $komentar)
+                                <div class="komentar-item" data-id="{{ $komentar->id }}">
+                                    <div>
+                                        <span class="font-semibold">{{ $komentar->user->nama_pengguna }}</span> —
+                                        <span class="isi-komentar">
+                                            {{ \Illuminate\Support\Str::limit($komentar->isi_komentar, 150) }}
+                                            @if (strlen($komentar->isi_komentar) > 150)
+                                                <button class="text-xs text-blue-600 hover:underline show-full"
+                                                    data-full="{{ $komentar->isi_komentar }}">Lihat selengkapnya</button>
+                                            @endif
+                                        </span>
+                                    </div>
+                                    <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>
+
+                                    <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2">
+                                        @foreach ($komentar->replies as $reply)
+                                            <div>
+                                                ↳ <span class="font-semibold">{{ $reply->user->nama_pengguna }}</span> —
+                                                {{ $reply->isi_komentar }}
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center text-gray-500">Belum Ada Komentar</div>
+                            @endforelse
+                        </div>
+
+                        @if ($komentarList->where('parent_id', null)->count() > 5)
+                            <div class="mt-3 text-center">
+                                <button id="loadMoreKomentar" class="text-blue-600 hover:underline text-sm">Lihat
+                                    selengkapnya</button>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -375,8 +411,118 @@
         </div>
     </div>
 
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const komentarForm = document.getElementById('komentarForm');
+            const komentarInput = document.getElementById('komentarInput');
+            const komentarContainer = document.getElementById('komentarContainer');
+            let currentReplyTarget = null;
+
+            komentarForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const komentar = komentarInput.value.trim();
+                if (!komentar) return;
+
+                const parentId = komentarInput.dataset.replyTo || null;
+
+                try {
+                    const response = await fetch("{{ route('komentar.kirim') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({
+                            komentar: komentar,
+                            item_id: "{{ $news->id }}",
+                            komentar_type: "Berita",
+                            parent_id: parentId
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const replyHTML =
+                            `<div>↳ <span class="font-semibold">${data.nama_pengguna}</span> — ${data.isi_komentar}</div>`;
+                        if (data.parent_id) {
+                            const parent = document.querySelector(
+                                `.komentar-item[data-id="${data.parent_id}"] .replies`);
+                            parent.insertAdjacentHTML('beforeend', replyHTML);
+                        } else {
+                            const div = document.createElement('div');
+                            div.className = "komentar-item animate-fade-in";
+                            div.setAttribute('data-id', data.id);
+                            div.innerHTML = `
+                        <div>
+                            <span class="font-semibold">${data.nama_pengguna}</span> —
+                            <span class="isi-komentar">${data.isi_komentar}</span>
+                        </div>
+                        <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>
+                        <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2"></div>
+                    `;
+                            komentarContainer.prepend(div);
+                        }
+
+                        komentarInput.value = '';
+                        komentarInput.removeAttribute('data-reply-to');
+                        komentarInput.placeholder = 'Tulis komentarmu disini';
+                        if (currentReplyTarget) {
+                            currentReplyTarget.remove();
+                            currentReplyTarget = null;
+                        }
+                    } else {
+                        alert("Gagal mengirim komentar.");
+                    }
+                } catch (err) {
+                    alert("Gagal mengirim komentar.");
+                    console.error(err);
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('reply-btn')) {
+                    if (currentReplyTarget) currentReplyTarget.remove();
+
+                    const parentKomentar = e.target.closest('.komentar-item');
+                    const parentId = parentKomentar.dataset.id;
+
+                    const formReply = document.createElement('div');
+                    formReply.className = 'mt-2';
+                    formReply.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <input type="text" class="reply-input border border-gray-300 rounded-full px-3 py-1 text-sm flex-1" placeholder="Balas komentar ini..." />
+                    <button class="send-reply px-3 py-1 bg-blue-600 text-white rounded-full text-sm">Kirim</button>
+                </div>
+            `;
+                    parentKomentar.appendChild(formReply);
+                    currentReplyTarget = formReply;
+
+                    const input = formReply.querySelector('.reply-input');
+                    input.focus();
+
+                    formReply.querySelector('.send-reply').addEventListener('click', function() {
+                        komentarInput.value = input.value;
+                        komentarInput.dataset.replyTo = parentId;
+                        komentarForm.dispatchEvent(new Event('submit'));
+                    });
+                }
+
+                if (e.target.classList.contains('show-full')) {
+                    const fullText = e.target.dataset.full;
+                    e.target.parentElement.textContent = fullText;
+                }
+            });
+
+            document.getElementById('loadMoreKomentar')?.addEventListener('click', function() {
+                // Opsional jika ingin AJAX load more dari server
+                this.remove();
+                document.querySelectorAll('.komentar-item').forEach(k => k.classList.remove('hidden'));
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const bookmarkBtn = document.getElementById('bookmark-btn');
             const text = bookmarkBtn.querySelector('span');

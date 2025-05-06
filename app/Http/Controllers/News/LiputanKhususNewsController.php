@@ -7,6 +7,7 @@ use App\Models\News\LiputanKhususNews;
 use Illuminate\Http\Request;
 use App\Models\UserReact\Reaksi;
 use Illuminate\Support\Facades\Auth;
+use App\Models\UserReact\Komentar;
 
 class LiputanKhususNewsController extends Controller
 {
@@ -63,6 +64,13 @@ class LiputanKhususNewsController extends Controller
                 ->first();
         }
 
+        $komentarList = Komentar::with(['user', 'replies.user'])
+            ->where('komentar_type', 'Berita')
+            ->where('item_id', $news->id)
+            ->whereNull('parent_id') // hanya komentar utama
+            ->orderBy('tanggal_komentar', 'desc')
+            ->get();
+
         // Berita terkait berdasarkan kategori yang sama
         $relatedNews = LiputanKhususNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
@@ -83,6 +91,6 @@ class LiputanKhususNewsController extends Controller
             ->take(8)
             ->get();
 
-            return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi'));
+            return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi', 'komentarList'));
     }
 }

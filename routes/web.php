@@ -36,6 +36,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\KotakMasukController;
 use App\Http\Controllers\UserReact\BookmarkController;
+use App\Http\Controllers\UserReact\KomentarController;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
 
@@ -316,6 +317,12 @@ Route::post('/reaksi', [ReaksiController::class, 'store'])->name('reaksi.store')
 
 Route::middleware('web')->group(function () {
     Route::post('/bookmark/toggle', [BookmarkController::class, 'toggle']);
+});
+
+Route::middleware(['web'])->group(function () {
+    Route::post('/komentar/store', [KomentarController::class, 'store'])->name('komentar.store');
+    Route::get('/komentar/{item_id}', [KomentarController::class, 'fetch'])->name('komentar.fetch');
+    Route::post('/komentar/kirim', [KomentarController::class, 'store'])->name('komentar.kirim');
 });
 
 // Route untuk Admin
