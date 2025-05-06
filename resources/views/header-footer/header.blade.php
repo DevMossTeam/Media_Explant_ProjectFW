@@ -393,38 +393,70 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Ambil elemen dropdown media dan profil
+        // Ambil elemen dropdown
         const articleButton = document.getElementById("articleButton");
         const articleDropdown = document.getElementById("articleDropdown");
-
         const profileButton = document.getElementById("profileButton");
         const profileDropdown = document.getElementById("profileDropdown");
+        const notifButton = document.getElementById("notifButton");
+        const notifDropdown = document.getElementById("notifDropdown");
 
-        // Fungsi untuk menutup semua dropdown kecuali yang sedang dibuka
+        // Fungsi untuk menutup semua dropdown, kecuali yang diklik
         function closeAllDropdowns(except = null) {
-            if (except !== articleDropdown) articleDropdown.classList.add("hidden");
-            if (except !== profileDropdown) profileDropdown.classList.add("hidden");
+            if (articleDropdown && except !== articleDropdown) {
+                articleDropdown.classList.add("hidden");
+            }
+            if (profileDropdown && except !== profileDropdown) {
+                profileDropdown.classList.add("hidden");
+            }
+            if (notifDropdown && except !== notifDropdown) {
+                notifDropdown.classList.add("hidden", "opacity-0", "scale-95");
+                notifDropdown.classList.remove("opacity-100", "scale-100");
+            }
         }
 
-        articleButton.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const isHidden = articleDropdown.classList.contains("hidden");
-            closeAllDropdowns(articleDropdown); // Tutup dropdown lain
-            articleDropdown.classList.toggle("hidden", !
-                isHidden); // Toggle hanya jika sebelumnya tersembunyi
+        // Artikel dropdown
+        if (articleButton && articleDropdown) {
+            articleButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const isHidden = articleDropdown.classList.contains("hidden");
+                closeAllDropdowns(articleDropdown);
+                articleDropdown.classList.toggle("hidden", !isHidden);
+            });
+        }
+
+        // Profil dropdown
+        if (profileButton && profileDropdown) {
+            profileButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const isHidden = profileDropdown.classList.contains("hidden");
+                closeAllDropdowns(profileDropdown);
+                profileDropdown.classList.toggle("hidden", !isHidden);
+            });
+        }
+
+        // Notifikasi dropdown
+        if (notifButton && notifDropdown) {
+            notifButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const isHidden = notifDropdown.classList.contains("hidden");
+                closeAllDropdowns(notifDropdown);
+                if (isHidden) {
+                    notifDropdown.classList.remove("hidden", "opacity-0", "scale-95");
+                    notifDropdown.classList.add("opacity-100", "scale-100");
+                } else {
+                    notifDropdown.classList.add("hidden", "opacity-0", "scale-95");
+                    notifDropdown.classList.remove("opacity-100", "scale-100");
+                }
+            });
+        }
+
+        // Klik di luar dropdown akan menutup semuanya
+        document.addEventListener("click", function() {
+            closeAllDropdowns();
         });
 
-        profileButton.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const isHidden = profileDropdown.classList.contains("hidden");
-            closeAllDropdowns(profileDropdown); // Tutup dropdown lain
-            profileDropdown.classList.toggle("hidden", !isHidden);
-        });
-
-        // Tutup dropdown ketika klik di luar dropdown atau tombolnya
-        document.addEventListener("click", () => closeAllDropdowns());
-
-        // Sidebar Toggle
+        // === SIDEBAR TOGGLE ===
         const toggleButton = document.getElementById("toggleSearchNotif");
         const closeButton = document.getElementById("closeSidebar");
         const searchNotifContainer = document.getElementById("searchNotifContainer");
@@ -444,10 +476,11 @@
             overlay.classList.remove("opacity-100");
         }
 
-        toggleButton.addEventListener("click", openSidebar);
-        closeButton.addEventListener("click", closeSidebar);
-        overlay.addEventListener("click", closeSidebar);
+        if (toggleButton) toggleButton.addEventListener("click", openSidebar);
+        if (closeButton) closeButton.addEventListener("click", closeSidebar);
+        if (overlay) overlay.addEventListener("click", closeSidebar);
 
+        // === SEARCH TOGGLE ===
         const searchButton = document.getElementById("searchButton");
         const searchContainer = document.getElementById("searchContainer");
         const closeSearch = document.getElementById("closeSearch");
@@ -467,32 +500,9 @@
             searchOverlay.classList.remove("opacity-100");
         }
 
-        searchButton.addEventListener("click", openSearch);
-        closeSearch.addEventListener("click", closeSearchFunc);
-        searchOverlay.addEventListener("click", closeSearchFunc);
-
-        const notifButton = document.getElementById("notifButton");
-        const notifDropdown = document.getElementById("notifDropdown");
-
-        function toggleNotif() {
-            if (notifDropdown.classList.contains("hidden")) {
-                notifDropdown.classList.remove("hidden", "opacity-0", "scale-95");
-                notifDropdown.classList.add("opacity-100", "scale-100");
-            } else {
-                notifDropdown.classList.add("hidden", "opacity-0", "scale-95");
-                notifDropdown.classList.remove("opacity-100", "scale-100");
-            }
-        }
-
-        notifButton.addEventListener("click", toggleNotif);
-
-        // Menutup dropdown saat klik di luar
-        document.addEventListener("click", function(event) {
-            if (!notifButton.contains(event.target) && !notifDropdown.contains(event.target)) {
-                notifDropdown.classList.add("hidden", "opacity-0", "scale-95");
-                notifDropdown.classList.remove("opacity-100", "scale-100");
-            }
-        });
+        if (searchButton) searchButton.addEventListener("click", openSearch);
+        if (closeSearch) closeSearch.addEventListener("click", closeSearchFunc);
+        if (searchOverlay) searchOverlay.addEventListener("click", closeSearchFunc);
     });
 </script>
 

@@ -113,13 +113,15 @@
                                             {{ \Illuminate\Support\Str::limit($komentar->isi_komentar, 150) }}
                                             @if (strlen($komentar->isi_komentar) > 150)
                                                 <button class="text-xs text-blue-600 hover:underline show-full"
-                                                    data-full="{{ $komentar->isi_komentar }}">Lihat selengkapnya</button>
+                                                    data-full="{{ $komentar->isi_komentar }}"
+                                                    data-short="{{ \Illuminate\Support\Str::limit($komentar->isi_komentar, 150) }}">Lihat
+                                                    selengkapnya</button>
                                             @endif
                                         </span>
                                     </div>
                                     <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>
 
-                                    <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2">
+                                    <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2 hidden">
                                         @foreach ($komentar->replies as $reply)
                                             <div>
                                                 ↳ <span class="font-semibold">{{ $reply->user->nama_pengguna }}</span> —
@@ -127,18 +129,17 @@
                                             </div>
                                         @endforeach
                                     </div>
+
+                                    @if ($komentar->replies->count())
+                                        <button class="toggle-replies text-xs text-blue-600 hover:underline mt-1">
+                                            {{ $komentar->replies->count() === 1 ? 'Lihat 1 balasan' : 'Lihat semua ' . $komentar->replies->count() . ' balasan' }}
+                                        </button>
+                                    @endif
                                 </div>
                             @empty
                                 <div class="text-center text-gray-500">Belum Ada Komentar</div>
                             @endforelse
                         </div>
-
-                        @if ($komentarList->where('parent_id', null)->count() > 5)
-                            <div class="mt-3 text-center">
-                                <button id="loadMoreKomentar" class="text-blue-600 hover:underline text-sm">Lihat
-                                    selengkapnya</button>
-                            </div>
-                        @endif
                     </div>
                 </div>
             </div>
@@ -447,6 +448,7 @@
                     if (data.success) {
                         const replyHTML =
                             `<div>↳ <span class="font-semibold">${data.nama_pengguna}</span> — ${data.isi_komentar}</div>`;
+
                         if (data.parent_id) {
                             const parent = document.querySelector(
                                 `.komentar-item[data-id="${data.parent_id}"] .replies`);
@@ -461,7 +463,8 @@
                             <span class="isi-komentar">${data.isi_komentar}</span>
                         </div>
                         <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>
-                        <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2"></div>
+                        <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2 hidden"></div>
+                        <button class="toggle-replies text-xs text-blue-600 hover:underline mt-1 hidden"></button>
                     `;
                             komentarContainer.prepend(div);
                         }
@@ -494,7 +497,7 @@
                     formReply.innerHTML = `
                 <div class="flex items-center gap-2">
                     <input type="text" class="reply-input border border-gray-300 rounded-full px-3 py-1 text-sm flex-1" placeholder="Balas komentar ini..." />
-                    <button class="send-reply px-3 py-1 bg-blue-600 text-white rounded-full text-sm">Kirim</button>
+                    <button class="send-reply px-3 py-1 bg-[#9A0605] text-white rounded-full text-sm hover:bg-red-800">Kirim</button>
                 </div>
             `;
                     parentKomentar.appendChild(formReply);
@@ -503,23 +506,45 @@
                     const input = formReply.querySelector('.reply-input');
                     input.focus();
 
-                    formReply.querySelector('.send-reply').addEventListener('click', function() {
+                    const submitReply = () => {
                         komentarInput.value = input.value;
                         komentarInput.dataset.replyTo = parentId;
                         komentarForm.dispatchEvent(new Event('submit'));
+                    };
+
+                    formReply.querySelector('.send-reply').addEventListener('click', submitReply);
+                    input.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            submitReply();
+                        }
                     });
                 }
 
                 if (e.target.classList.contains('show-full')) {
                     const fullText = e.target.dataset.full;
-                    e.target.parentElement.textContent = fullText;
+                    e.target.outerHTML =
+                        `<span>${fullText}</span> <button class="text-xs text-blue-600 hover:underline show-less" data-short="${e.target.previousSibling.textContent}">Lihat lebih sedikit</button>`;
                 }
-            });
 
-            document.getElementById('loadMoreKomentar')?.addEventListener('click', function() {
-                // Opsional jika ingin AJAX load more dari server
-                this.remove();
-                document.querySelectorAll('.komentar-item').forEach(k => k.classList.remove('hidden'));
+                if (e.target.classList.contains('show-less')) {
+                    const shortText = e.target.dataset.short;
+                    e.target.outerHTML =
+                        `<span>${shortText}</span> <button class="text-xs text-blue-600 hover:underline show-full" data-full="${e.target.previousSibling.textContent}">Lihat selengkapnya</button>`;
+                }
+
+                if (e.target.classList.contains('toggle-replies')) {
+                    const container = e.target.previousElementSibling;
+                    if (container.classList.contains('hidden')) {
+                        container.classList.remove('hidden');
+                        e.target.textContent = `Sembunyikan balasan`;
+                    } else {
+                        container.classList.add('hidden');
+                        const jumlah = container.children.length;
+                        e.target.textContent = jumlah === 1 ? `Lihat 1 balasan` :
+                            `Lihat semua ${jumlah} balasan`;
+                    }
+                }
             });
         });
 
