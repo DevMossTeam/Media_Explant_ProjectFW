@@ -23,6 +23,31 @@ class KaryaController extends Controller
             ->paginate(5);
         return response()->json($this->formatKaryaResponse($karyas, $userId));
     }
+    // Mengambil syair terbaru
+    public function getSyairTerbaru(Request $request)
+    {
+        $userId = $request->query('user_id');
+        $userId = $userId ? $userId : null;
+        $karyas = Karya::with(['bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('kategori', 'syair')
+            ->where('visibilitas', 'public')
+            ->orderByDesc('release_date')
+            ->paginate(5);
+        return response()->json($this->formatKaryaResponse($karyas, $userId));
+    }
+
+    // Mengambil desain grafis terbaru
+    public function getDesainGrafisTerbaru(Request $request)
+    {
+        $userId = $request->query('user_id');
+        $userId = $userId ? $userId : null;
+        $karyas = Karya::with(['bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('kategori', 'desain_grafis')
+            ->where('visibilitas', 'public')
+            ->orderByDesc('release_date')
+            ->paginate(5);
+        return response()->json($this->formatKaryaResponse($karyas, $userId));
+    }
 
     // Mengambil karya populer (berdasarkan jumlah "like".
     public function getPantunPopuler(Request $request)
