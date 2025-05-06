@@ -18,6 +18,7 @@ class BeritaController extends Controller
         $userId = $userId ? $userId : null;
         $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
             ->orderByDesc('tanggal_diterbitkan')
+            ->where('visibilitas', 'public')
             ->paginate(10);
         return response()->json($this->formatBeritaResponse($beritas, $userId));
     }
@@ -34,6 +35,7 @@ class BeritaController extends Controller
             ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
             ->orderByDesc('jumlah_like')
             ->orderByDesc('view_count')
+            ->where('visibilitas', 'public')
             ->limit(5)
             ->get();
         return response()->json($this->formatBeritaResponse($beritas, $userId));
@@ -63,6 +65,7 @@ class BeritaController extends Controller
         ->where('id', '!=', $beritaId) // Pastikan berita utama tidak muncul
         ->where('kategori', $kategori) // Filter berdasarkan kategori yang sama
         ->orderByDesc('tanggal_diterbitkan')
+        ->where('visibilitas', 'public')
         ->paginate(10);
 
     // Format dan kembalikan response
@@ -89,6 +92,7 @@ class BeritaController extends Controller
         if ($kategoriFavorit->isNotEmpty()) {
             $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
                 ->whereIn('kategori', $kategoriFavorit)
+                ->where('visibilitas', 'public')
                 ->inRandomOrder()
                 ->paginate(10);
         } else {
@@ -100,6 +104,7 @@ class BeritaController extends Controller
             ])
                 ->orderByDesc('view_count')
                 ->orderByDesc('like_count')
+                ->where('visibilitas', 'public')
                 ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
                 ->paginate(10);
         }
@@ -122,6 +127,7 @@ class BeritaController extends Controller
                 }
             })
             ->inRandomOrder()
+            ->where('visibilitas', 'public')
             ->paginate(10);
         return response()->json($this->formatBeritaResponse($beritas, $userId));
     }
@@ -137,7 +143,7 @@ class BeritaController extends Controller
                 'kontenBerita' => $berita->konten_berita,
                 'gambar' => $berita->gambar ?? null,
                 'tanggalDibuat' => $tanggalDiterbitkan->toDateTimeString(),
-                'penulis' => $berita->user->nama_lengkap ?? null, // <- ini
+                'penulis' => $berita->user->nama_lengkap ?? null,
                 'profil' => $berita->user->profile_pic ?? null,
                 'kategori' => $berita->kategori,
                 'jumlahLike' => $berita->reaksis->where('jenis_reaksi', 'Suka')->count(),

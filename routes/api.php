@@ -10,6 +10,7 @@ use App\Http\Controllers\API\SignUpController;
 use App\Http\Controllers\API\BookmarkController;
 use App\Http\Controllers\API\SecurityController;
 use App\Http\Controllers\API\GetProfileController;
+use App\Http\Controllers\API\KaryaController;
 use App\Http\Controllers\API\ProdukController;
 use App\Http\Controllers\API\UpdateProfileController;
 
@@ -82,7 +83,6 @@ Route::post('/bookmark/toggle', [BookmarkController::class, 'toggle']);
 // toggle reaksi berita
 Route::post('/reaksi/toggle', [ReaksiController::class, 'toggle']);
 
-Route::get('/berita', [BeritaController::class, 'getAllBerita']);
 Route::get('/berita/terbaru', [BeritaController::class, 'getBeritaTerbaru']);
 Route::get('/berita/populer', [BeritaController::class, 'getBeritaPopuler']);
 Route::get('/berita/rekomendasi', [BeritaController::class, 'getBeritaRekomendasi']);
@@ -95,5 +95,9 @@ Route::get('/produk-buletin', [ProdukController::class, 'getProdukBuletin']);
 
 // download produk
 Route::get('/produk-majalah/{id}/media', [ProdukController::class, 'getProdukMedia']);
+
+
+//karya
+Route::get('/puisi/terbaru', [KaryaController::class, 'getPuisiTerbaru']);
 
 

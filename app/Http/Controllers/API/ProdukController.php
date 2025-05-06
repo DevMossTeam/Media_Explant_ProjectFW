@@ -24,6 +24,7 @@ class ProdukController extends Controller
             ->where('kategori', 'Majalah')
             ->with(['user:uid,nama_lengkap,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
             ->orderBy('release_date', 'desc')
+            ->where('visibilitas', 'public')
             ->paginate(5);
 
         return response()->json($this->formatProdukResponse($produk, $userId));
@@ -43,6 +44,7 @@ class ProdukController extends Controller
             ->where('kategori', 'Buletin')
             ->with(['user:uid,nama_lengkap,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
             ->orderBy('release_date', 'desc')
+            ->where('visibilitas', 'public')
             ->paginate(5);
 
         return response()->json($this->formatProdukResponse($produk, $userId));
