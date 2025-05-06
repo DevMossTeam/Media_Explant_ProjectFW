@@ -96,9 +96,7 @@ Route::get('/produk-buletin', [ProdukController::class, 'getProdukBuletin']);
 // download produk
 Route::get('/produk-majalah/{id}/media', [ProdukController::class, 'getProdukMedia']);
 
-
 //karya
 Route::get('/puisi/terbaru', [KaryaController::class, 'getPuisiTerbaru']);
 Route::get('/syair/terbaru', [KaryaController::class, 'getSyairTerbaru']);
 Route::get('/desain-grafis/terbaru', [KaryaController::class, 'getDesainGrafisTerbaru']);
-
