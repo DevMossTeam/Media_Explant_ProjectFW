@@ -105,7 +105,7 @@
                     <div class="mt-5 border border-gray-200 rounded-lg bg-gray-50 p-4">
                         <div id="komentarContainer"
                             class="space-y-4 text-sm text-gray-700 max-h-[300px] overflow-y-auto transition-all duration-300">
-                            @forelse ($komentarList->where('parent_id', null)->take(5) as $komentar)
+                            @forelse ($komentarList->where('parent_id', null) as $komentar)
                                 <div class="komentar-item" data-id="{{ $komentar->id }}">
                                     <div>
                                         <span class="font-semibold">{{ $komentar->user->nama_pengguna }}</span> —
@@ -446,6 +446,10 @@
                     const data = await response.json();
 
                     if (data.success) {
+                        const noCommentText = komentarContainer.querySelector(
+                            '.text-center.text-gray-500');
+                        if (noCommentText) noCommentText.remove();
+
                         const replyHTML =
                             `<div>↳ <span class="font-semibold">${data.nama_pengguna}</span> — ${data.isi_komentar}</div>`;
 
@@ -453,19 +457,33 @@
                             const parent = document.querySelector(
                                 `.komentar-item[data-id="${data.parent_id}"] .replies`);
                             parent.insertAdjacentHTML('beforeend', replyHTML);
+
+                            // Tampilkan container balasan jika tersembunyi
+                            if (parent.classList.contains('hidden')) {
+                                parent.classList.remove('hidden');
+                            }
+
+                            const toggleButton = parent.closest('.komentar-item').querySelector(
+                                '.toggle-replies');
+                            if (toggleButton) {
+                                const jumlah = parent.children.length;
+                                toggleButton.textContent = 'Sembunyikan balasan';
+                                toggleButton.classList.remove('hidden');
+                            }
+
                         } else {
                             const div = document.createElement('div');
                             div.className = "komentar-item animate-fade-in";
                             div.setAttribute('data-id', data.id);
                             div.innerHTML = `
-                        <div>
-                            <span class="font-semibold">${data.nama_pengguna}</span> —
-                            <span class="isi-komentar">${data.isi_komentar}</span>
-                        </div>
-                        <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>
-                        <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2 hidden"></div>
-                        <button class="toggle-replies text-xs text-blue-600 hover:underline mt-1 hidden"></button>
-                    `;
+            <div>
+                <span class="font-semibold">${data.nama_pengguna}</span> —
+                <span class="isi-komentar">${data.isi_komentar}</span>
+            </div>
+            <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>
+            <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2 hidden"></div>
+            <button class="toggle-replies text-xs text-blue-600 hover:underline mt-1 hidden"></button>
+        `;
                             komentarContainer.prepend(div);
                         }
 
@@ -506,10 +524,59 @@
                     const input = formReply.querySelector('.reply-input');
                     input.focus();
 
-                    const submitReply = () => {
-                        komentarInput.value = input.value;
-                        komentarInput.dataset.replyTo = parentId;
-                        komentarForm.dispatchEvent(new Event('submit'));
+                    const submitReply = async () => {
+                        const isi = input.value.trim();
+                        if (!isi) return;
+
+                        try {
+                            const response = await fetch("{{ route('komentar.kirim') }}", {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Content-Type': 'application/json'
+                                },
+                                credentials: 'same-origin',
+                                body: JSON.stringify({
+                                    komentar: isi,
+                                    item_id: "{{ $news->id }}",
+                                    komentar_type: "Berita",
+                                    parent_id: parentId
+                                })
+                            });
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                const parent = document.querySelector(
+                                    `.komentar-item[data-id="${data.parent_id}"] .replies`);
+                                const replyHTML =
+                                    `<div>↳ <span class="font-semibold">${data.nama_pengguna}</span> — ${data.isi_komentar}</div>`;
+                                parent.insertAdjacentHTML('beforeend', replyHTML);
+
+                                // Tampilkan dan ubah tombol toggle
+                                if (parent.classList.contains('hidden')) {
+                                    parent.classList.remove('hidden');
+                                }
+
+                                const toggleButton = parent.closest('.komentar-item').querySelector(
+                                    '.toggle-replies');
+                                if (toggleButton) {
+                                    const jumlah = parent.children.length;
+                                    toggleButton.textContent = 'Sembunyikan balasan';
+                                    toggleButton.classList.remove('hidden');
+                                }
+
+                                // Bersihkan reply form
+                                currentReplyTarget.remove();
+                                currentReplyTarget = null;
+                            } else {
+                                alert("Gagal mengirim komentar.");
+                            }
+
+                        } catch (err) {
+                            console.error(err);
+                            alert("Gagal mengirim komentar.");
+                        }
                     };
 
                     formReply.querySelector('.send-reply').addEventListener('click', submitReply);

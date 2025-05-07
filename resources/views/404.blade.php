@@ -11,9 +11,6 @@
         <h1 class="text-9xl font-extrabold text-red-600">404</h1>
         <p class="text-2xl mt-2 text-red-500 font-semibold">Oops! Halaman Tidak Ditemukan</p>
         <p class="text-gray-300 mt-4">Halaman yang Anda cari mungkin telah dihapus atau tidak tersedia.</p>
-        <a href="{{ route('home') }}" class="mt-6 inline-block px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-md transition duration-300 shadow-lg">
-            Kembali ke Beranda
-        </a>
     </div>
 </body>
 </html>
