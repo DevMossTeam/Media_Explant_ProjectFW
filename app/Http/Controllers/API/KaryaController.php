@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use Carbon\Carbon;
 use App\Models\API\karya;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
 class KaryaController extends Controller
 {
@@ -46,6 +46,19 @@ class KaryaController extends Controller
             ->where('visibilitas', 'public')
             ->orderByDesc('release_date')
             ->paginate(5);
+        return response()->json($this->formatKaryaResponse($karyas, $userId));
+    }
+    // Mengambil desain grafis terbaru
+    public function getFotografiTerbaru(Request $request)
+    {
+        $userId = $request->query('user_id');
+        $userId = $userId ? $userId : null;
+        $karyas = Karya::with(['bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('kategori', 'fotografi')
+            ->where('visibilitas', 'public')
+            ->orderByDesc('release_date')
+            ->paginate(5);
+            // ->paginate(5);
         return response()->json($this->formatKaryaResponse($karyas, $userId));
     }
 

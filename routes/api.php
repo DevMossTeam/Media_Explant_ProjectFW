@@ -100,3 +100,4 @@ Route::get('/produk-majalah/{id}/media', [ProdukController::class, 'getProdukMed
 Route::get('/puisi/terbaru', [KaryaController::class, 'getPuisiTerbaru']);
 Route::get('/syair/terbaru', [KaryaController::class, 'getSyairTerbaru']);
 Route::get('/desain-grafis/terbaru', [KaryaController::class, 'getDesainGrafisTerbaru']);
+Route::get('/fotografi/terbaru', [KaryaController::class, 'getFotografiTerbaru']);

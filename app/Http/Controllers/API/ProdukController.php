@@ -19,12 +19,12 @@ class ProdukController extends Controller
             'judul',
             'deskripsi',
             'release_date',
-            'kategori'
+            'kategori'  
         ])
             ->where('kategori', 'Majalah')
             ->with(['user:uid,nama_lengkap,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
             ->orderBy('release_date', 'desc')
-            ->where('visibilitas', 'public')
+             ->where('visibilitas', 'public')
             ->paginate(5);
 
         return response()->json($this->formatProdukResponse($produk, $userId));

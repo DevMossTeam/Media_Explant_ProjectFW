@@ -73,8 +73,6 @@ class BeritaController extends Controller
 }
 
     
-
-
     public function getBeritaRekomendasi(Request $request)
     {
         $userId = $request->query('user_id');
@@ -128,7 +126,7 @@ class BeritaController extends Controller
             })
             ->inRandomOrder()
             ->where('visibilitas', 'public')
-            ->paginate(10);
+            ->get();
         return response()->json($this->formatBeritaResponse($beritas, $userId));
     }
 
