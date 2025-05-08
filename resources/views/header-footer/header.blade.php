@@ -141,7 +141,7 @@
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
                         <li>
-                            <button onclick="openSettingsModal()"
+                            <button onclick="openSettingsModal('umum')"
                                 class="text-gray-600 hover:text-[#990505]">Pengaturan</button>
                         </li>
                         <li><a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a></li>
@@ -350,7 +350,7 @@
                             </div>
                         </div>
 
-                        <a onclick="openSettingsModal()"
+                        <a onclick="openSettingsModal('umum')"
                             class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
                             <img src="https://img.icons8.com/ios-filled/24/808080/settings.png" alt="Settings Icon"
                                 class="w-5 h-5 mr-3"> Pengaturan

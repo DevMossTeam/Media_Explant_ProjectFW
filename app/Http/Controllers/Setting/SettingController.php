@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Setting;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class SettingController extends Controller
 {
@@ -28,5 +29,32 @@ class SettingController extends Controller
 
         // Kirim $user ke view
         return view('settings.umum', ['user' => $user]);
+    }
+
+    public function tempPreview(Request $request)
+    {
+        $userUid = Cookie::get('user_uid');
+        $user = User::where('uid', $userUid)->first();
+
+        if ($request->hasFile('profile_pic')) {
+            $image = $request->file('profile_pic');
+            $data = file_get_contents($image);
+            session(['temp_profile_pic' => base64_encode($data)]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    public function deleteProfilePic(Request $request)
+    {
+        $userUid = Cookie::get('user_uid');
+        $user = User::where('uid', $userUid)->first();
+
+        if ($user) {
+            $user->profile_pic = null;
+            $user->save();
+        }
+
+        return response()->json(['success' => true]);
     }
 }

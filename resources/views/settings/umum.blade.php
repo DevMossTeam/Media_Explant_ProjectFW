@@ -2,14 +2,31 @@
 
 @section('title', 'Pengaturan Umum')
 
+@include('settings.settingModal')
+
 @section('setting-content')
     <h2 class="text-red-600 font-bold mb-6 text-lg">Profile Akun Anda</h2>
 
     <!-- Foto Profil -->
     <div class="flex items-center mb-6">
-        <div
-            class="relative w-24 h-24 rounded-full bg-yellow-400 flex items-center justify-center text-white text-4xl font-bold border-4 border-red-500">
-            {{ strtoupper(substr($user->nama_pengguna ?? 'C', 0, 1)) }}
+        <div class="relative w-24 h-24 flex-shrink-0">
+            @php
+                $previewPic = session('temp_profile_pic');
+            @endphp
+
+            @if ($previewPic)
+                <img src="data:image/jpeg;base64,{{ $previewPic }}"
+                    class="w-24 h-24 object-cover rounded-full border-4 border-red-500" alt="Preview">
+            @elseif ($user->profile_pic)
+                <img src="{{ asset($user->profile_pic) }}" class="w-24 h-24 object-cover rounded-full border-4 border-red-500"
+                    alt="Foto Profil">
+            @else
+                <div
+                    class="w-24 h-24 rounded-full border-4 border-red-500 bg-yellow-400 flex items-center justify-center text-white text-4xl font-bold">
+                    {{ strtoupper(substr($user->nama_pengguna ?? 'C', 0, 1)) }}
+                </div>
+            @endif
+
             <div class="absolute bottom-0 right-0 bg-red-500 rounded-full p-1">
                 <i class="fas fa-camera text-white text-xs"></i>
             </div>

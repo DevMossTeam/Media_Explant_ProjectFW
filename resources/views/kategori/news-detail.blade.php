@@ -20,7 +20,11 @@
                 </div>
 
                 @php
-                    $user = session('user');
+                    use Illuminate\Support\Facades\Cookie;
+                    use App\Models\User;
+
+                    $userUid = Cookie::get('user_uid');
+                    $user = $userUid ? User::where('uid', $userUid)->first() : null;
                     $isBookmarked = \App\Models\UserReact\Bookmark::where('user_id', $user->uid ?? null)
                         ->where('item_id', $news->id)
                         ->where('bookmark_type', 'Berita')
@@ -590,14 +594,30 @@
 
                 if (e.target.classList.contains('show-full')) {
                     const fullText = e.target.dataset.full;
-                    e.target.outerHTML =
-                        `<span>${fullText}</span> <button class="text-xs text-blue-600 hover:underline show-less" data-short="${e.target.previousSibling.textContent}">Lihat lebih sedikit</button>`;
+                    const shortText = e.target.dataset.short;
+                    const span = e.target.parentElement;
+
+                    span.innerHTML = `
+        ${fullText}
+        <button class="text-xs text-blue-600 hover:underline show-less"
+            data-full="${fullText}" data-short="${shortText}">
+            Lihat lebih sedikit
+        </button>
+    `;
                 }
 
                 if (e.target.classList.contains('show-less')) {
                     const shortText = e.target.dataset.short;
-                    e.target.outerHTML =
-                        `<span>${shortText}</span> <button class="text-xs text-blue-600 hover:underline show-full" data-full="${e.target.previousSibling.textContent}">Lihat selengkapnya</button>`;
+                    const fullText = e.target.dataset.full;
+                    const span = e.target.parentElement;
+
+                    span.innerHTML = `
+        ${shortText}
+        <button class="text-xs text-blue-600 hover:underline show-full"
+            data-full="${fullText}" data-short="${shortText}">
+            Lihat selengkapnya
+        </button>
+    `;
                 }
 
                 if (e.target.classList.contains('toggle-replies')) {

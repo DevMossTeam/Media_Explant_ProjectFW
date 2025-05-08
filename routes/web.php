@@ -138,18 +138,7 @@ Route::post('/store-password', [CreatePasswordController::class, 'storePassword'
 // Route untuk logout
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
-// Route untuk pengaturan profil
-Route::get('/settings', function () {
-    return redirect()->route('settings.umum');
-})->name('settings');
-
-Route::get('/settings/notifikasi', function () {
-    return view('settings.notifikasi');
-})->name('settings.notifikasi');
-
-Route::get('/settings/bantuan', function () {
-    return view('settings.bantuan');
-})->name('settings.bantuan');
+Route::get('/settings', fn() => redirect('/settings/modal/umum'))->name('settings');
 
 Route::get('/settings/modal/{section}', function ($section) {
     $userUid = Cookie::get('user_uid');
@@ -157,7 +146,7 @@ Route::get('/settings/modal/{section}', function ($section) {
 
     if ($userUid) {
         $user = User::where('uid', $userUid)
-            ->select('nama_pengguna', 'password', 'email', 'nama_lengkap')
+            ->select('nama_pengguna', 'password', 'email', 'nama_lengkap', 'profile_pic')
             ->first();
     }
 
@@ -168,11 +157,11 @@ Route::get('/settings/modal/{section}', function ($section) {
     ];
 
     $view = $viewMap[$section] ?? 'settings.partials.umum';
-
     return view($view, compact('user'));
 });
 
-Route::get('/settings/umum', [SettingController::class, 'umumSettings'])->name('settings.umum');
+Route::post('/settings/temp-preview', [SettingController::class, 'tempPreview']);
+Route::post('/settings/delete-profile-pic', [SettingController::class, 'deleteProfilePic']);
 
 // Route fallback jika halaman tidak ditemukan
 Route::fallback(function () {
