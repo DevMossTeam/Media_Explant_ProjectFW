@@ -2,16 +2,17 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\KaryaController;
 use App\Http\Controllers\API\PesanController;
 use App\Http\Controllers\API\BeritaController;
+use App\Http\Controllers\API\ProdukController;
 use App\Http\Controllers\API\ReaksiController;
 use App\Http\Controllers\API\SignInController;
 use App\Http\Controllers\API\SignUpController;
 use App\Http\Controllers\API\BookmarkController;
+use App\Http\Controllers\API\KomentarController;
 use App\Http\Controllers\API\SecurityController;
 use App\Http\Controllers\API\GetProfileController;
-use App\Http\Controllers\API\KaryaController;
-use App\Http\Controllers\API\ProdukController;
 use App\Http\Controllers\API\UpdateProfileController;
 
 /*
@@ -101,3 +102,6 @@ Route::get('/puisi/terbaru', [KaryaController::class, 'getPuisiTerbaru']);
 Route::get('/syair/terbaru', [KaryaController::class, 'getSyairTerbaru']);
 Route::get('/desain-grafis/terbaru', [KaryaController::class, 'getDesainGrafisTerbaru']);
 Route::get('/fotografi/terbaru', [KaryaController::class, 'getFotografiTerbaru']);
+
+// komentar
+Route::post('/komentar', [KomentarController::class, 'store']);

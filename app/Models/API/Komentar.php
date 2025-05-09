@@ -4,8 +4,10 @@ namespace App\Models\API;
 
 
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Komentar extends Model
 {
@@ -13,10 +15,39 @@ class Komentar extends Model
 
     protected $table = 'komentar';
     protected $primaryKey = 'id';
-    protected $fillable = ['id', 'user_id', 'isi_komentar', 'tanggal_komentar', 'komentar_type', 'item_id'];
+    public $incrementing = false;
+    public $timestamps = false;
+    protected $keyType = 'string';
+    protected $fillable = ['user_id', 'isi_komentar', 'tanggal_komentar', 'komentar_type', 'item_id','parent_id'];
 
-    public function bookmarkable()
+
+    protected static function boot()
     {
-        return $this->morphTo('bookmarkable', 'item_id', 'bookmark_type');
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->id = $model->id ?? Str::random(12);
+            $model->tanggal_komentar = now();
+        });
+    }
+
+    public function komentarable()
+    {
+        return $this->morphTo(__FUNCTION__, 'komentar_type', 'item_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Balasan komentar
+    public function replies()
+    {
+        return $this->hasMany(Komentar::class, 'parent_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Komentar::class, 'parent_id');
     }
 }
