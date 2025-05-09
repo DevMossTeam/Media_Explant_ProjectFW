@@ -105,3 +105,4 @@ Route::get('/fotografi/terbaru', [KaryaController::class, 'getFotografiTerbaru']
 
 // komentar
 Route::post('/komentar', [KomentarController::class, 'store']);
+Route::get('/get-komentar', [KomentarController::class, 'index']);
