@@ -57,4 +57,15 @@ class SettingController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function loadPartial($section)
+    {
+        $user = auth()->user();
+
+        if (view()->exists("settings.partials.$section")) {
+            return view("settings.partials.$section", compact('user'))->render();
+        }
+
+        return response()->json(['error' => 'Partial not found'], 404);
+    }
 }
