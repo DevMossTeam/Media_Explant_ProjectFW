@@ -37,6 +37,7 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\KotakMasukController;
 use App\Http\Controllers\UserReact\BookmarkController;
 use App\Http\Controllers\UserReact\KomentarController;
+use App\Http\Controllers\Search\SearchController;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
 
@@ -320,6 +321,9 @@ Route::middleware(['web'])->group(function () {
     Route::get('/komentar/{item_id}', [KomentarController::class, 'fetch'])->name('komentar.fetch');
     Route::post('/komentar/kirim', [KomentarController::class, 'store'])->name('komentar.kirim');
 });
+
+Route::get('/search-preview', [SearchController::class, 'preview']);
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 // Route untuk Admin
 
