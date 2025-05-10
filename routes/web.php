@@ -138,17 +138,17 @@ Route::post('/store-password', [CreatePasswordController::class, 'storePassword'
 // Route untuk logout
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
-Route::get('/settings', fn() => redirect('/settings/modal/umum'))->name('settings');
+// Redirect /settings ke modal default
+Route::get('/settings', fn() => redirect('/settings/umum'))->name('settings');
 
+// Modal content via AJAX
 Route::get('/settings/modal/{section}', function ($section) {
     $userUid = Cookie::get('user_uid');
-    $user = null;
-
-    if ($userUid) {
-        $user = User::where('uid', $userUid)
+    $user = $userUid
+        ? User::where('uid', $userUid)
             ->select('nama_pengguna', 'password', 'email', 'nama_lengkap', 'profile_pic')
-            ->first();
-    }
+            ->first()
+        : null;
 
     $viewMap = [
         'umum' => 'settings.partials.umum',
@@ -157,9 +157,16 @@ Route::get('/settings/modal/{section}', function ($section) {
     ];
 
     $view = $viewMap[$section] ?? 'settings.partials.umum';
+
     return view($view, compact('user'));
 });
 
+// Full page fallback untuk akses langsung / refresh
+Route::get('/settings/{section}', function ($section) {
+    return view('layouts.setting-layout', compact('section'));
+})->where('section', 'umum|notifikasi|bantuan');
+
+// Aksi lainnya
 Route::post('/settings/temp-preview', [SettingController::class, 'tempPreview']);
 Route::post('/settings/delete-profile-pic', [SettingController::class, 'deleteProfilePic']);
 
