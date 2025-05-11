@@ -38,6 +38,8 @@ use App\Http\Controllers\Admin\KotakMasukController;
 use App\Http\Controllers\UserReact\BookmarkController;
 use App\Http\Controllers\UserReact\KomentarController;
 use App\Http\Controllers\Search\SearchController;
+use App\Http\Controllers\Profile\LikedController;
+use App\Http\Controllers\Profile\BookmarkedController;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
 
@@ -147,8 +149,8 @@ Route::get('/settings/modal/{section}', function ($section) {
     $userUid = Cookie::get('user_uid');
     $user = $userUid
         ? User::where('uid', $userUid)
-            ->select('nama_pengguna', 'password', 'email', 'nama_lengkap', 'profile_pic')
-            ->first()
+        ->select('nama_pengguna', 'password', 'email', 'nama_lengkap', 'profile_pic')
+        ->first()
         : null;
 
     $viewMap = [
@@ -224,14 +226,12 @@ Route::middleware(['checkRole:Penulis'])->group(function () {
 
 // Halaman Karya yang Disukai
 Route::middleware(['checkRole:Penulis,Pembaca'])->group(function () {
-    Route::get('/profile/liked', function () {
-        return view('profile.liked');
-    })->name('liked');
+    Route::get('/profile/liked', [LikedController::class, 'index'])->name('liked');
+    Route::delete('/profile/liked/{id}', [LikedController::class, 'destroy'])->name('liked.destroy');
 
     // Halaman Karya yang Disimpan
-    Route::get('/profile/bookmarked', function () {
-        return view('profile.bookmarked');
-    })->name('bookmarked');
+    Route::get('/profile/bookmarked', [BookmarkedController::class, 'index'])->name('bookmarked');
+    Route::delete('/profile/bookmarked/{id}', [BookmarkedController::class, 'destroy'])->name('bookmarked.destroy');
 });
 
 Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
