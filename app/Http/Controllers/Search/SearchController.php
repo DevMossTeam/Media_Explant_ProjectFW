@@ -39,7 +39,6 @@ class SearchController extends Controller
             ->pluck('nama_tag')
             ->toArray();
 
-        // Gabungkan semua hasil dan hilangkan duplikat
         $allResults = array_unique(array_merge($judulProduk, $judulBerita, $judulKarya, $namaTags));
 
         return response()->json($allResults);
@@ -51,35 +50,45 @@ class SearchController extends Controller
 
         // Produk
         $produk = DB::table('produk')
+            ->select('id', 'judul', 'kategori', 'release_date')
             ->where('judul', 'like', "%$keyword%")
             ->orderByDesc('release_date')
-            ->get();
+            ->paginate(20, ['*'], 'produk_page');
 
-        // Berita dari judul langsung
+        // Berita dari judul
         $beritaByJudul = DB::table('berita')
-            ->where('judul', 'like', "%$keyword%")
-            ->orderByDesc('tanggal_diterbitkan')
-            ->get();
+            ->select('id', 'judul', 'kategori', 'konten_berita', 'tanggal_diterbitkan')
+            ->where('judul', 'like', "%$keyword%");
 
         // Berita dari tag.nama_tag
         $beritaByTag = DB::table('tag')
             ->join('berita', 'tag.berita_id', '=', 'berita.id')
             ->where('tag.nama_tag', 'like', "%$keyword%")
-            ->select('berita.*')
-            ->orderByDesc('berita.tanggal_diterbitkan')
-            ->get();
+            ->select('berita.id', 'berita.judul', 'berita.kategori', 'berita.konten_berita', 'berita.tanggal_diterbitkan');
 
-        // Gabungkan berita dan hilangkan duplikat berdasarkan ID
-        $mergedBerita = $beritaByJudul->merge($beritaByTag)->unique('id')->values();
+        // Gabungkan & urutkan berita
+        $mergedBerita = $beritaByJudul->union($beritaByTag)
+            ->orderByDesc('tanggal_diterbitkan')
+            ->paginate(100, ['*'], 'berita_page');
+
+        foreach ($mergedBerita as $item) {
+            $item->thumbnail = $this->extractFirstImage($item->konten_berita);
+        }
 
         // Karya
         $karya = DB::table('karya')
+            ->select('id', 'judul', 'kategori', 'media', 'deskripsi', 'release_date')
             ->where('judul', 'like', "%$keyword%")
             ->orderByDesc('release_date')
-            ->get();
+            ->paginate(50, ['*'], 'karya_page');
 
-        // Total semua
-        $total = $produk->count() + $mergedBerita->count() + $karya->count();
+        foreach ($karya as $item) {
+            $item->thumbnail = (!empty($item->media) && strlen($item->media) > 50)
+                ? 'data:image/jpeg;base64,' . $item->media
+                : asset('images/default-thumbnail.jpg');
+        }
+
+        $total = $produk->total() + $mergedBerita->total() + $karya->total();
 
         return view('search.results', [
             'produk' => $produk,
@@ -88,5 +97,16 @@ class SearchController extends Controller
             'keyword' => $keyword,
             'total' => $total,
         ]);
+    }
+
+    private function extractFirstImage($html)
+    {
+        if (empty($html)) return null;
+
+        // Remove non-breaking space artifacts
+        $cleanHtml = str_replace('&nbsp;', ' ', $html);
+
+        preg_match('/<img[^>]+src=["\']?([^"\'>]+)["\']?/i', $cleanHtml, $matches);
+        return $matches[1] ?? null;
     }
 }

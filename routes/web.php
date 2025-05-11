@@ -324,6 +324,7 @@ Route::middleware(['web'])->group(function () {
 
 Route::get('/search-preview', [SearchController::class, 'preview']);
 Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/search/{section}', [SearchController::class, 'paginateSection']);
 
 // Route untuk Admin
 
