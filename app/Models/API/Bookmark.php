@@ -2,9 +2,10 @@
 
 namespace App\Models\API;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Bookmark extends Model
 {
@@ -25,7 +26,7 @@ class Bookmark extends Model
 
         static::creating(function ($model) {
             $model->id = $model->id ?? Str::random(12);
-            $model->tanggal_bookmark = now();
+            $model->tanggal_bookmark = Carbon::now('Asia/Jakarta');
         });
     }
 

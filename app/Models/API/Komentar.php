@@ -6,6 +6,7 @@ namespace App\Models\API;
 
 use App\Models\User;
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -27,7 +28,7 @@ class Komentar extends Model
 
         static::creating(function ($model) {
             $model->id = $model->id ?? Str::random(12);
-            $model->tanggal_komentar = now();
+            $model->tanggal_komentar = Carbon::now('Asia/Jakarta');
         });
     }
 
