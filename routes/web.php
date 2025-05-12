@@ -169,9 +169,8 @@ Route::get('/settings/{section}', function ($section) {
     return view('layouts.setting-layout', compact('section'));
 })->where('section', 'umum|notifikasi|bantuan');
 
-// Aksi lainnya
-Route::post('/settings/temp-preview', [SettingController::class, 'tempPreview']);
-Route::post('/settings/delete-profile-pic', [SettingController::class, 'deleteProfilePic']);
+Route::post('/settings/upload-profile-pic', [SettingController::class, 'uploadTempProfilePic'])->name('settings.upload.profile_pic');
+Route::post('/settings/save-profile', [SettingController::class, 'saveProfile'])->name('settings.save.profile');
 
 // Route fallback jika halaman tidak ditemukan
 Route::fallback(function () {
