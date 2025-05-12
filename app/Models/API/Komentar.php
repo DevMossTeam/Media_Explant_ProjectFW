@@ -18,7 +18,7 @@ class Komentar extends Model
     public $incrementing = false;
     public $timestamps = false;
     protected $keyType = 'string';
-    protected $fillable = ['user_id', 'isi_komentar', 'tanggal_komentar', 'komentar_type', 'item_id','parent_id'];
+    protected $fillable = ['user_id', 'isi_komentar', 'tanggal_komentar', 'komentar_type', 'item_id', 'parent_id'];
 
 
     protected static function boot()
@@ -37,8 +37,9 @@ class Komentar extends Model
     }
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'uid');
     }
+
 
     // Balasan komentar
     public function replies()

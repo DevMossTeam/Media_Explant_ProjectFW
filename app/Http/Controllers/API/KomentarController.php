@@ -51,7 +51,7 @@ class KomentarController extends Controller
             ->orderBy('tanggal_komentar', 'desc')
             ->get();
 
-      
+
         $data = $komentar->map(function ($item) {
             return [
                 'id'               => $item->id,
@@ -61,8 +61,8 @@ class KomentarController extends Controller
                 'komentar_type'    => $item->komentar_type,
                 'item_id'          => $item->item_id,
                 'parent_id'        => $item->parent_id,
-                'nama_pengguna'    => optional($item->user)->nama_pengguna,
-                'profil_pic'       => optional($item->user)->profil_pic,
+                'nama_pengguna'    => $item->user->nama_pengguna ?? null,
+                'profil_pic'       => $item->user->profile_pic ?? null,
             ];
         });
 

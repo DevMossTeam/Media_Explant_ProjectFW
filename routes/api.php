@@ -106,3 +106,8 @@ Route::get('/fotografi/terbaru', [KaryaController::class, 'getFotografiTerbaru']
 // komentar
 Route::post('/komentar', [KomentarController::class, 'store']);
 Route::get('/get-komentar', [KomentarController::class, 'index']);
+
+// search
+Route::get('/berita/search', [BeritaController::class, 'searchBerita']);
+Route::get('/berita/search/kategori', [BeritaController::class, 'searchByKategori']);
+

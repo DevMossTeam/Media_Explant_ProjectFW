@@ -10,7 +10,7 @@ use Carbon\Carbon;
 
 class BeritaController extends Controller
 {
-   
+
     // Mengambil berita terbaru
     public function getBeritaTerbaru(Request $request)
     {
@@ -42,37 +42,37 @@ class BeritaController extends Controller
     }
 
     public function getBeritaTerkait(Request $request)
-{
-    // Ambil parameter dari query string
-    $userId = $request->query('user_id');
-    $beritaId = $request->query('berita_id');
-    $kategori = $request->query('kategori'); // kategori sebagai parameter
+    {
+        // Ambil parameter dari query string
+        $userId = $request->query('user_id');
+        $beritaId = $request->query('berita_id');
+        $kategori = $request->query('kategori'); // kategori sebagai parameter
 
-    // Pastikan kategori ada dalam parameter
-    if (!$kategori) {
-        return response()->json(['message' => 'Kategori tidak ditemukan'], 400);
+        // Pastikan kategori ada dalam parameter
+        if (!$kategori) {
+            return response()->json(['message' => 'Kategori tidak ditemukan'], 400);
+        }
+
+        // Ambil berita utama berdasarkan ID
+        $beritaUtama = Berita::find($beritaId);
+
+        if (!$beritaUtama) {
+            return response()->json(['message' => 'Berita tidak ditemukan'], 404);
+        }
+
+        // Ambil berita terkait berdasarkan kategori yang sama dan pastikan bukan berita utama
+        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('id', '!=', $beritaId) // Pastikan berita utama tidak muncul
+            ->where('kategori', $kategori) // Filter berdasarkan kategori yang sama
+            ->orderByDesc('tanggal_diterbitkan')
+            ->where('visibilitas', 'public')
+            ->paginate(10);
+
+        // Format dan kembalikan response
+        return response()->json($this->formatBeritaResponse($beritas, $userId));
     }
 
-    // Ambil berita utama berdasarkan ID
-    $beritaUtama = Berita::find($beritaId);
 
-    if (!$beritaUtama) {
-        return response()->json(['message' => 'Berita tidak ditemukan'], 404);
-    }
-
-    // Ambil berita terkait berdasarkan kategori yang sama dan pastikan bukan berita utama
-    $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-        ->where('id', '!=', $beritaId) // Pastikan berita utama tidak muncul
-        ->where('kategori', $kategori) // Filter berdasarkan kategori yang sama
-        ->orderByDesc('tanggal_diterbitkan')
-        ->where('visibilitas', 'public')
-        ->paginate(10);
-
-    // Format dan kembalikan response
-    return response()->json($this->formatBeritaResponse($beritas, $userId));
-}
-
-    
     public function getBeritaRekomendasi(Request $request)
     {
         $userId = $request->query('user_id');
@@ -130,6 +130,49 @@ class BeritaController extends Controller
         return response()->json($this->formatBeritaResponse($beritas, $userId));
     }
 
+    // search  
+    public function searchBerita(Request $request)
+    {
+        $userId = $request->query('user_id');
+        $query = $request->query('q');
+
+        if (!$query) {
+            return response()->json(['message' => 'Query pencarian tidak boleh kosong'], 400);
+        }
+
+        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('visibilitas', 'public')
+            ->where(function ($q) use ($query) {
+                $q->where('judul', 'like', '%' . $query . '%')
+                    ->orWhere('konten_berita', 'like', '%' . $query . '%')
+                    ->orWhere('kategori', 'like', '%' . $query . '%');
+            })
+            ->orderByDesc('tanggal_diterbitkan')
+            ->paginate(10);
+
+        return response()->json($this->formatBeritaResponse($beritas, $userId));
+    }
+
+    // search by kategori
+    public function searchByKategori(Request $request)
+    {
+        $userId = $request->query('user_id');
+        $kategori = $request->query('kategori');
+
+        if (!$kategori) {
+            return response()->json(['message' => 'Kategori tidak boleh kosong'], 400);
+        }
+
+        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('visibilitas', 'public')
+            ->where('kategori', 'like', '%' . $kategori . '%')
+            ->orderByDesc('tanggal_diterbitkan')
+            ->paginate(10);
+
+        return response()->json($this->formatBeritaResponse($beritas, $userId));
+    }
+
+
     private function formatBeritaResponse($beritas, $userId)
     {
         return $beritas->map(function ($berita) use ($userId) {
@@ -157,4 +200,3 @@ class BeritaController extends Controller
 }
 
 // php artisan serve --host=0.0.0.0 --port=8000
-
