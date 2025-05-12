@@ -31,22 +31,31 @@
                     </span>
                 </div>
 
-                <div class="relative z-40">
-                    <button onclick="toggleDropdown()"
+                <div class="relative z-20">
+                    @php
+                        $sortText = match (request('sort')) {
+                            'asc' => 'A-Z Judul',
+                            'desc' => 'Z-A Judul',
+                            default => 'Terbaru',
+                        };
+                    @endphp
+
+                    <button onclick="toggleDropdown('sortDropdown')"
                         class="flex items-center space-x-1 bg-red-700 text-white px-4 py-2 rounded-full text-sm shadow-sm hover:bg-red-800 focus:outline-none">
-                        <span>A - Z Group</span>
+                        <span>{{ $sortText }}</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
                     </button>
-                    <div id="dropdown"
-                        class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-md hidden z-10">
-                        <a href="{{ route('draft-media', ['sort' => 'asc']) }}"
+
+                    <div id="sortDropdown"
+                        class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-md hidden z-50">
+                        <a href="{{ route('bookmarked', ['sort' => 'asc']) }}"
                             class="block px-4 py-2 text-sm hover:bg-gray-100">A-Z Judul</a>
-                        <a href="{{ route('draft-media', ['sort' => 'desc']) }}"
+                        <a href="{{ route('bookmarked', ['sort' => 'desc']) }}"
                             class="block px-4 py-2 text-sm hover:bg-gray-100">Z-A Judul</a>
-                        <a href="{{ route('draft-media', ['sort' => 'recent']) }}"
+                        <a href="{{ route('bookmarked') }}"
                             class="block px-4 py-2 text-sm hover:bg-gray-100">Terbaru</a>
                     </div>
                 </div>

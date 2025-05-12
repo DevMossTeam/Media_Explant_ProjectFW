@@ -37,6 +37,9 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\KotakMasukController;
 use App\Http\Controllers\UserReact\BookmarkController;
 use App\Http\Controllers\UserReact\KomentarController;
+use App\Http\Controllers\Search\SearchController;
+use App\Http\Controllers\Profile\LikedController;
+use App\Http\Controllers\Profile\BookmarkedController;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
 
@@ -138,17 +141,17 @@ Route::post('/store-password', [CreatePasswordController::class, 'storePassword'
 // Route untuk logout
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
-Route::get('/settings', fn() => redirect('/settings/modal/umum'))->name('settings');
+// Redirect /settings ke modal default
+Route::get('/settings', fn() => redirect('/settings/umum'))->name('settings');
 
+// Modal content via AJAX
 Route::get('/settings/modal/{section}', function ($section) {
     $userUid = Cookie::get('user_uid');
-    $user = null;
-
-    if ($userUid) {
-        $user = User::where('uid', $userUid)
-            ->select('nama_pengguna', 'password', 'email', 'nama_lengkap', 'profile_pic')
-            ->first();
-    }
+    $user = $userUid
+        ? User::where('uid', $userUid)
+        ->select('nama_pengguna', 'password', 'email', 'nama_lengkap', 'profile_pic')
+        ->first()
+        : null;
 
     $viewMap = [
         'umum' => 'settings.partials.umum',
@@ -157,9 +160,16 @@ Route::get('/settings/modal/{section}', function ($section) {
     ];
 
     $view = $viewMap[$section] ?? 'settings.partials.umum';
+
     return view($view, compact('user'));
 });
 
+// Full page fallback untuk akses langsung / refresh
+Route::get('/settings/{section}', function ($section) {
+    return view('layouts.setting-layout', compact('section'));
+})->where('section', 'umum|notifikasi|bantuan');
+
+// Aksi lainnya
 Route::post('/settings/temp-preview', [SettingController::class, 'tempPreview']);
 Route::post('/settings/delete-profile-pic', [SettingController::class, 'deleteProfilePic']);
 
@@ -216,14 +226,12 @@ Route::middleware(['checkRole:Penulis'])->group(function () {
 
 // Halaman Karya yang Disukai
 Route::middleware(['checkRole:Penulis,Pembaca'])->group(function () {
-    Route::get('/profile/liked', function () {
-        return view('profile.liked');
-    })->name('liked');
+    Route::get('/profile/liked', [LikedController::class, 'index'])->name('liked');
+    Route::delete('/profile/liked/{id}', [LikedController::class, 'destroy'])->name('liked.destroy');
 
     // Halaman Karya yang Disimpan
-    Route::get('/profile/bookmarked', function () {
-        return view('profile.bookmarked');
-    })->name('bookmarked');
+    Route::get('/profile/bookmarked', [BookmarkedController::class, 'index'])->name('bookmarked');
+    Route::delete('/profile/bookmarked/{id}', [BookmarkedController::class, 'destroy'])->name('bookmarked.destroy');
 });
 
 Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
@@ -313,6 +321,10 @@ Route::middleware(['web'])->group(function () {
     Route::get('/komentar/{item_id}', [KomentarController::class, 'fetch'])->name('komentar.fetch');
     Route::post('/komentar/kirim', [KomentarController::class, 'store'])->name('komentar.kirim');
 });
+
+Route::get('/search-preview', [SearchController::class, 'preview']);
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/search/{section}', [SearchController::class, 'paginateSection']);
 
 // Route untuk Admin
 

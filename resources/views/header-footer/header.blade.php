@@ -246,6 +246,9 @@
             </div>
             <input type="text" placeholder="Ketik dan tekan enter"
                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+
+            <!-- Preview Search Suggestions -->
+            <ul id="searchSuggestions" class="mt-2 space-y-1"></ul>
         </div>
 
         <!-- Overlay -->
@@ -503,6 +506,42 @@
         if (searchButton) searchButton.addEventListener("click", openSearch);
         if (closeSearch) closeSearch.addEventListener("click", closeSearchFunc);
         if (searchOverlay) searchOverlay.addEventListener("click", closeSearchFunc);
+
+        const searchInput = document.querySelector('#searchContainer input');
+        const suggestionList = document.getElementById('searchSuggestions');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            if (!query) {
+                suggestionList.innerHTML = '';
+                return;
+            }
+
+            fetch(`/search-preview?query=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    let results = data.map(item => {
+                        const safeQuery = encodeURIComponent(item);
+                        return `<li>
+                    <a href="/search?query=${safeQuery}" class="block px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 rounded">
+                        ${item}
+                    </a>
+                </li>`;
+                    });
+
+                    suggestionList.innerHTML = results.join('');
+                });
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const query = this.value.trim();
+                if (query) {
+                    window.location.href = `/search?query=${encodeURIComponent(query)}`;
+                }
+            }
+        });
     });
 </script>
 

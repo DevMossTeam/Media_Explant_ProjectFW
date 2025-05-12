@@ -8,7 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}">
     <link rel="shortcut icon" href="{{ asset('assets/ukpm-explant-ic.png') }}" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Cr4+r8mV7E6KjL1PjIuFBo8zpq7wcmI7NY+qd7t3Kh1qI2tWPNWs9TzXH7dKSUg77Km3gHAGeA+8U45mclCy5w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        integrity="sha512-Cr4+r8mV7E6KjL1PjIuFBo8zpq7wcmI7NY+qd7t3Kh1qI2tWPNWs9TzXH7dKSUg77Km3gHAGeA+8U45mclCy5w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
@@ -66,13 +68,17 @@
     </div>
 
     <script>
-        function openSettingsModal() {
+        let previousUrl = window.location.pathname;
+
+        function openSettingsModal(section = 'umum') {
+            previousUrl = window.location.pathname; // Simpan URL sebelumnya
             document.getElementById('settingsModal').classList.remove('hidden');
-            loadSettingContent('umum'); // default load
+            loadSettingContent(section);
         }
 
         function closeSettingsModal() {
             document.getElementById('settingsModal').classList.add('hidden');
+            history.replaceState(null, '', previousUrl); // Kembali ke URL sebelumnya
         }
 
         function loadSettingContent(menu) {
@@ -88,13 +94,21 @@
         function updateActiveLink(activeMenu) {
             ['umum', 'notifikasi', 'bantuan'].forEach(menu => {
                 const link = document.getElementById(`link-${menu}`);
-                if (menu === activeMenu) {
-                    link.classList.add('text-blue-600', 'font-semibold');
-                } else {
-                    link.classList.remove('text-blue-600', 'font-semibold');
+                if (link) {
+                    link.classList.toggle('text-blue-600', menu === activeMenu);
+                    link.classList.toggle('font-semibold', menu === activeMenu);
                 }
             });
         }
+
+        // Buka modal jika halaman direfresh di /settings/umum dll
+        document.addEventListener('DOMContentLoaded', function() {
+            const path = window.location.pathname;
+            const match = path.match(/^\/settings\/(umum|notifikasi|bantuan)$/);
+            if (match) {
+                openSettingsModal(match[1]);
+            }
+        });
     </script>
 </body>
 

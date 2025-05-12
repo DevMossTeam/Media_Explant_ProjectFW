@@ -2,8 +2,6 @@
 
 @section('title', 'Pengaturan Umum')
 
-@include('settings.settingModal')
-
 @section('setting-content')
     <h2 class="text-red-600 font-bold mb-6 text-lg">Profile Akun Anda</h2>
 
