@@ -37,9 +37,9 @@
             display: none;
         }
 
-        /* Hover to expand: 
+        /* Hover to expand:
        We wrap the aside in a .group so that .group:hover can expand the sidebar.
-       Then we check if it’s “collapsed” but also hovered. 
+       Then we check if it’s “collapsed” but also hovered.
        If hovered, set width back to 64, show text, show submenus. */
         .group:hover .sidebar.collapsed {
             width: 16rem;
@@ -83,10 +83,10 @@
                 <a href="/dashboard-admin">
                     <div class="flex items-center px-4 py-4 border-b border-gray-200">
                         <!-- Brand Image -->
-                        <img src="{{ asset('assets/ukpm-explant-ic.png') }}" alt="Brand Logo" class="w-10 h-10" />
+                        <img src="{{ asset('assets/Medex-M-IC.png') }}" alt="Brand Logo" class="w-10 h-10" />
                         <!-- Brand Text -->
                         <span class="sidebar-text ml-3 text-xl font-bold text-gray-700">
-                            MediaEksplan
+                            Media Explant
                         </span>
                     </div>
                 </a>
@@ -178,7 +178,7 @@
                                 class="tableSubmenu ml-12 mt-1 overflow-hidden transition-[max-height] duration-500 ease-in-out space-y-2 max-h-0">
                                 <li><a href="/dashboard-admin/berita"
                                         class="block py-2 text-gray-600 hover:text-gray-800">Berita</a></li>
-                                <li>                                
+                                <li>
                             </ul>
                         </li>
                         <li>

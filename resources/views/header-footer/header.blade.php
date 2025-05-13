@@ -331,7 +331,8 @@
 
                 <button id="profileButton" class="flex items-center focus:outline-none">
                     @if ($user && $user->profile_pic)
-                        <img src="{{ asset($user->profile_pic) }}" alt="Profil" class="w-10 h-10 rounded-full">
+                        <img src="data:image/jpeg;base64,{{ base64_encode($user->profile_pic) }}" alt="Profil"
+                            class="w-8 h-8 rounded-full border-2 border-red-500">
                     @else
                         <i class="fa-solid fa-user-circle text-2xl text-gray-700 hover:text-red-700"></i>
                     @endif
@@ -341,11 +342,11 @@
                     class="absolute right-0 mt-2 w-64 bg-white text-gray-800 shadow-lg rounded-md hidden z-50">
                     @if ($user)
                         <div class="px-4 py-4 border-b flex flex-col items-center">
-                            @if ($user->profile_pic)
-                                <img src="{{ asset($user->profile_pic) }}" alt="Profil"
-                                    class="w-16 h-16 rounded-full mb-2">
+                            @if ($user && $user->profile_pic)
+                                <img src="data:image/jpeg;base64,{{ base64_encode($user->profile_pic) }}"
+                                    alt="Profil" class="w-20 h-20 rounded-full">
                             @else
-                                <i class="fa-solid fa-user-circle text-4xl text-gray-700 mb-2"></i>
+                                <i class="fa-solid fa-user-circle text-2xl text-gray-700 hover:text-red-700"></i>
                             @endif
                             <div class="text-center">
                                 <p class="font-bold text-red-700 uppercase">{{ $user->nama_lengkap }}</p>
