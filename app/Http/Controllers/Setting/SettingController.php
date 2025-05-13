@@ -23,7 +23,7 @@ class SettingController extends Controller
     public function uploadTempProfilePic(Request $request)
     {
         $request->validate([
-            'profile_pic' => 'required|image|max:2048',
+            'profile_pic' => 'required|image|max:20480', // 20MB
         ]);
 
         $image = $request->file('profile_pic');
@@ -40,7 +40,7 @@ class SettingController extends Controller
         $user = $userUid ? User::where('uid', $userUid)->first() : null;
 
         if ($user && session('temp_profile_pic')) {
-            $user->profile_pic = base64_decode(session('temp_profile_pic')); // <-- penting!
+            $user->profile_pic = base64_decode(session('temp_profile_pic')); // simpan biner ke LONGBLOB
             $user->save();
             session()->forget('temp_profile_pic');
         }

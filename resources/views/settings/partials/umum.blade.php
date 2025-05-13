@@ -11,22 +11,25 @@
         <div class="relative w-24 h-24 flex-shrink-0">
             @php $previewPic = session('temp_profile_pic'); @endphp
 
-            @if ($previewPic)
-                <img src="data:image/jpeg;base64,{{ $previewPic }}"
-                    id="profilePreview" class="w-24 h-24 object-cover rounded-full border-4 border-red-500" alt="Preview">
-            @elseif ($user && $user->profile_pic)
-                <img src="data:image/jpeg;base64,{{ $user->profile_pic }}"
-                    id="profilePreview" class="w-24 h-24 object-cover rounded-full border-4 border-red-500" alt="Profile Picture">
-            @else
-                <div id="profilePreviewContainer"
-                    class="w-24 h-24 rounded-full border-4 border-red-500 bg-[#2c3440] flex items-center justify-center">
-                    <i class="fa-solid fa-user text-white text-6xl"></i>
-                </div>
-            @endif
+            <div id="profilePreviewContainer" class="w-24 h-24 relative">
+                @if ($previewPic)
+                    <img src="data:image/jpeg;base64,{{ $previewPic }}" id="profilePreview"
+                        class="w-24 h-24 object-cover rounded-full border-4 border-red-500" alt="Preview">
+                @elseif ($user && $user->profile_pic)
+                    <img src="data:image/jpeg;base64,{{ base64_encode($user->profile_pic) }}" id="profilePreview"
+                        class="w-24 h-24 object-cover rounded-full border-4 border-red-500" alt="Profile Picture">
+                @else
+                    <div id="defaultProfileIcon"
+                        class="w-24 h-24 rounded-full border-4 border-red-500 bg-[#2c3440] flex items-center justify-center">
+                        <i class="fa-solid fa-user text-white text-6xl"></i>
+                    </div>
+                @endif
+            </div>
 
             <div class="absolute bottom-0 right-0 cursor-pointer">
                 <label for="uploadProfilePic">
-                    <div class="w-10 h-10 bg-red-500 rounded-full border-4 border-white flex items-center justify-center">
+                    <div
+                        class="w-10 h-10 bg-red-500 rounded-full border-4 border-white flex items-center justify-center">
                         <i class="fas fa-camera text-white text-sm"></i>
                     </div>
                 </label>
@@ -81,35 +84,49 @@
 </form>
 
 <script>
-    document.getElementById('uploadProfilePic').addEventListener('change', function () {
+    document.getElementById('uploadProfilePic').addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) return;
+
         const formData = new FormData();
-        formData.append('profile_pic', this.files[0]);
+        formData.append('profile_pic', file);
 
         fetch('{{ route('settings.upload.profile_pic') }}', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const preview = document.getElementById('profilePreview');
-                    if (preview) {
-                        preview.src = e.target.result;
-                    } else {
-                        const img = document.createElement('img');
-                        img.id = 'profilePreview';
-                        img.src = e.target.result;
-                        img.className = 'w-24 h-24 object-cover rounded-full border-4 border-red-500';
-                        document.getElementById('profilePreviewContainer')?.replaceWith(img);
-                    }
-                };
-                reader.readAsDataURL(formData.get('profile_pic'));
-            }
-        });
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        let preview = document.getElementById('profilePreview');
+                        if (preview) {
+                            preview.src = e.target.result;
+                        } else {
+                            preview = document.createElement('img');
+                            preview.id = 'profilePreview';
+                            preview.src = e.target.result;
+                            preview.className =
+                                'w-24 h-24 object-cover rounded-full border-4 border-red-500';
+
+                            const container = document.querySelector('#profilePreviewContainer');
+                            if (container) {
+                                container.replaceWith(preview);
+                            }
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Gagal upload gambar!');
+                }
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                alert('Terjadi kesalahan saat upload gambar.');
+            });
     });
 </script>
