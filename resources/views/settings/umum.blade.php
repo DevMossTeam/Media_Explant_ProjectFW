@@ -16,12 +16,12 @@
                 <img src="data:image/jpeg;base64,{{ $previewPic }}"
                     class="w-24 h-24 object-cover rounded-full border-4 border-red-500" alt="Preview">
             @elseif ($user->profile_pic)
-                <img src="{{ asset($user->profile_pic) }}" class="w-24 h-24 object-cover rounded-full border-4 border-red-500"
-                    alt="Foto Profil">
+                <img src="data:image/jpeg;base64,{{ base64_encode($user->profile_pic) }}"
+                    class="w-24 h-24 object-cover rounded-full border-4 border-red-500" alt="Foto Profil">
             @else
                 <div
-                    class="w-24 h-24 rounded-full border-4 border-red-500 bg-yellow-400 flex items-center justify-center text-white text-4xl font-bold">
-                    {{ strtoupper(substr($user->nama_pengguna ?? 'C', 0, 1)) }}
+                    cclass="w-24 h-24 flex items-center justify-center rounded-full border-4 border-red-500 bg-gray-200 text-gray-500">
+                    <i class="fa-solid fa-user-circle text-5xl"></i>
                 </div>
             @endif
 

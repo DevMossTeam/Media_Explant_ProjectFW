@@ -40,6 +40,8 @@ use App\Http\Controllers\UserReact\KomentarController;
 use App\Http\Controllers\Search\SearchController;
 use App\Http\Controllers\Profile\LikedController;
 use App\Http\Controllers\Profile\BookmarkedController;
+use App\Http\Controllers\Setting\NotifikasiController;
+use App\Http\Controllers\Setting\BantuanController;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
 
@@ -141,34 +143,14 @@ Route::post('/store-password', [CreatePasswordController::class, 'storePassword'
 // Route untuk logout
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
-// Redirect /settings ke modal default
-Route::get('/settings', fn() => redirect('/settings/umum'))->name('settings');
-
-// Modal content via AJAX
-Route::get('/settings/modal/{section}', function ($section) {
-    $userUid = Cookie::get('user_uid');
-    $user = $userUid
-        ? User::where('uid', $userUid)
-        ->select('nama_pengguna', 'password', 'email', 'nama_lengkap', 'profile_pic')
-        ->first()
-        : null;
-
-    $viewMap = [
-        'umum' => 'settings.partials.umum',
-        'notifikasi' => 'settings.partials.notifikasi',
-        'bantuan' => 'settings.partials.bantuan',
-    ];
-
-    $view = $viewMap[$section] ?? 'settings.partials.umum';
-
-    return view($view, compact('user'));
+// route setting
+Route::prefix('settings')->middleware('remember.prev')->group(function () {
+    Route::get('/umum', [SettingController::class, 'umumSettings'])->name('settings.umum');
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('settings.notifikasi');
+    Route::get('/bantuan', [BantuanController::class, 'index'])->name('settings.bantuan');
 });
 
-// Full page fallback untuk akses langsung / refresh
-Route::get('/settings/{section}', function ($section) {
-    return view('layouts.setting-layout', compact('section'));
-})->where('section', 'umum|notifikasi|bantuan');
-
+// upload & simpan profil
 Route::post('/settings/upload-profile-pic', [SettingController::class, 'uploadTempProfilePic'])->name('settings.upload.profile_pic');
 Route::post('/settings/save-profile', [SettingController::class, 'saveProfile'])->name('settings.save.profile');
 

@@ -141,8 +141,8 @@
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
                         <li>
-                            <button onclick="openSettingsModal('umum')"
-                                class="text-gray-600 hover:text-[#990505]">Pengaturan</button>
+                            <a href="{{ route('settings.umum') }}"
+                                class="text-gray-600 hover:text-[#990505]">Pengaturan</a>
                         </li>
                         <li><a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a></li>
                         <li><a href="{{ route('bookmarked') }}" class="text-gray-600 hover:text-[#990505]">Disimpan</a>
@@ -354,7 +354,7 @@
                             </div>
                         </div>
 
-                        <a onclick="openSettingsModal('umum')"
+                        <a href="{{ route('settings.umum') }}"
                             class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
                             <img src="https://img.icons8.com/ios-filled/24/808080/settings.png" alt="Settings Icon"
                                 class="w-5 h-5 mr-3"> Pengaturan

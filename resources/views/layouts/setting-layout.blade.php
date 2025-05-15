@@ -1,23 +1,37 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('title', 'Pengaturan')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/scrollbar.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-@include('settings.settingModal')
+<body class="bg-white text-gray-800">
 
-@section('content')
+    <!-- Header -->
+    <div class="flex items-center px-6 py-4 border-b">
+        <a href="{{ session('settings_previous_url', url('/')) }}" class="flex items-center">
+            <img src="{{ asset('assets/Medex-M-IC.png') }}" alt="Logo" class="w-6 h-6 mr-2">
+            <h1 class="text-lg font-semibold text-red-600">Pengaturan</h1>
+        </a>
+    </div>
+
+    <!-- Layout -->
     <div class="flex h-screen">
         <!-- Sidebar -->
         <div class="w-60 bg-gray-100 p-4 flex flex-col gap-4 border-r">
-            <a href="javascript:void(0)" onclick="openSettingsModal('umum')"
-                class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
+            <a href="{{ route('settings.umum') }}" class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
                 <i class="fas fa-user"></i> Akun
             </a>
-            <a href="javascript:void(0)" onclick="openSettingsModal('notifikasi')"
+            <a href="{{ route('settings.notifikasi') }}"
                 class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
                 <i class="fas fa-bell"></i> Notifikasi
             </a>
-            <a href="javascript:void(0)" onclick="openSettingsModal('bantuan')"
-                class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
+            <a href="{{ route('settings.bantuan') }}" class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
                 <i class="fas fa-question-circle"></i> Pusat Bantuan
             </a>
         </div>
@@ -28,33 +42,6 @@
         </div>
     </div>
 
-    <script>
-    function openSettingsModal(section = 'umum') {
-        fetch(`/settings/modal/${section}`)
-            .then(res => res.text())
-            .then(html => {
-                document.getElementById('settings-modal-content').innerHTML = html;
-                document.getElementById('settings-modal').classList.remove('hidden');
-                history.replaceState({ modal: true }, '', `/settings/${section}`);
-            });
-    }
+</body>
 
-    window.addEventListener('DOMContentLoaded', () => {
-        const path = window.location.pathname;
-        if (path.startsWith('/settings/') && !path.startsWith('/settings/modal/')) {
-            const section = path.split('/').pop();
-            openSettingsModal(section);
-        }
-    });
-
-    window.addEventListener('popstate', () => {
-        const path = window.location.pathname;
-        if (path.startsWith('/settings/')) {
-            const section = path.split('/').pop();
-            openSettingsModal(section);
-        } else {
-            document.getElementById('settings-modal').classList.add('hidden');
-        }
-    });
-</script>
-@endsection
+</html>
