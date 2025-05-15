@@ -86,8 +86,13 @@
                             </button>
                         </div>
 
-                        <button class="ml-auto text-red-600 hover:text-red-800 bg-red-100 rounded-full p-2">
-                            <i class="fas fa-flag"></i>
+                        <button id="reportButton"
+                            class="flex items-center gap-2 text-[#ABABAB] hover:text-[#9A0605] focus:text-[#9A0605]">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 flex-shrink-0" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v16M4 4h6l2 2h6v6h-6l-2-2H4z" />
+                            </svg>
+                            <span>Laporkan</span>
                         </button>
                     </div>
                 </div>
@@ -416,8 +421,214 @@
         </div>
     </div>
 
+    <!-- Modal Pelaporan -->
+    <div id="reportModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+            <h2 class="text-lg font-bold mb-4">Laporkan Artikel</h2>
+            <form id="reportForm">
+                <div class="mb-4">
+                    <label class="block mb-2">Pilih alasan pelaporan:</label>
+                    <div id="reportReasons" class="space-y-4">
+                        @php
+                            $reasons = [
+                                'Konten seksual',
+                                'Konten kekerasan atau menjijikkan',
+                                'Konten kebencian atau pelecehan',
+                                'Tindakan berbahaya',
+                                'Spam atau misinformasi',
+                                'Masalah hukum',
+                                'Teks bermasalah',
+                            ];
+                        @endphp
+                        @foreach ($reasons as $reason)
+                            <label class="block">
+                                <input type="radio" name="reportReason" value="{{ $reason }}"
+                                    class="form-radio">
+                                <span class="ml-2">{{ $reason }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+                <button type="button" id="nextButton" class="bg-gray-300 text-gray-700 px-4 py-2 rounded mt-4"
+                    disabled>Berikutnya</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Laporan Tambahan -->
+    <div id="additionalReportModal"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
+            <h2 class="text-lg font-bold mb-4">Laporan Tambahan Opsional</h2>
+            <textarea class="w-full border border-gray-300 rounded p-2" placeholder="Berikan detail tambahan" maxlength="500"></textarea>
+            <div class="text-right text-sm text-gray-500">0/500</div>
+            <div class="mt-4 flex justify-end space-x-4">
+                <button type="button" id="backButton"
+                    class="bg-gray-300 text-gray-700 px-4 py-2 rounded">Kembali</button>
+                <button type="button" id="submitReportButton"
+                    class="bg-blue-500 text-white px-4 py-2 rounded">Laporkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Terima Kasih -->
+    <div id="thankYouModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-30">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto mb-4 h-24 w-24 text-green-500" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <p class="text-lg font-semibold mb-4">Terima kasih telah melaporkan artikel ini!</p>
+            <p class="text-gray-600">Laporan Anda akan kami tinjau sesegera mungkin.</p>
+            <button type="button" id="closeThankYouModal"
+                class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Tutup</button>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const reportButton = document.getElementById('reportButton');
+            const reportModal = document.getElementById('reportModal');
+            const nextButton = document.getElementById('nextButton');
+            const additionalReportModal = document.getElementById('additionalReportModal');
+            const thankYouModal = document.getElementById('thankYouModal');
+            const closeThankYouModalButton = document.getElementById('closeThankYouModal');
+            const backButton = document.getElementById('backButton');
+
+            const reasonsWithOptions = {
+                "Konten seksual": ["Pornografi", "Eksploitasi anak", "Pelecehan seksual"],
+                "Konten kekerasan atau menjijikkan": ["Kekerasan fisik", "Kekerasan verbal",
+                    "Kekerasan psikologis"
+                ],
+                "Konten kebencian atau pelecehan": ["Pelecehan rasial", "Pelecehan agama", "Pelecehan seksual"],
+                "Tindakan berbahaya": ["Penggunaan narkoba", "Penyalahgunaan senjata",
+                    "Tindakan berbahaya lainnya"
+                ],
+                "Spam atau misinformasi": ["Berita palsu", "Iklan tidak sah", "Penipuan"],
+                "Masalah hukum": ["Pelanggaran hak cipta", "Pelanggaran privasi", "Masalah hukum lainnya"],
+                "Teks bermasalah": ["Kata-kata kasar", "Teks diskriminatif", "Teks mengandung kekerasan"]
+            };
+
+            reportButton.addEventListener('click', () => reportModal.classList.remove('hidden'));
+
+            document.querySelectorAll('input[name="reportReason"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const selectedReason = radio.value;
+                    const label = radio.closest('label');
+                    const prev = document.querySelector('.additional-container');
+                    if (prev) prev.remove();
+
+                    if (reasonsWithOptions[selectedReason]) {
+                        const container = document.createElement('div');
+                        container.classList.add('additional-container', 'mt-2');
+
+                        const select = document.createElement('select');
+                        select.classList.add('form-select', 'w-full', 'border', 'border-gray-300',
+                            'rounded', 'p-2');
+                        const defaultOption = document.createElement('option');
+                        defaultOption.textContent = "Pilih masalah";
+                        defaultOption.disabled = true;
+                        defaultOption.selected = true;
+                        select.appendChild(defaultOption);
+
+                        reasonsWithOptions[selectedReason].forEach(option => {
+                            const opt = document.createElement('option');
+                            opt.value = option;
+                            opt.textContent = option;
+                            select.appendChild(opt);
+                        });
+
+                        container.appendChild(select);
+                        label.appendChild(container);
+
+                        select.addEventListener('change', () => {
+                            if (select.value) {
+                                nextButton.classList.remove('bg-gray-300');
+                                nextButton.classList.add('bg-blue-500', 'text-white');
+                                nextButton.disabled = false;
+                            }
+                        });
+                    }
+
+                    nextButton.classList.add('bg-gray-300');
+                    nextButton.classList.remove('bg-blue-500', 'text-white');
+                    nextButton.disabled = true;
+                });
+            });
+
+            nextButton.addEventListener('click', function() {
+                reportModal.classList.add('hidden');
+                additionalReportModal.classList.remove('hidden');
+            });
+
+            backButton.addEventListener('click', function() {
+                additionalReportModal.classList.add('hidden');
+                reportModal.classList.remove('hidden');
+            });
+
+            closeThankYouModalButton.addEventListener('click', function() {
+                thankYouModal.classList.add('hidden');
+                resetForm();
+            });
+
+            function resetForm() {
+                document.querySelectorAll('input[name="reportReason"]').forEach(radio => radio.checked = false);
+                const container = document.querySelector('.additional-container');
+                if (container) container.remove();
+                nextButton.classList.add('bg-gray-300');
+                nextButton.classList.remove('bg-blue-500', 'text-white');
+                nextButton.disabled = true;
+                document.querySelector('textarea').value = '';
+            }
+
+            function closeModalOnOutsideClick(modal) {
+                window.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.classList.add('hidden');
+                        if (modal === thankYouModal) resetForm();
+                    }
+                });
+            }
+
+            closeModalOnOutsideClick(reportModal);
+            closeModalOnOutsideClick(thankYouModal);
+
+            // Submit report
+            document.getElementById('submitReportButton').addEventListener('click', function() {
+                const selectedReason = document.querySelector('input[name="reportReason"]:checked');
+                const additionalDetail = document.querySelector('textarea').value.trim();
+                const itemId = new URLSearchParams(window.location.search).get('a');
+
+                if (selectedReason) {
+                    fetch('/report-news', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                report_reason: selectedReason.value,
+                                detail_pesan: additionalDetail,
+                                item_id: itemId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                additionalReportModal.classList.add('hidden');
+                                thankYouModal.classList.remove('hidden');
+                            } else {
+                                alert(data.message || 'Gagal mengirim laporan.');
+                            }
+                        });
+                } else {
+                    alert('Silakan pilih alasan pelaporan.');
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const komentarForm = document.getElementById('komentarForm');
             const komentarInput = document.getElementById('komentarInput');
