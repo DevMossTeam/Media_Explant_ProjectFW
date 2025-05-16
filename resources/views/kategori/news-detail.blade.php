@@ -460,7 +460,8 @@
         class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20 hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
             <h2 class="text-lg font-bold mb-4">Laporan Tambahan Opsional</h2>
-            <textarea class="w-full border border-gray-300 rounded p-2" placeholder="Berikan detail tambahan" maxlength="500"></textarea>
+            <textarea name="detail_pesan" class="w-full border border-gray-300 rounded p-2" placeholder="Berikan detail tambahan"
+                maxlength="500"></textarea>
             <div class="text-right text-sm text-gray-500">0/500</div>
             <div class="mt-4 flex justify-end space-x-4">
                 <button type="button" id="backButton"
@@ -495,7 +496,6 @@
             const thankYouModal = document.getElementById('thankYouModal');
             const closeThankYouModalButton = document.getElementById('closeThankYouModal');
             const backButton = document.getElementById('backButton');
-
             const reasonsWithOptions = {
                 "Konten seksual": ["Pornografi", "Eksploitasi anak", "Pelecehan seksual"],
                 "Konten kekerasan atau menjijikkan": ["Kekerasan fisik", "Kekerasan verbal",
@@ -510,7 +510,9 @@
                 "Teks bermasalah": ["Kata-kata kasar", "Teks diskriminatif", "Teks mengandung kekerasan"]
             };
 
-            reportButton.addEventListener('click', () => reportModal.classList.remove('hidden'));
+            reportButton.addEventListener('click', () => {
+                reportModal.classList.remove('hidden');
+            });
 
             document.querySelectorAll('input[name="reportReason"]').forEach(radio => {
                 radio.addEventListener('change', function() {
@@ -526,6 +528,7 @@
                         const select = document.createElement('select');
                         select.classList.add('form-select', 'w-full', 'border', 'border-gray-300',
                             'rounded', 'p-2');
+
                         const defaultOption = document.createElement('option');
                         defaultOption.textContent = "Pilih masalah";
                         defaultOption.disabled = true;
@@ -579,7 +582,7 @@
                 nextButton.classList.add('bg-gray-300');
                 nextButton.classList.remove('bg-blue-500', 'text-white');
                 nextButton.disabled = true;
-                document.querySelector('textarea').value = '';
+                document.querySelector('textarea[name="detail_pesan"]').value = '';
             }
 
             function closeModalOnOutsideClick(modal) {
@@ -594,15 +597,17 @@
             closeModalOnOutsideClick(reportModal);
             closeModalOnOutsideClick(thankYouModal);
 
-            // Submit report
             document.getElementById('submitReportButton').addEventListener('click', function() {
                 const selectedReason = document.querySelector('input[name="reportReason"]:checked');
-                const additionalDetail = document.querySelector('textarea').value.trim();
-                const itemId = new URLSearchParams(window.location.search).get('a');
+                const additionalDetail = document.querySelector('textarea[name="detail_pesan"]').value
+                    .trim();
+                const itemId = new URLSearchParams(window.location.search).get(
+                    'a'); // Ganti sesuai kebutuhan
 
-                if (selectedReason) {
+                if (selectedReason && itemId) {
                     fetch('/report-news', {
                             method: 'POST',
+                            credentials: 'same-origin',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
@@ -622,9 +627,13 @@
                             } else {
                                 alert(data.message || 'Gagal mengirim laporan.');
                             }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('Terjadi kesalahan jaringan.');
                         });
                 } else {
-                    alert('Silakan pilih alasan pelaporan.');
+                    alert('Silakan pilih alasan dan pastikan item ID tersedia.');
                 }
             });
         });

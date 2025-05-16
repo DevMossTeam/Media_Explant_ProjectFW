@@ -304,7 +304,9 @@ Route::middleware(['web'])->group(function () {
     Route::post('/komentar/kirim', [KomentarController::class, 'store'])->name('komentar.kirim');
 });
 
-Route::post('/report-news', [ReportController::class, 'store'])->name('report.news');
+Route::middleware('web')->group(function () {
+    Route::post('/report-news', [ReportController::class, 'store'])->name('report.news');
+});
 
 Route::get('/search-preview', [SearchController::class, 'preview']);
 Route::get('/search', [SearchController::class, 'index'])->name('search');
