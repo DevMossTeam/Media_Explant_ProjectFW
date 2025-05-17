@@ -34,6 +34,28 @@ class KomentarController extends Controller
         ]);
     }
 
+    public function destroy(Request $request)
+    {
+        $id = $request->query('id');
+
+        if (!$id) {
+            return response()->json(['message' => 'ID komentar tidak diberikan'], 400);
+        }
+
+        $komentar = Komentar::find($id);
+
+        if (!$komentar) {
+            return response()->json(['message' => 'Komentar tidak ditemukan'], 404);
+        }
+
+        $komentar->delete();
+
+        return response()->json(['message' => 'Komentar berhasil dihapus'], 200);
+    }
+
+
+
+
     public function index(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -53,6 +75,10 @@ class KomentarController extends Controller
 
 
         $data = $komentar->map(function ($item) {
+              $profilePic = null;
+            if (!empty($item->user->profile_pic)) {
+                $profilePic = base64_encode($item->user->profile_pic);
+            }
             return [
                 'id'               => $item->id,
                 'user_id'          => $item->user_id,
@@ -62,7 +88,7 @@ class KomentarController extends Controller
                 'item_id'          => $item->item_id,
                 'parent_id'        => $item->parent_id,
                 'nama_pengguna'    => $item->user->nama_pengguna ?? null,
-                'profil_pic'       => $item->user->profile_pic ?? null,
+                'profil_pic'       => $profilePic
             ];
         });
 

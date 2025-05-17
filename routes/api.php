@@ -85,6 +85,7 @@ Route::post('/bookmark/toggle', [BookmarkController::class, 'toggle']);
 Route::post('/reaksi/toggle', [ReaksiController::class, 'toggle']);
 
 Route::get('/berita/terbaru', [BeritaController::class, 'getBeritaTerbaru']);
+Route::get('/berita/teratas', [BeritaController::class, 'getBeritaTeratas']);
 Route::get('/berita/populer', [BeritaController::class, 'getBeritaPopuler']);
 Route::get('/berita/rekomendasi', [BeritaController::class, 'getBeritaRekomendasi']);
 Route::get('/berita/rekomendasi-lainnya', [BeritaController::class, 'getRekomendasiLainnya']);
@@ -106,6 +107,9 @@ Route::get('/fotografi/terbaru', [KaryaController::class, 'getFotografiTerbaru']
 // komentar
 Route::post('/komentar', [KomentarController::class, 'store']);
 Route::get('/get-komentar', [KomentarController::class, 'index']);
+Route::delete('/delete-komentar', [KomentarController::class, 'destroy']);
+
+
 
 // search
 Route::get('/berita/search', [BeritaController::class, 'searchBerita']);

@@ -5,178 +5,24 @@ namespace App\Http\Controllers\API;
 use App\Models\API\Berita;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class BeritaController extends Controller
 {
-
-    // Mengambil berita terbaru
-    public function getBeritaTerbaru(Request $request)
+    // Fungsi bantu ambil limit & page dari query
+    private function getPaginationParams(Request $request)
     {
-        $userId = $request->query('user_id');
-        $userId = $userId ? $userId : null;
-        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-            ->orderByDesc('tanggal_diterbitkan')
-            ->where('visibilitas', 'public')
-            ->paginate(10);
-        return response()->json($this->formatBeritaResponse($beritas, $userId));
+        $limit = $request->query('limit', 10);
+        $page = $request->query('page', 1);
+        return [(int) $limit, (int) $page];
     }
 
-    // Mengambil berita populer (berdasarkan jumlah "like".
-    public function getBeritaPopuler(Request $request)
-    {
-        $userId = $request->query('user_id');
-        $userId = $userId ? $userId : null;
-
-        $beritas = Berita::withCount(['reaksis as jumlah_like' => function ($q) {
-            $q->where('jenis_reaksi', 'Suka');
-        }])
-            ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-            ->orderByDesc('jumlah_like')
-            ->orderByDesc('view_count')
-            ->where('visibilitas', 'public')
-            ->limit(5)
-            ->get();
-        return response()->json($this->formatBeritaResponse($beritas, $userId));
-    }
-
-    public function getBeritaTerkait(Request $request)
-    {
-        // Ambil parameter dari query string
-        $userId = $request->query('user_id');
-        $beritaId = $request->query('berita_id');
-        $kategori = $request->query('kategori'); // kategori sebagai parameter
-
-        // Pastikan kategori ada dalam parameter
-        if (!$kategori) {
-            return response()->json(['message' => 'Kategori tidak ditemukan'], 400);
-        }
-
-        // Ambil berita utama berdasarkan ID
-        $beritaUtama = Berita::find($beritaId);
-
-        if (!$beritaUtama) {
-            return response()->json(['message' => 'Berita tidak ditemukan'], 404);
-        }
-
-        // Ambil berita terkait berdasarkan kategori yang sama dan pastikan bukan berita utama
-        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-            ->where('id', '!=', $beritaId) // Pastikan berita utama tidak muncul
-            ->where('kategori', $kategori) // Filter berdasarkan kategori yang sama
-            ->orderByDesc('tanggal_diterbitkan')
-            ->where('visibilitas', 'public')
-            ->paginate(10);
-
-        // Format dan kembalikan response
-        return response()->json($this->formatBeritaResponse($beritas, $userId));
-    }
-
-
-    public function getBeritaRekomendasi(Request $request)
-    {
-        $userId = $request->query('user_id');
-
-        // Ambil kategori berita yang pernah dibookmark user (jika user login)
-        $kategoriFavorit = collect();
-
-        if ($userId) {
-            $kategoriFavorit = Berita::whereHas('bookmarks', function ($q) use ($userId) {
-                $q->where('user_id', $userId);
-            })->pluck('kategori')->unique();
-        }
-
-        // Jika ada kategori favorit, ambil berita berdasarkan kategori tersebut
-        if ($kategoriFavorit->isNotEmpty()) {
-            $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-                ->whereIn('kategori', $kategoriFavorit)
-                ->where('visibilitas', 'public')
-                ->inRandomOrder()
-                ->paginate(10);
-        } else {
-            // Jika tidak ada (user belum login atau belum pernah bookmark), ambil berdasarkan view & like
-            $beritas = Berita::withCount([
-                'reaksis as like_count' => function ($q) {
-                    $q->where('jenis_reaksi', 'Suka');
-                }
-            ])
-                ->orderByDesc('view_count')
-                ->orderByDesc('like_count')
-                ->where('visibilitas', 'public')
-                ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-                ->paginate(10);
-        }
-
-        return response()->json($this->formatBeritaResponse($beritas, $userId));
-    }
-
-
-
-    // Mengambil berita lain yang belum dibookmark oleh pengguna.
-    public function getRekomendasiLainnya(Request $request)
-    {
-        $userId = $request->query('user_id');
-        $userId = $userId ? $userId : null;
-
-        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-            ->whereDoesntHave('bookmarks', function ($q) use ($userId) {
-                if ($userId) {
-                    $q->where('user_id', $userId);
-                }
-            })
-            ->inRandomOrder()
-            ->where('visibilitas', 'public')
-            ->get();
-        return response()->json($this->formatBeritaResponse($beritas, $userId));
-    }
-
-    // search  
-    public function searchBerita(Request $request)
-    {
-        $userId = $request->query('user_id');
-        $query = $request->query('q');
-
-        if (!$query) {
-            return response()->json(['message' => 'Query pencarian tidak boleh kosong'], 400);
-        }
-
-        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-            ->where('visibilitas', 'public')
-            ->where(function ($q) use ($query) {
-                $q->where('judul', 'like', '%' . $query . '%')
-                    ->orWhere('konten_berita', 'like', '%' . $query . '%')
-                    ->orWhere('kategori', 'like', '%' . $query . '%');
-            })
-            ->orderByDesc('tanggal_diterbitkan')
-            ->paginate(10);
-
-        return response()->json($this->formatBeritaResponse($beritas, $userId));
-    }
-
-    // search by kategori
-    public function searchByKategori(Request $request)
-    {
-        $userId = $request->query('user_id');
-        $kategori = $request->query('kategori');
-
-        if (!$kategori) {
-            return response()->json(['message' => 'Kategori tidak boleh kosong'], 400);
-        }
-
-        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-            ->where('visibilitas', 'public')
-            ->where('kategori', 'like', '%' . $kategori . '%')
-            ->orderByDesc('tanggal_diterbitkan')
-            ->paginate(10);
-
-        return response()->json($this->formatBeritaResponse($beritas, $userId));
-    }
-
-
+    // Format response berita
     private function formatBeritaResponse($beritas, $userId)
     {
         return $beritas->map(function ($berita) use ($userId) {
             $tanggalDiterbitkan = Carbon::parse($berita->tanggal_diterbitkan);
+            $profilePic = !empty($berita->user->profile_pic) ? base64_encode($berita->user->profile_pic) : null;
 
             return [
                 'idBerita' => $berita->id,
@@ -185,7 +31,7 @@ class BeritaController extends Controller
                 'gambar' => $berita->gambar ?? null,
                 'tanggalDibuat' => $tanggalDiterbitkan->toDateTimeString(),
                 'penulis' => $berita->user->nama_lengkap ?? null,
-                'profil' => $berita->user->profile_pic ?? null,
+                'profil' => $profilePic,
                 'kategori' => $berita->kategori,
                 'jumlahLike' => $berita->reaksis->where('jenis_reaksi', 'Suka')->count(),
                 'jumlahDislike' => $berita->reaksis->where('jenis_reaksi', 'Tidak Suka')->count(),
@@ -197,6 +43,188 @@ class BeritaController extends Controller
             ];
         });
     }
+
+    public function getBeritaTerbaru(Request $request)
+    {
+        $userId = $request->query('user_id');
+        [$limit, $page] = $this->getPaginationParams($request);
+
+        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('visibilitas', 'public')
+            ->orderByDesc('tanggal_diterbitkan')
+            ->paginate($limit, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $this->formatBeritaResponse($beritas, $userId)
+        ]);
+    }
+
+    public function getBeritaPopuler(Request $request)
+    {
+        $userId = $request->query('user_id');
+        [$limit, $page] = $this->getPaginationParams($request);
+
+        $beritas = Berita::withCount(['reaksis as jumlah_like' => function ($q) {
+                $q->where('jenis_reaksi', 'Suka');
+            }])
+            ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('visibilitas', 'public')
+            ->orderByDesc('jumlah_like')
+            ->orderByDesc('view_count')
+            ->paginate($limit, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $this->formatBeritaResponse($beritas, $userId)
+        ]);
+    }
+
+    public function getBeritaTeratas(Request $request)
+    {
+        $userId = $request->query('user_id');
+
+        $beritas = Berita::withCount(['reaksis as jumlah_like' => function ($q) {
+                $q->where('jenis_reaksi', 'Suka');
+            }])
+            ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('visibilitas', 'public')
+            ->orderByDesc('view_count')
+            ->orderByDesc('jumlah_like')
+            ->limit(1)
+            ->get();
+
+        return response()->json([
+            'data' => $this->formatBeritaResponse($beritas, $userId)
+        ]);
+    }
+
+    public function getBeritaTerkait(Request $request)
+    {
+        $userId = $request->query('user_id');
+        $beritaId = $request->query('berita_id');
+        $kategori = $request->query('kategori');
+        [$limit, $page] = $this->getPaginationParams($request);
+
+        if (!$kategori) {
+            return response()->json(['message' => 'Kategori tidak ditemukan'], 400);
+        }
+
+        $beritaUtama = Berita::find($beritaId);
+        if (!$beritaUtama) {
+            return response()->json(['message' => 'Berita tidak ditemukan'], 404);
+        }
+
+        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('id', '!=', $beritaId)
+            ->where('kategori', $kategori)
+            ->where('visibilitas', 'public')
+            ->orderByDesc('tanggal_diterbitkan')
+            ->paginate($limit, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $this->formatBeritaResponse($beritas, $userId)
+        ]);
+    }
+
+    public function getBeritaRekomendasi(Request $request)
+    {
+        $userId = $request->query('user_id');
+        [$limit, $page] = $this->getPaginationParams($request);
+        $kategoriFavorit = collect();
+
+        if ($userId) {
+            $kategoriFavorit = Berita::whereHas('bookmarks', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })->pluck('kategori')->unique();
+        }
+
+        if ($kategoriFavorit->isNotEmpty()) {
+            $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+                ->whereIn('kategori', $kategoriFavorit)
+                ->where('visibilitas', 'public')
+                ->inRandomOrder()
+                ->paginate($limit, ['*'], 'page', $page);
+        } else {
+            $beritas = Berita::withCount(['reaksis as like_count' => function ($q) {
+                    $q->where('jenis_reaksi', 'Suka');
+                }])
+                ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+                ->where('visibilitas', 'public')
+                ->orderByDesc('view_count')
+                ->orderByDesc('like_count')
+                ->paginate($limit, ['*'], 'page', $page);
+        }
+
+        return response()->json([
+            'data' => $this->formatBeritaResponse($beritas, $userId)
+        ]);
+    }
+
+    public function getRekomendasiLainnya(Request $request)
+    {
+        $userId = $request->query('user_id');
+        [$limit, $page] = $this->getPaginationParams($request);
+
+        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('visibilitas', 'public')
+            ->whereDoesntHave('bookmarks', function ($q) use ($userId) {
+                if ($userId) {
+                    $q->where('user_id', $userId);
+                }
+            })
+            ->inRandomOrder()
+            ->paginate($limit, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $this->formatBeritaResponse($beritas, $userId)
+        ]);
+    }
+
+    public function searchBerita(Request $request)
+    {
+        $userId = $request->query('user_id');
+        $query = $request->query('q');
+        [$limit, $page] = $this->getPaginationParams($request);
+
+        if (!$query) {
+            return response()->json(['message' => 'Query pencarian tidak boleh kosong'], 400);
+        }
+
+        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('visibilitas', 'public')
+            ->where(function ($q) use ($query) {
+                $q->where('judul', 'like', "%$query%")
+                    ->orWhere('konten_berita', 'like', "%$query%")
+                    ->orWhere('kategori', 'like', "%$query%");
+            })
+            ->orderByDesc('tanggal_diterbitkan')
+            ->paginate($limit, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $this->formatBeritaResponse($beritas, $userId)
+        ]);
+    }
+
+    public function searchByKategori(Request $request)
+    {
+        $userId = $request->query('user_id');
+        $kategori = $request->query('kategori');
+        [$limit, $page] = $this->getPaginationParams($request);
+
+        if (!$kategori) {
+            return response()->json(['message' => 'Kategori tidak boleh kosong'], 400);
+        }
+
+        $beritas = Berita::with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('visibilitas', 'public')
+            ->where('kategori', 'like', "%$kategori%")
+            ->orderByDesc('tanggal_diterbitkan')
+            ->paginate($limit, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $this->formatBeritaResponse($beritas, $userId)
+        ]);
+    }
 }
+
 
 // php artisan serve --host=0.0.0.0 --port=8000
