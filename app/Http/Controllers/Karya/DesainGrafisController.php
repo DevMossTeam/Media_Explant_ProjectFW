@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Karya;
 use App\Http\Controllers\Controller;
 use App\Models\Karya\DesainGrafis;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\UserReact\Reaksi;
+use App\Models\UserReact\Komentar;
 
 class DesainGrafisController extends Controller
 {
@@ -39,6 +42,31 @@ class DesainGrafisController extends Controller
             ->take(4)
             ->get();
 
-        return view('karya.detail.desainGrafis-detail', compact('karya', 'rekomendasi'));
+        $komentarList = Komentar::with(['user', 'replies.user'])
+            ->where('komentar_type', 'Karya')
+            ->where('item_id', $karya->id)
+            ->whereNull('parent_id')
+            ->orderBy('tanggal_komentar', 'desc')
+            ->get();
+
+        $likeCount = Reaksi::where('item_id', $karya->id)
+            ->where('jenis_reaksi', 'Suka')
+            ->where('reaksi_type', 'Karya')
+            ->count();
+
+        $dislikeCount = Reaksi::where('item_id', $karya->id)
+            ->where('jenis_reaksi', 'Tidak Suka')
+            ->where('reaksi_type', 'Karya')
+            ->count();
+
+        $userReaksi = null;
+        if (Auth::check()) {
+            $userReaksi = Reaksi::where('user_id', Auth::user()->uid)
+                ->where('item_id', $karya->id)
+                ->where('reaksi_type', 'Karya')
+                ->first();
+        }
+
+        return view('karya.detail.desainGrafis-detail', compact('karya', 'rekomendasi', 'likeCount', 'dislikeCount', 'komentarList', 'userReaksi'));
     }
 }

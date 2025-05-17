@@ -543,7 +543,7 @@
                                 body: JSON.stringify({
                                     komentar: isi,
                                     item_id: "{{ $buletin->id }}",
-                                    komentar_type: "Berita",
+                                    komentar_type: "Produk",
                                     parent_id: parentId
                                 })
                             });

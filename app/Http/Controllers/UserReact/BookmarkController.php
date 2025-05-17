@@ -30,7 +30,7 @@ class BookmarkController extends Controller
 
         $request->validate([
             'item_id' => 'required|string|size:12',
-            'bookmark_type' => 'required|in:Berita,Produk'
+            'bookmark_type' => 'required|in:Berita,Produk,Karya'
         ]);
 
         $itemId = $request->item_id;
