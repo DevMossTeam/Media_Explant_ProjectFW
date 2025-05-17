@@ -18,7 +18,7 @@ class KomentarController extends Controller
         $request->validate([
             'komentar' => 'required|string|max:1000',
             'item_id' => 'required|string',
-            'komentar_type' => 'required|string',
+            'komentar_type' => 'required|string', // Pastikan 'Produk' digunakan di sini
             'parent_id' => 'nullable|string'
         ]);
 
@@ -28,12 +28,13 @@ class KomentarController extends Controller
         $user = User::where('uid', $user_uid)->first();
         if (!$user) return response()->json(['success' => false, 'message' => 'User not found'], 401);
 
+        // Simpan komentar
         $komentar = Komentar::create([
             'id' => Str::random(12),
             'user_id' => $user->uid,
             'isi_komentar' => $request->komentar,
             'tanggal_komentar' => Carbon::now(),
-            'komentar_type' => $request->komentar_type,
+            'komentar_type' => $request->komentar_type, // 'Produk'
             'item_id' => $request->item_id,
             'parent_id' => $request->parent_id ?? null
         ]);

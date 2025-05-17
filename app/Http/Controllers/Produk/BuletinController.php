@@ -6,27 +6,34 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Produk\Buletin;
 use Illuminate\Support\Facades\Response;
+use App\Models\UserReact\Reaksi;
+use Illuminate\Support\Facades\Auth;
+use App\Models\UserReact\Komentar;
 
 class BuletinController extends Controller
 {
-    // Menampilkan buletin
+    // Menampilkan buletin utama dan daftar lainnya
     public function index()
     {
         // 3 buletin terbaru untuk "Produk Kami"
-        $buletins = Buletin::where('kategori', 'Buletin')
+        $buletins = Buletin::select('id', 'judul', 'deskripsi', 'release_date', 'user_id')
+            ->where('kategori', 'Buletin')
             ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take(3)
             ->get();
 
         // 9 buletin terbaru untuk "Terbaru"
-        $buletinsTerbaru = Buletin::where('kategori', 'Buletin')
+        $buletinsTerbaru = Buletin::select('id', 'judul', 'release_date', 'user_id')
+            ->where('kategori', 'Buletin')
             ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take(9)
             ->get();
 
-        $buletinsRekomendasi = Buletin::where('kategori', 'Buletin')
+        // 12 buletin rekomendasi terbaru
+        $buletinsRekomendasi = Buletin::select('id', 'judul', 'release_date', 'user_id')
+            ->where('kategori', 'Buletin')
             ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take(12)
@@ -35,13 +42,13 @@ class BuletinController extends Controller
         return view('produk.buletin', compact('buletins', 'buletinsTerbaru', 'buletinsRekomendasi'));
     }
 
-    // Menampilkan halaman detail buletin
+    // Menampilkan halaman detail buletin dengan optimasi memori
     public function show(Request $request)
     {
         $id = $request->query('f');
 
-        // Ambil buletin utama
-        $buletin = Buletin::with('user')
+        // Ambil buletin utama tanpa media besar, hanya kolom penting saja
+        $buletin = Buletin::select('id', 'judul', 'deskripsi', 'release_date', 'user_id', 'kategori', 'visibilitas')
             ->where('visibilitas', 'public')
             ->where('id', $id)
             ->where('kategori', 'Buletin')
@@ -51,20 +58,56 @@ class BuletinController extends Controller
             return abort(404, "Buletin tidak ditemukan.");
         }
 
-        // Ambil rekomendasi buletin lain dengan pagination
-        $rekomendasiBuletin = Buletin::where('kategori', 'Buletin')
+        // Pagination rekomendasi buletin dengan limit dan tanpa eager loading user (jika user tidak dibutuhkan)
+        $rekomendasiBuletin = Buletin::select('id', 'judul', 'release_date')
+            ->where('kategori', 'Buletin')
             ->where('visibilitas', 'public')
             ->where('id', '!=', $id)
             ->orderBy('release_date', 'desc')
             ->paginate(6);
 
-        // Cek jika request adalah AJAX (untuk pagination)
+        // Ambil komentar utama dan balasan untuk 'Produk' (komentar_type)
+        $komentarList = Komentar::with(['user', 'replies.user'])
+            ->where('komentar_type', 'Produk')
+            ->where('item_id', $buletin->id)
+            ->whereNull('parent_id') // hanya komentar utama
+            ->orderBy('tanggal_komentar', 'desc')
+            ->get();
+
+        // Hitung like dan dislike secara efisien dengan tambahan filter reaksi_type = Produk
+        $likeCount = Reaksi::where('item_id', $buletin->id)
+            ->where('jenis_reaksi', 'Suka')
+            ->where('reaksi_type', 'Produk')
+            ->count();
+
+        $dislikeCount = Reaksi::where('item_id', $buletin->id)
+            ->where('jenis_reaksi', 'Tidak Suka')
+            ->where('reaksi_type', 'Produk')
+            ->count();
+
+        // Ambil reaksi user yang sudah login, dengan filter reaksi_type = Produk
+        $userReaksi = null;
+        if (Auth::check()) {
+            $userReaksi = Reaksi::where('user_id', Auth::user()->uid)
+                ->where('item_id', $buletin->id)
+                ->where('reaksi_type', 'Produk')
+                ->first();
+        }
+
+        // Jika AJAX untuk pagination rekomendasi
         if ($request->ajax()) {
             return view('produk.partials.BuletinRekomendasi', compact('rekomendasiBuletin'))->render();
         }
 
-        // Jika bukan AJAX, tampilkan full page
-        return view('produk.buletin_detail', compact('buletin', 'rekomendasiBuletin'));
+        // Tampilkan view lengkap dengan data hitung reaksi dan user reaksi
+        return view('produk.buletin_detail', compact(
+            'buletin',
+            'komentarList',
+            'rekomendasiBuletin',
+            'likeCount',
+            'dislikeCount',
+            'userReaksi'
+        ));
     }
 
     // Menampilkan halaman pertama PDF sebagai thumbnail
@@ -81,6 +124,7 @@ class BuletinController extends Controller
         ]);
     }
 
+    // Download PDF
     public function download($id)
     {
         $buletin = Buletin::findOrFail($id);
@@ -97,6 +141,7 @@ class BuletinController extends Controller
         ]);
     }
 
+    // Preview PDF
     public function preview(Request $request)
     {
         $id = $request->query('f');

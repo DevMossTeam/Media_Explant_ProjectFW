@@ -29,15 +29,17 @@ class BookmarkController extends Controller
         }
 
         $request->validate([
-            'item_id' => 'required|string|size:12'
+            'item_id' => 'required|string|size:12',
+            'bookmark_type' => 'required|in:Berita,Produk'
         ]);
 
         $itemId = $request->item_id;
+        $bookmarkType = $request->bookmark_type;
 
         $existing = DB::table('bookmark')
             ->where('user_id', $user->uid)
             ->where('item_id', $itemId)
-            ->where('bookmark_type', 'Berita')
+            ->where('bookmark_type', $bookmarkType)
             ->first();
 
         if ($existing) {
@@ -48,7 +50,7 @@ class BookmarkController extends Controller
                 'id' => Str::random(12),
                 'user_id' => $user->uid,
                 'tanggal_bookmark' => now(),
-                'bookmark_type' => 'Berita',
+                'bookmark_type' => $bookmarkType,
                 'item_id' => $itemId,
             ]);
             return response()->json(['status' => 'bookmarked']);

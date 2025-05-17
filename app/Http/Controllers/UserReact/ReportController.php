@@ -36,7 +36,7 @@ class ReportController extends Controller
             'detail_pesan' => $request->detail_pesan,
             'status_read'  => 'belum',
             'status'       => 'laporan',
-            'pesan_type'   => 'Berita',
+            'pesan_type'   => $request->input('pesan_type', 'Berita'),
             'item_id'      => $request->item_id
         ]);
 

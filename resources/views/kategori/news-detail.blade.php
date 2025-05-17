@@ -461,8 +461,10 @@
         <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
             <h2 class="text-lg font-bold mb-4">Laporan Tambahan Opsional</h2>
             <textarea name="detail_pesan" class="w-full border border-gray-300 rounded p-2" placeholder="Berikan detail tambahan"
-                maxlength="500"></textarea>
-            <div class="text-right text-sm text-gray-500">0/500</div>
+                maxlength="500" id="detailTextarea"></textarea>
+            <div class="text-right text-sm text-gray-500">
+                <span id="charCount">0</span>/500
+            </div>
             <div class="mt-4 flex justify-end space-x-4">
                 <button type="button" id="backButton"
                     class="bg-gray-300 text-gray-700 px-4 py-2 rounded">Kembali</button>
@@ -496,6 +498,9 @@
             const thankYouModal = document.getElementById('thankYouModal');
             const closeThankYouModalButton = document.getElementById('closeThankYouModal');
             const backButton = document.getElementById('backButton');
+            const textarea = document.getElementById('detailTextarea');
+            const charCount = document.getElementById('charCount');
+
             const reasonsWithOptions = {
                 "Konten seksual": ["Pornografi", "Eksploitasi anak", "Pelecehan seksual"],
                 "Konten kekerasan atau menjijikkan": ["Kekerasan fisik", "Kekerasan verbal",
@@ -510,10 +515,20 @@
                 "Teks bermasalah": ["Kata-kata kasar", "Teks diskriminatif", "Teks mengandung kekerasan"]
             };
 
+            // Update character count dynamically as the user types
+            if (textarea && charCount) {
+                textarea.addEventListener('input', function() {
+                    const currentLength = this.value.length;
+                    charCount.textContent = currentLength; // Update the displayed character count
+                });
+            }
+
+            // Modal Button Click to Show Report Modal
             reportButton.addEventListener('click', () => {
                 reportModal.classList.remove('hidden');
             });
 
+            // Handle Reason Change and Dynamic Select Options
             document.querySelectorAll('input[name="reportReason"]').forEach(radio => {
                 radio.addEventListener('change', function() {
                     const selectedReason = radio.value;
@@ -545,6 +560,7 @@
                         container.appendChild(select);
                         label.appendChild(container);
 
+                        // Enable Next Button when selecting option
                         select.addEventListener('change', () => {
                             if (select.value) {
                                 nextButton.classList.remove('bg-gray-300');
@@ -554,27 +570,32 @@
                         });
                     }
 
+                    // Disable Next Button if reason is changed
                     nextButton.classList.add('bg-gray-300');
                     nextButton.classList.remove('bg-blue-500', 'text-white');
                     nextButton.disabled = true;
                 });
             });
 
+            // Navigate to Next Modal
             nextButton.addEventListener('click', function() {
                 reportModal.classList.add('hidden');
                 additionalReportModal.classList.remove('hidden');
             });
 
+            // Navigate Back to Previous Modal
             backButton.addEventListener('click', function() {
                 additionalReportModal.classList.add('hidden');
                 reportModal.classList.remove('hidden');
             });
 
+            // Close Thank You Modal
             closeThankYouModalButton.addEventListener('click', function() {
                 thankYouModal.classList.add('hidden');
-                resetForm();
+                resetForm(); // Reset form when closing the "Thank You" modal
             });
 
+            // Reset Form After Submission or Close
             function resetForm() {
                 document.querySelectorAll('input[name="reportReason"]').forEach(radio => radio.checked = false);
                 const container = document.querySelector('.additional-container');
@@ -582,9 +603,11 @@
                 nextButton.classList.add('bg-gray-300');
                 nextButton.classList.remove('bg-blue-500', 'text-white');
                 nextButton.disabled = true;
-                document.querySelector('textarea[name="detail_pesan"]').value = '';
+                document.querySelector('textarea[name="detail_pesan"]').value = ''; // Clear the textarea
+                charCount.textContent = '0'; // Reset the character count to 0
             }
 
+            // Close Modal When Clicking Outside
             function closeModalOnOutsideClick(modal) {
                 window.addEventListener('click', function(e) {
                     if (e.target === modal) {
@@ -597,12 +620,13 @@
             closeModalOnOutsideClick(reportModal);
             closeModalOnOutsideClick(thankYouModal);
 
+            // Submit the Report
             document.getElementById('submitReportButton').addEventListener('click', function() {
                 const selectedReason = document.querySelector('input[name="reportReason"]:checked');
                 const additionalDetail = document.querySelector('textarea[name="detail_pesan"]').value
-                    .trim();
+                .trim();
                 const itemId = new URLSearchParams(window.location.search).get(
-                    'a'); // Ganti sesuai kebutuhan
+                'a');
 
                 if (selectedReason && itemId) {
                     fetch('/report-news', {
@@ -624,6 +648,7 @@
                             if (data.success) {
                                 additionalReportModal.classList.add('hidden');
                                 thankYouModal.classList.remove('hidden');
+                                resetForm(); // Reset the form after successful submission
                             } else {
                                 alert(data.message || 'Gagal mengirim laporan.');
                             }
