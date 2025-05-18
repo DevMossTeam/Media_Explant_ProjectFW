@@ -119,20 +119,22 @@
             <div class="flex flex-col space-y-4 mt-10">
                 <a href="{{ route('home') }}" class="text-gray-700 hover:text-[#990505] font-semibold">Beranda</a>
 
-                <!-- Media Dropdown -->
-                <div class="group">
-                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
-                        Buat <i class="fa-solid fa-chevron-down float-right"></i>
-                    </button>
-                    <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li><a href="{{ route('create-news') }}" class="text-gray-600 hover:text-[#990505]">Buat
-                                Berita</a></li>
-                        <li><a href="{{ route('create-product') }}"
-                                class="text-gray-600 hover:text-[#990505]">Tambahkan Produk</a></li>
-                        <li><a href="{{ route('creation') }}" class="text-gray-600 hover:text-[#990505]">Tambahkan
-                                Karya</a></li>
-                    </ul>
-                </div>
+                @if (session('user') && session('user')->role === 'Penulis')
+                    <!-- Media Dropdown -->
+                    <div class="group">
+                        <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
+                            Buat <i class="fa-solid fa-chevron-down float-right"></i>
+                        </button>
+                        <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
+                            <li><a href="{{ route('create-news') }}" class="text-gray-600 hover:text-[#990505]">Buat
+                                    Berita</a></li>
+                            <li><a href="{{ route('create-product') }}"
+                                    class="text-gray-600 hover:text-[#990505]">Tambahkan Produk</a></li>
+                            <li><a href="{{ route('creation') }}" class="text-gray-600 hover:text-[#990505]">Tambahkan
+                                    Karya</a></li>
+                        </ul>
+                    </div>
+                @endif
 
                 <!-- Profil Dropdown -->
                 <div class="group">
@@ -147,13 +149,20 @@
                         <li><a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a></li>
                         <li><a href="{{ route('bookmarked') }}" class="text-gray-600 hover:text-[#990505]">Disimpan</a>
                         </li>
-                        <li><a href="{{ route('draft-media') }}" class="text-gray-600 hover:text-[#990505]">Draf
-                                Karya</a>
+                        @if (session('user') && session('user')->role === 'Penulis')
+                            <li><a href="{{ route('draft-media') }}" class="text-gray-600 hover:text-[#990505]">Draf
+                                    Karya</a></li>
+                            <li><a href="{{ route('published-media') }}"
+                                    class="text-gray-600 hover:text-[#990505]">Publikasi Karya</a></li>
+                        @endif
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="text-left text-gray-600 hover:text-[#990505] w-full">
+                                    Keluar
+                                </button>
+                            </form>
                         </li>
-                        <li><a href="{{ route('published-media') }}"
-                                class="text-gray-600 hover:text-[#990505]">Publikasi Karya</a>
-                        </li>
-                        <li><a href="{{ route('logout') }}" class="text-gray-600 hover:text-[#990505]">Keluar</a></li>
                     </ul>
                 </div>
 
@@ -307,20 +316,25 @@
                 </div>
             </div>
 
-            <!-- Media Dropdown -->
-            <div class="relative">
-                <button id="articleButton"
-                    class="flex items-center space-x-2 text-gray-700 hover:text-red-700 focus:outline-none">
-                    <i class="fa-solid fa-square-plus text-lg text-gray-500 hover:text-red-700 focus:outline-none"></i>
-                </button>
-                <div id="articleDropdown"
-                    class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
-                    <a href="{{ route('create-news') }}" class="block px-4 py-2 hover:bg-gray-100">Buat Berita</a>
-                    <a href="{{ route('create-product') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan
-                        Produk</a>
-                    <a href="{{ route('creation') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan Karya</a>
+            @if (session('user') && session('user')->role === 'Penulis')
+                <!-- Media Dropdown -->
+                <div class="relative">
+                    <button id="articleButton"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-red-700 focus:outline-none">
+                        <i
+                            class="fa-solid fa-square-plus text-lg text-gray-500 hover:text-red-700 focus:outline-none"></i>
+                    </button>
+                    <div id="articleDropdown"
+                        class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
+                        <a href="{{ route('create-news') }}" class="block px-4 py-2 hover:bg-gray-100">Buat
+                            Berita</a>
+                        <a href="{{ route('create-product') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan
+                            Produk</a>
+                        <a href="{{ route('creation') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan
+                            Karya</a>
+                    </div>
                 </div>
-            </div>
+            @endif
 
             <!-- Profil Dropdown -->
             <div class="relative z-50">
@@ -367,15 +381,18 @@
                             <img src="https://img.icons8.com/ios-filled/24/808080/agreement.png"
                                 alt="Agreement Like Icon" class="w-5 h-5 mr-3"> Disukai
                         </a>
-                        <a href="{{ route('draft-media') }}" class="flex items-center px-4 py-2 hover:bg-gray-100">
-                            <img src="https://img.icons8.com/ios-filled/24/808080/edit-property.png"
-                                alt="Edit Property Icon" class="w-5 h-5 mr-3"> Draft Karya
-                        </a>
-                        <a href="{{ route('published-media') }}"
-                            class="flex items-center px-4 py-2 hover:bg-gray-100">
-                            <img src="https://img.icons8.com/ios-filled/24/808080/internet.png"
-                                alt="Publikasi Karya Icon" class="w-5 h-5 mr-3"> publikasi Karya
-                        </a>
+                        @if ($user->role === 'Penulis')
+                            <a href="{{ route('draft-media') }}"
+                                class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                <img src="https://img.icons8.com/ios-filled/24/808080/edit-property.png"
+                                    class="w-5 h-5 mr-3"> Draft Karya
+                            </a>
+                            <a href="{{ route('published-media') }}"
+                                class="flex items-center px-4 py-2 hover:bg-gray-100">
+                                <img src="https://img.icons8.com/ios-filled/24/808080/internet.png"
+                                    class="w-5 h-5 mr-3"> Publikasi Karya
+                            </a>
+                        @endif
 
                         <div class="border-t my-2"></div>
 

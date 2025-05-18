@@ -13,6 +13,9 @@ class LogoutController extends Controller
         // Hapus cookie user_uid
         Cookie::queue(Cookie::forget('user_uid'));
 
+        // Hapus sesi user
+        $request->session()->forget('user'); 
+
         // Redirect ke halaman login
         return redirect()->route('login')->with('success', 'Anda telah logout.');
     }

@@ -66,7 +66,7 @@
 
         <!-- Deskripsi buletin -->
         <div class="text-base text-gray-700 leading-relaxed mt-4 mb-4">
-            {{ $buletin->deskripsi }}
+            {{ strip_tags(str_replace('&nbsp;', ' ', $buletin->deskripsi)) }}
         </div>
 
         <!-- Tombol Aksi -->

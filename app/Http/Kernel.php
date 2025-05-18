@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'auth:sanctum' => \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         'checkRole' => \App\Http\Middleware\CheckRole::class,
+        'guestOrRole' => \App\Http\Middleware\CheckGuestOrRole::class,
         'remember.prev' => \App\Http\Middleware\RememberPreviousUrl::class,
     ];
 }

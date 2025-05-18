@@ -31,7 +31,7 @@
                                     <h2 class="text-lg font-semibold mt-1">{{ $buletin->judul }}</h2>
 
                                     <p class="text-sm mt-1 line-clamp-2">
-                                        {{ $buletin->deskripsi }}
+                                        {{ strip_tags(str_replace('&nbsp;', ' ', $buletin->deskripsi)) }}
                                     </p>
                                 </div>
                             </a>

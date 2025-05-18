@@ -59,72 +59,18 @@ use App\Models\User;
 */
 
 // Route untuk halaman utama (Beranda)
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::middleware(['guestOrRole'])->group(function () {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Route untuk halaman Siaran Pers
-Route::get('/kategori/siaran-pers', function () {
-    return view('kategori.siaranPers');
-})->name('siaran-pers');
+    Route::get('/produk/buletin', fn() => view('produk.buletin'))->name('buletin');
+    Route::get('/produk/majalah', fn() => view('produk.majalah'))->name('majalah');
 
-// Route untuk halaman Riset
-Route::get('/kategori/riset', function () {
-    return view('kategori.riset');
-})->name('riset');
-
-// Route untuk halaman Wawancara
-Route::get('/kategori/wawancara', function () {
-    return view('kategori.wawancara');
-})->name('wawancara');
-
-// Route untuk halaman Diskusi
-Route::get('/kategori/diskusi', function () {
-    return view('kategori.diskusi');
-})->name('diskusi');
-
-// Route untuk halaman Agenda
-Route::get('/kategori/agenda', function () {
-    return view('kategori.agenda');
-})->name('agenda');
-
-// Route untuk halaman Opini
-Route::get('/kategori/opini', function () {
-    return view('kategori.opini');
-})->name('opini');
-
-// Rute untuk halaman Buletin
-Route::get('/produk/buletin', function () {
-    return view('produk.buletin');
-})->name('buletin');
-
-// Rute untuk halaman Majalah
-Route::get('/produk/majalah', function () {
-    return view('produk.majalah');
-})->name('majalah');
-
-// Rute untuk halaman Puisi
-Route::get('/karya/puisi', function () {
-    return view('karya.puisi');
-})->name('puisi');
-
-// Rute untuk halaman Pantun
-Route::get('/karya/pantun', function () {
-    return view('karya.pantun');
-})->name('pantun');
-
-// Rute untuk halaman Syair
-Route::get('/karya/syair', function () {
-    return view('karya.syair');
-})->name('syair');
-
-// Rute untuk halaman Fotografi
-Route::get('/karya/fotografi', function () {
-    return view('karya.fotografi');
-})->name('fotografi');
-
-// Rute untuk halaman Desain Grafis
-Route::get('/karya/desain-grafis', function () {
-    return view('karya.desain-grafis');
-})->name('desain-grafis');
+    Route::get('/karya/puisi', fn() => view('karya.puisi'))->name('puisi');
+    Route::get('/karya/pantun', fn() => view('karya.pantun'))->name('pantun');
+    Route::get('/karya/syair', fn() => view('karya.syair'))->name('syair');
+    Route::get('/karya/fotografi', fn() => view('karya.fotografi'))->name('fotografi');
+    Route::get('/karya/desain-grafis', fn() => view('karya.desain-grafis'))->name('desain-grafis');
+});
 
 // Route untuk login
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -140,6 +86,15 @@ Route::post('/verifikasi-akun', [VerifikasiAkunController::class, 'verifyOtp'])-
 Route::get('/buat-password', [CreatePasswordController::class, 'showCreatePasswordForm'])->name('buat-password');
 Route::post('/buat-password', [CreatePasswordController::class, 'storePassword']);
 Route::post('/store-password', [CreatePasswordController::class, 'storePassword'])->name('store-password');
+
+Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.sendOtp');
+Route::get('verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.verifyOtpForm');
+Route::post('verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verifyOtp');
+Route::get('ganti-password', [ForgotPasswordController::class, 'showChangePasswordForm'])->name('password.changePasswordForm');
+Route::post('ganti-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
+Route::post('/password/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->name('password.resendOtp');
+Route::post('/verifikasi-akun/resend-otp', [RegisterController::class, 'resendOtp'])->name('verifikasi-akun.resendOtp');
 
 // Route untuk logout
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
@@ -216,80 +171,96 @@ Route::middleware(['checkRole:Penulis,Pembaca'])->group(function () {
     Route::delete('/profile/bookmarked/{id}', [BookmarkedController::class, 'destroy'])->name('bookmarked.destroy');
 });
 
-Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotPasswordForm'])->name('password.request');
-Route::post('forgot-password', [ForgotPasswordController::class, 'sendOtp'])->name('password.sendOtp');
-Route::get('verify-otp', [ForgotPasswordController::class, 'showVerifyOtpForm'])->name('password.verifyOtpForm');
-Route::post('verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.verifyOtp');
-Route::get('ganti-password', [ForgotPasswordController::class, 'showChangePasswordForm'])->name('password.changePasswordForm');
-Route::post('ganti-password', [ForgotPasswordController::class, 'updatePassword'])->name('password.updatePassword');
+Route::middleware(['guestOrRole'])->group(function () {
 
-Route::get('/kategori/kampus', [KampusNewsController::class, 'index'])->name('kampus');
-Route::get('/kategori/kampus/read', [KampusNewsController::class, 'show'])->name('kampus.detail');
-Route::get('/kategori/nasional-internasional', [NasionalInternasionalNewsController::class, 'index'])->name('nasional-internasional');
-Route::get('/kategori/nasional-internasional/read', [NasionalInternasionalNewsController::class, 'show'])->name('nasional-internasional.detail');
-Route::get('/kategori/opini-esai', [OpiniEsaiNewsController::class, 'index'])->name('opini-esai');
-Route::get('/kategori/opini-esai/read', [OpiniEsaiNewsController::class, 'show'])->name('opini-esai.detail');
-Route::get('/kategori/kesenian-hiburan', [KesenianHiburanNewsController::class, 'index'])->name('kesenian-hiburan');
-Route::get('/kategori/kesenian-hiburan/read', [KesenianHiburanNewsController::class, 'show'])->name('kesenian-hiburan.detail');
-Route::get('/kategori/kesehatan', [KesehatanNewsController::class, 'index'])->name('kesehatan');
-Route::get('/kategori/kesehatan/read', [KesehatanNewsController::class, 'show'])->name('kesehatan.detail');
-Route::get('/kategori/teknologi', [TeknologiNewsController::class, 'index'])->name('teknologi');
-Route::get('/kategori/teknologi/read', [TeknologiNewsController::class, 'show'])->name('teknologi.detail');
-Route::get('/kategori/liputan-khusus', [LiputanKhususNewsController::class, 'index'])->name('liputan-khusus');
-Route::get('/kategori/liputan-khusus/read', [LiputanKhususNewsController::class, 'show'])->name('liputan-khusus.detail');
-Route::get('/kategori/olahraga', [OlahragaNewsController::class, 'index'])->name('olahraga');
-Route::get('/kategori/olahraga/read', [OlahragaNewsController::class, 'show'])->name('olahraga.detail');
+    // Halaman utama
+    Route::get('/', [HomeNewsController::class, 'index'])->name('home');
 
-Route::get('/', [HomeNewsController::class, 'index'])->name('home');
+    // Kategori berita
+    Route::get('/kategori/kampus', [KampusNewsController::class, 'index'])->name('kampus');
+    Route::get('/kategori/kampus/read', [KampusNewsController::class, 'show'])->name('kampus.detail');
 
-// Rute untuk kategori berita
-Route::get('/kategori/{category}', [HomeNewsController::class, 'index'])->name('category');
-Route::get('/kategori/{category}/read', [HomeNewsController::class, 'show'])->name('kategori.detail');
+    Route::get('/kategori/nasional-internasional', [NasionalInternasionalNewsController::class, 'index'])->name('nasional-internasional');
+    Route::get('/kategori/nasional-internasional/read', [NasionalInternasionalNewsController::class, 'show'])->name('nasional-internasional.detail');
 
-Route::view('/tentang-kami', 'header-footer.footer-menu.tentangKami');
-Route::view('/explant-contributor', 'header-footer.footer-menu.explantContributor');
-Route::view('/kode-etik', 'header-footer.footer-menu.kode-etik');
-Route::view('/struktur-organisasi', 'header-footer.footer-menu.strukturOrganisasi');
-Route::view('/pusat-bantuan', 'header-footer.footer-menu.pusatBantuan');
+    Route::get('/kategori/opini-esai', [OpiniEsaiNewsController::class, 'index'])->name('opini-esai');
+    Route::get('/kategori/opini-esai/read', [OpiniEsaiNewsController::class, 'show'])->name('opini-esai.detail');
 
-Route::post('/password/resend-otp', [ForgotPasswordController::class, 'resendOtp'])->name('password.resendOtp');
-Route::post('/verifikasi-akun/resend-otp', [RegisterController::class, 'resendOtp'])->name('verifikasi-akun.resendOtp');
+    Route::get('/kategori/kesenian-hiburan', [KesenianHiburanNewsController::class, 'index'])->name('kesenian-hiburan');
+    Route::get('/kategori/kesenian-hiburan/read', [KesenianHiburanNewsController::class, 'show'])->name('kesenian-hiburan.detail');
 
-Route::get('/produk/buletin', [BuletinController::class, 'index'])->name('buletin.index');
-Route::get('/produk/buletin/browse', [BuletinController::class, 'show'])->name('buletin.browse');
-Route::get('/produk/buletin/pdf-preview/{id}', [BuletinController::class, 'pdfPreview'])->name('buletin.pdfPreview');
-Route::get('/produk/buletin/download/{id}', [BuletinController::class, 'download'])->name('buletin.download');
-Route::get('/produk/buletin/preview', [BuletinController::class, 'preview'])->name('buletin.preview');
+    Route::get('/kategori/kesehatan', [KesehatanNewsController::class, 'index'])->name('kesehatan');
+    Route::get('/kategori/kesehatan/read', [KesehatanNewsController::class, 'show'])->name('kesehatan.detail');
 
-Route::get('/produk/majalah', [MajalahController::class, 'index'])->name('majalah.index');
-Route::get('/produk/majalah/browse', [MajalahController::class, 'show'])->name('majalah.browse');
-Route::get('/produk/majalah/pdf-preview/{id}', [MajalahController::class, 'pdfPreview'])->name('majalah.pdfPreview');
-Route::get('/produk/majalah/download/{id}', [MajalahController::class, 'download'])->name('majalah.download');
-Route::get('/produk/majalah/preview', [MajalahController::class, 'preview'])->name('majalah.preview');
+    Route::get('/kategori/teknologi', [TeknologiNewsController::class, 'index'])->name('teknologi');
+    Route::get('/kategori/teknologi/read', [TeknologiNewsController::class, 'show'])->name('teknologi.detail');
 
-Route::prefix('karya/puisi')->name('karya.puisi.')->group(function () {
-    Route::get('/', [PuisiController::class, 'index'])->name('index');
-    Route::get('/read', [PuisiController::class, 'show'])->name('read');
+    Route::get('/kategori/liputan-khusus', [LiputanKhususNewsController::class, 'index'])->name('liputan-khusus');
+    Route::get('/kategori/liputan-khusus/read', [LiputanKhususNewsController::class, 'show'])->name('liputan-khusus.detail');
+
+    Route::get('/kategori/olahraga', [OlahragaNewsController::class, 'index'])->name('olahraga');
+    Route::get('/kategori/olahraga/read', [OlahragaNewsController::class, 'show'])->name('olahraga.detail');
+
+    // Kategori dinamis
+    Route::get('/kategori/{category}', [HomeNewsController::class, 'index'])->name('category');
+    Route::get('/kategori/{category}/read', [HomeNewsController::class, 'show'])->name('kategori.detail');
+
+    // Footer menu (halaman informasi)
+    Route::view('/tentang-kami', 'header-footer.footer-menu.tentangKami');
+    Route::view('/explant-contributor', 'header-footer.footer-menu.explantContributor');
+    Route::view('/kode-etik', 'header-footer.footer-menu.kode-etik');
+    Route::view('/struktur-organisasi', 'header-footer.footer-menu.strukturOrganisasi');
+    Route::view('/pusat-bantuan', 'header-footer.footer-menu.pusatBantuan');
+
 });
 
-Route::prefix('karya/pantun')->name('karya.pantun.')->group(function () {
-    Route::get('/', [PantunController::class, 'index'])->name('index');
-    Route::get('/read', [PantunController::class, 'show'])->name('read');
-});
+Route::middleware(['guestOrRole'])->group(function () {
 
-Route::prefix('karya/syair')->name('karya.syair.')->group(function () {
-    Route::get('/', [SyairController::class, 'index'])->name('index');
-    Route::get('/read', [SyairController::class, 'show'])->name('read');
-});
+    // route PRODUK: BULETIN
+    Route::get('/produk/buletin', [BuletinController::class, 'index'])->name('buletin.index');
+    Route::get('/produk/buletin/browse', [BuletinController::class, 'show'])->name('buletin.browse');
+    Route::get('/produk/buletin/pdf-preview/{id}', [BuletinController::class, 'pdfPreview'])->name('buletin.pdfPreview');
+    Route::get('/produk/buletin/download/{id}', [BuletinController::class, 'download'])->name('buletin.download');
+    Route::get('/produk/buletin/preview', [BuletinController::class, 'preview'])->name('buletin.preview');
 
-Route::prefix('karya/fotografi')->name('karya.fotografi.')->group(function () {
-    Route::get('/', [FotografiController::class, 'index'])->name('index');
-    Route::get('/read', [FotografiController::class, 'show'])->name('read');
-});
+    // route PRODUK: MAJALAH
+    Route::get('/produk/majalah', [MajalahController::class, 'index'])->name('majalah.index');
+    Route::get('/produk/majalah/browse', [MajalahController::class, 'show'])->name('majalah.browse');
+    Route::get('/produk/majalah/pdf-preview/{id}', [MajalahController::class, 'pdfPreview'])->name('majalah.pdfPreview');
+    Route::get('/produk/majalah/download/{id}', [MajalahController::class, 'download'])->name('majalah.download');
+    Route::get('/produk/majalah/preview', [MajalahController::class, 'preview'])->name('majalah.preview');
 
-Route::prefix('karya/desain-grafis')->name('karya.desain-grafis.')->group(function () {
-    Route::get('/', [DesainGrafisController::class, 'index'])->name('index');
-    Route::get('/read', [DesainGrafisController::class, 'show'])->name('read');
+    // route KARYA
+    Route::prefix('karya/puisi')->name('karya.puisi.')->group(function () {
+        Route::get('/', [PuisiController::class, 'index'])->name('index');
+        Route::get('/read', [PuisiController::class, 'show'])->name('read');
+    });
+
+    Route::prefix('karya/pantun')->name('karya.pantun.')->group(function () {
+        Route::get('/', [PantunController::class, 'index'])->name('index');
+        Route::get('/read', [PantunController::class, 'show'])->name('read');
+    });
+
+    Route::prefix('karya/syair')->name('karya.syair.')->group(function () {
+        Route::get('/', [SyairController::class, 'index'])->name('index');
+        Route::get('/read', [SyairController::class, 'show'])->name('read');
+    });
+
+    Route::prefix('karya/fotografi')->name('karya.fotografi.')->group(function () {
+        Route::get('/', [FotografiController::class, 'index'])->name('index');
+        Route::get('/read', [FotografiController::class, 'show'])->name('read');
+    });
+
+    Route::prefix('karya/desain-grafis')->name('karya.desain-grafis.')->group(function () {
+        Route::get('/', [DesainGrafisController::class, 'index'])->name('index');
+        Route::get('/read', [DesainGrafisController::class, 'show'])->name('read');
+    });
+
+    // route search
+    Route::get('/search-preview', [SearchController::class, 'preview']);
+    Route::get('/search', [SearchController::class, 'index'])->name('search');
+    Route::get('/search/{section}', [SearchController::class, 'paginateSection']);
+
 });
 
 Route::post('/reaksi', [ReaksiController::class, 'store'])->name('reaksi.store');
@@ -307,10 +278,6 @@ Route::middleware(['web'])->group(function () {
 Route::middleware('web')->group(function () {
     Route::post('/report-news', [ReportController::class, 'store'])->name('report.news');
 });
-
-Route::get('/search-preview', [SearchController::class, 'preview']);
-Route::get('/search', [SearchController::class, 'index'])->name('search');
-Route::get('/search/{section}', [SearchController::class, 'paginateSection']);
 
 // Route untuk Admin
 

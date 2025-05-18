@@ -66,7 +66,7 @@
 
         <!-- Deskripsi majalah -->
         <div class="text-base text-gray-700 leading-relaxed mt-4 mb-4">
-            {{ $majalah->deskripsi }}
+            {{ strip_tags(str_replace('&nbsp;', ' ', $majalah->deskripsi)) }}
         </div>
 
         <!-- Tombol Aksi -->
