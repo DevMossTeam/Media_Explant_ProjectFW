@@ -17,6 +17,9 @@ class FotografiController extends Controller
         $karya = Fotografi::with('user')
             ->where('kategori', 'fotografi')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('release_date')
             ->take(16)
             ->get();
@@ -24,6 +27,9 @@ class FotografiController extends Controller
         // 4 terbaru
         $terbaru = Fotografi::where('kategori', 'fotografi')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('release_date')
             ->take(4)
             ->get();
@@ -31,6 +37,9 @@ class FotografiController extends Controller
         // 6 rekomendasi hari ini
         $rekomendasi = Fotografi::where('kategori', 'fotografi')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->inRandomOrder()
             ->take(6)
             ->get();

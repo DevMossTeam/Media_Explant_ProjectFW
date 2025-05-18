@@ -70,7 +70,7 @@
             </div>
         </div>
 
-         {{-- Tanggapan --}}
+        {{-- Tanggapan --}}
         <div class="mt-5" data-karya-id="{{ $karya->id }}">
             <div class="text-sm font-semibold text-black mb-2">Beri Tanggapanmu :</div>
             <div class="flex items-center gap-6 text-[#ABABAB]">
@@ -194,8 +194,7 @@
                         <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                         <div class="flex gap-3 text-xs">
                             <div class="flex items-center gap-1">
-                                <i class="fa-regular fa-thumbs-up"></i>
-                                <span>107</span>
+                                <i class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
                             </div>
                             <div class="flex items-center gap-1">
                                 <i class="fa-solid fa-share-nodes"></i>

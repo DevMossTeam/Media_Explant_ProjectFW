@@ -14,6 +14,9 @@ class SyairController extends Controller
     {
         $terbaru = Syair::where('kategori', 'syair')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->orderBy('release_date', 'desc')
             ->take(6)
             ->get();
@@ -21,11 +24,14 @@ class SyairController extends Controller
         $karya = Syair::with('user')
             ->where('kategori', 'syair')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->orderBy('release_date', 'desc')
             ->take(20)
             ->get();
 
-        return view('karya.syair', compact('terbaru', 'karya'));
+        return view('karya.syair', data: compact('terbaru', 'karya'));
     }
 
     public function show()

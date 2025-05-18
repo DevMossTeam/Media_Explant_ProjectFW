@@ -32,11 +32,13 @@
                                 <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                 <div class="flex gap-2 text-xs">
                                     <div class="flex items-center gap-1">
-                                        <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                        <i class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
                                     </div>
-                                    <div class="flex items-center gap-1">
-                                        <i class="fa-solid fa-share-nodes"></i><span>Share</span>
-                                    </div>
+                                    <button class="flex items-center gap-1 openShareModal"
+                                        data-url="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
+                                        <i class="fa-solid fa-share-nodes"></i>
+                                        <span>Share</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -66,11 +68,13 @@
                                 <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                 <div class="flex gap-2 text-xs">
                                     <div class="flex items-center gap-1">
-                                        <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                        <i class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
                                     </div>
-                                    <div class="flex items-center gap-1">
-                                        <i class="fa-solid fa-share-nodes"></i><span>Share</span>
-                                    </div>
+                                    <button class="flex items-center gap-1 openShareModal"
+                                        data-url="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
+                                        <i class="fa-solid fa-share-nodes"></i>
+                                        <span>Share</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -97,95 +101,166 @@
                         <div class="w-full h-[2px] bg-gray-300"></div>
                     </div>
 
-                <div class="flex flex-col gap-6 mb-6">
-                    @foreach ($terpopuler_opini as $item)
-                        <div class="flex gap-4">
-                            <a href="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
-                                <div class="w-48 h-32 overflow-hidden rounded">
-                                    <img src="{{ $item->first_image }}" alt="{{ $item->judul }}"
-                                        class="w-full h-full object-cover">
-                                </div>
-                            </a>
-                            <div class="flex-1">
-                                <div class="flex items-center text-xs font-semibold mb-1">
-                                    <span class="text-[#990505]">{{ strtoupper($item->kategori) }}</span>
-                                    <span class="mx-2 text-[#990505]">|</span>
-                                    <span
-                                        class="text-[#A8A8A8]">{{ \Carbon\Carbon::parse($item->tanggal_diterbitkan)->format('d M Y') }}</span>
-                                </div>
+                    <div class="flex flex-col gap-6 mb-6">
+                        @foreach ($terpopuler_opini as $item)
+                            <div class="flex gap-4">
                                 <a href="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
-                                    <h3 class="text-lg font-bold mb-1">{{ $item->judul }}</h3>
+                                    <div class="w-48 h-32 overflow-hidden rounded">
+                                        <img src="{{ $item->first_image }}" alt="{{ $item->judul }}"
+                                            class="w-full h-full object-cover">
+                                    </div>
                                 </a>
-                                <p class="text-sm text-gray-600 mb-2">
-                                    {{ Str::limit(strip_tags(str_replace('&nbsp;', ' ', $item->konten_berita)), 150) }}
-                                </p>
-                                <div class="flex items-center gap-3 text-[13px] text-[#ABABAB] font-semibold">
-                                    <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
-                                    <div class="flex gap-2 text-xs">
-                                        <div class="flex items-center gap-1">
-                                            <i class="fa-regular fa-thumbs-up"></i><span>107</span>
-                                        </div>
-                                        <div class="flex items-center gap-1">
-                                            <i class="fa-solid fa-share-nodes"></i><span>Share</span>
+                                <div class="flex-1">
+                                    <div class="flex items-center text-xs font-semibold mb-1">
+                                        <span class="text-[#990505]">{{ strtoupper($item->kategori) }}</span>
+                                        <span class="mx-2 text-[#990505]">|</span>
+                                        <span
+                                            class="text-[#A8A8A8]">{{ \Carbon\Carbon::parse($item->tanggal_diterbitkan)->format('d M Y') }}</span>
+                                    </div>
+                                    <a href="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
+                                        <h3 class="text-lg font-bold mb-1">{{ $item->judul }}</h3>
+                                    </a>
+                                    <p class="text-sm text-gray-600 mb-2">
+                                        {{ Str::limit(strip_tags(str_replace('&nbsp;', ' ', $item->konten_berita)), 150) }}
+                                    </p>
+                                    <div class="flex items-center gap-3 text-[13px] text-[#ABABAB] font-semibold">
+                                        <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
+                                        <div class="flex gap-2 text-xs">
+                                            <div class="flex items-center gap-1">
+                                                <i
+                                                    class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
+                                            </div>
+                                            <button class="flex items-center gap-1 openShareModal"
+                                                data-url="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
+                                                <i class="fa-solid fa-share-nodes"></i>
+                                                <span>Share</span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                {{-- Label Esai --}}
-                <div class="md:col-span-1">
-                    <div class="flex flex-col mb-8">
-                        <div class="flex items-center">
-                            <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
-                            <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605]"
-                                style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
-                                Esai
-                            </h2>
-                        </div>
-                        <div class="w-full h-[2px] bg-gray-300"></div>
+                        @endforeach
                     </div>
 
-                <div class="flex flex-col gap-6">
-                    @foreach ($terpopuler_esai as $item)
-                        <div class="flex gap-4">
-                            <a href="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
-                                <div class="w-48 h-32 overflow-hidden rounded">
-                                    <img src="{{ $item->first_image }}" alt="{{ $item->judul }}"
-                                        class="w-full h-full object-cover">
-                                </div>
-                            </a>
-                            <div class="flex-1">
-                                <div class="flex items-center text-xs font-semibold mb-1">
-                                    <span class="text-[#990505]">{{ strtoupper($item->kategori) }}</span>
-                                    <span class="mx-2 text-[#990505]">|</span>
-                                    <span
-                                        class="text-[#A8A8A8]">{{ \Carbon\Carbon::parse($item->tanggal_diterbitkan)->format('d M Y') }}</span>
-                                </div>
-                                <a href="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
-                                    <h3 class="text-lg font-bold mb-1">{{ $item->judul }}</h3>
-                                </a>
-                                <p class="text-sm text-gray-600 mb-2">
-                                    {{ Str::limit(strip_tags(str_replace('&nbsp;', ' ', $item->konten_berita)), 150) }}
-                                </p>
-                                <div class="flex items-center gap-3 text-[13px] text-[#ABABAB] font-semibold">
-                                    <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
-                                    <div class="flex gap-2 text-xs">
-                                        <div class="flex items-center gap-1">
-                                            <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                    {{-- Label Esai --}}
+                    <div class="md:col-span-1">
+                        <div class="flex flex-col mb-8">
+                            <div class="flex items-center">
+                                <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
+                                <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605]"
+                                    style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                                    Esai
+                                </h2>
+                            </div>
+                            <div class="w-full h-[2px] bg-gray-300"></div>
+                        </div>
+
+                        <div class="flex flex-col gap-6">
+                            @foreach ($terpopuler_esai as $item)
+                                <div class="flex gap-4">
+                                    <a href="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
+                                        <div class="w-48 h-32 overflow-hidden rounded">
+                                            <img src="{{ $item->first_image }}" alt="{{ $item->judul }}"
+                                                class="w-full h-full object-cover">
                                         </div>
-                                        <div class="flex items-center gap-1">
-                                            <i class="fa-solid fa-share-nodes"></i><span>Share</span>
+                                    </a>
+                                    <div class="flex-1">
+                                        <div class="flex items-center text-xs font-semibold mb-1">
+                                            <span class="text-[#990505]">{{ strtoupper($item->kategori) }}</span>
+                                            <span class="mx-2 text-[#990505]">|</span>
+                                            <span
+                                                class="text-[#A8A8A8]">{{ \Carbon\Carbon::parse($item->tanggal_diterbitkan)->format('d M Y') }}</span>
+                                        </div>
+                                        <a href="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
+                                            <h3 class="text-lg font-bold mb-1">{{ $item->judul }}</h3>
+                                        </a>
+                                        <p class="text-sm text-gray-600 mb-2">
+                                            {{ Str::limit(strip_tags(str_replace('&nbsp;', ' ', $item->konten_berita)), 150) }}
+                                        </p>
+                                        <div class="flex items-center gap-3 text-[13px] text-[#ABABAB] font-semibold">
+                                            <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
+                                            <div class="flex gap-2 text-xs">
+                                                <div class="flex items-center gap-1">
+                                                    <i
+                                                        class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
+                                                </div>
+                                                <button class="flex items-center gap-1 openShareModal"
+                                                    data-url="{{ route('opini-esai.detail', ['a' => $item->id]) }}">
+                                                    <i class="fa-solid fa-share-nodes"></i>
+                                                    <span>Share</span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                    </div>
                 </div>
-            </div>
-        </div>
     </main>
+    @include('kategori.components.share-modal')
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const shareModal = document.getElementById('shareModal');
+            const closeShareModal = document.getElementById('closeShareModal');
+            const copyLinkBtn = document.getElementById('copyLink');
+            const shareLinkInput = document.getElementById('shareLink');
+            const iconContainer = document.getElementById('iconContainer');
+            const slideLeftBtn = document.getElementById('slideLeft');
+            const slideRightBtn = document.getElementById('slideRight');
+
+            document.querySelectorAll('.openShareModal').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = button.dataset.url;
+                    shareLinkInput.value = url;
+
+                    iconContainer.querySelectorAll('a').forEach(link => {
+                        const baseHref = link.dataset.base;
+                        if (baseHref) {
+                            link.href = baseHref + encodeURIComponent(url);
+                        }
+                    });
+
+                    shareModal.classList.remove('hidden');
+                });
+            });
+
+            closeShareModal.addEventListener('click', () => {
+                shareModal.classList.add('hidden');
+            });
+
+            shareModal.addEventListener('click', (e) => {
+                if (e.target === shareModal) {
+                    shareModal.classList.add('hidden');
+                }
+            });
+
+            copyLinkBtn.addEventListener('click', () => {
+                shareLinkInput.select();
+                document.execCommand('copy');
+                copyLinkBtn.textContent = 'Disalin!';
+                setTimeout(() => {
+                    copyLinkBtn.textContent = 'Salin';
+                }, 2000);
+            });
+
+            slideLeftBtn?.addEventListener('click', () => {
+                iconContainer.scrollBy({
+                    left: -150,
+                    behavior: 'smooth'
+                });
+            });
+
+            slideRightBtn?.addEventListener('click', () => {
+                iconContainer.scrollBy({
+                    left: 150,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+@endpush

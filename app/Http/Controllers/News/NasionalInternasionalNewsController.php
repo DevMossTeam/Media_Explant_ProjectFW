@@ -19,6 +19,9 @@ class NasionalInternasionalNewsController extends Controller
         $terbaru = NasionalInternasionalNews::with('user')
             ->whereIn('kategori', ['Nasional', 'Internasional'])
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(10)
             ->get();
@@ -26,6 +29,9 @@ class NasionalInternasionalNewsController extends Controller
         $rekomendasi = NasionalInternasionalNews::with('user')
             ->whereIn('kategori', ['Nasional', 'Internasional'])
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(8)
             ->get();
@@ -33,6 +39,9 @@ class NasionalInternasionalNewsController extends Controller
         $terpopuler_nasional = NasionalInternasionalNews::with('user')
             ->where('kategori', 'Nasional')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(5)
             ->get();
@@ -40,6 +49,9 @@ class NasionalInternasionalNewsController extends Controller
         $terpopuler_internasional = NasionalInternasionalNews::with('user')
             ->where('kategori', 'Internasional')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(5)
             ->get();

@@ -17,6 +17,9 @@ class DesainGrafisController extends Controller
         $karya = DesainGrafis::with('user')
             ->where('kategori', 'desain_grafis')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->orderBy('release_date', 'desc')
             ->paginate(12);
 

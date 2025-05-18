@@ -19,12 +19,18 @@ class LiputanKhususNewsController extends Controller
         $terbaru = LiputanKhususNews::with('user')
             ->where('kategori', 'Liputan Khusus')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(10)
             ->get();
 
         $terpopuler = LiputanKhususNews::with('user')
             ->where('kategori', 'Liputan Khusus')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->take(10)
@@ -33,6 +39,9 @@ class LiputanKhususNewsController extends Controller
         $rekomendasi = LiputanKhususNews::with('user')
             ->where('kategori', 'Liputan Khusus')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(8)
             ->get();
@@ -56,7 +65,7 @@ class LiputanKhususNewsController extends Controller
             ->where('jenis_reaksi', 'Tidak Suka')
             ->count();
 
-            $userReaksi = null;
+        $userReaksi = null;
         if (Auth::check()) {
             $userReaksi = Reaksi::where('user_id', Auth::user()->uid)
                 ->where('item_id', $news->id)
@@ -91,6 +100,6 @@ class LiputanKhususNewsController extends Controller
             ->take(8)
             ->get();
 
-            return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi', 'komentarList'));
+        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi', 'komentarList'));
     }
 }

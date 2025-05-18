@@ -14,6 +14,9 @@ class PuisiController extends Controller
     {
         $terbaru = Puisi::where('kategori', 'puisi')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->orderBy('release_date', 'desc')
             ->take(6)
             ->get();
@@ -21,6 +24,9 @@ class PuisiController extends Controller
         $karya = Puisi::with('user')
             ->where('kategori', 'puisi')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->orderBy('release_date', 'desc')
             ->take(20)
             ->get();

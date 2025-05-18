@@ -15,6 +15,9 @@ class PantunController extends Controller
     {
         $terbaru = Pantun::where('kategori', 'pantun')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->orderBy('release_date', 'desc')
             ->take(6)
             ->get();
@@ -22,6 +25,9 @@ class PantunController extends Controller
         $karya = Pantun::with('user')
             ->where('kategori', 'pantun')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->orderBy('release_date', 'desc')
             ->take(20)
             ->get();

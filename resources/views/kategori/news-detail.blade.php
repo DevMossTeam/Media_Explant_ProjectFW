@@ -19,26 +19,28 @@
                     <div class="w-full h-[2px] bg-gray-300"></div>
                 </div>
 
-                @php
-                    use Illuminate\Support\Facades\Cookie;
-                    use App\Models\User;
-
-                    $userUid = Cookie::get('user_uid');
-                    $user = $userUid ? User::where('uid', $userUid)->first() : null;
-                    $isBookmarked = \App\Models\UserReact\Bookmark::where('user_id', $user->uid ?? null)
-                        ->where('item_id', $news->id)
-                        ->where('bookmark_type', 'Berita')
-                        ->exists();
-                @endphp
-
                 <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{{ $news->judul }}</h1>
                 <div class="flex items-center justify-between text-sm text-gray-600 mb-4">
                     <div>
                         Oleh: {{ $news->user->nama_lengkap ?? 'Tidak Diketahui' }} -
                         {{ \Carbon\Carbon::parse($news->tanggal_diterbitkan)->format('d F Y - H.i') }} WIB
                     </div>
+                    @php
+                        use Illuminate\Support\Facades\Cookie;
+                        use App\Models\User;
+                        use App\Models\UserReact\Bookmark;
+
+                        $userUid = Cookie::get('user_uid');
+                        $user = $userUid ? User::where('uid', $userUid)->first() : null;
+
+                        $isBookmarked = Bookmark::where('user_id', $user->uid ?? null)
+                            ->where('item_id', $news->id)
+                            ->where('bookmark_type', 'Berita')
+                            ->exists();
+                    @endphp
                     <button id="bookmark-btn" class="flex items-center gap-2 text-gray-400 hover:text-gray-800"
-                        data-item-id="{{ $news->id }}" data-bookmarked="{{ $isBookmarked ? 'true' : 'false' }}">
+                        data-item-id="{{ $news->id }}" data-bookmarked="{{ $isBookmarked ? 'true' : 'false' }}"
+                        data-bookmark-type="Berita">
                         <span class="text-sm">
                             {{ $isBookmarked ? 'Batalkan Bookmark' : 'Simpan dan baca nanti' }}
                         </span>
@@ -182,7 +184,8 @@
                                         <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                         <div class="flex gap-2">
                                             <div class="flex items-center gap-1">
-                                                <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                                <i
+                                                    class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
                                             </div>
                                             <div class="flex items-center gap-1">
                                                 <i class="fa-solid fa-share-nodes"></i><span>Share</span>
@@ -222,7 +225,8 @@
                                         <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                         <div class="flex gap-2">
                                             <div class="flex items-center gap-1">
-                                                <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                                <i
+                                                    class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
                                             </div>
                                             <div class="flex items-center gap-1">
                                                 <i class="fa-solid fa-share-nodes"></i><span>Share</span>
@@ -264,7 +268,7 @@
                                 <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                 <div class="flex gap-2">
                                     <div class="flex items-center gap-1">
-                                        <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                        <i class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
                                     </div>
                                     <div class="flex items-center gap-1">
                                         <i class="fa-solid fa-share-nodes"></i><span>Share</span>
@@ -624,9 +628,9 @@
             document.getElementById('submitReportButton').addEventListener('click', function() {
                 const selectedReason = document.querySelector('input[name="reportReason"]:checked');
                 const additionalDetail = document.querySelector('textarea[name="detail_pesan"]').value
-                .trim();
+                    .trim();
                 const itemId = new URLSearchParams(window.location.search).get(
-                'a');
+                    'a');
 
                 if (selectedReason && itemId) {
                     fetch('/report-news', {
@@ -888,6 +892,7 @@
             bookmarkBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 const itemId = this.dataset.itemId;
+                const bookmarkType = this.dataset.bookmarkType; // Ambil jenis bookmark (Berita)
 
                 fetch('/bookmark/toggle', {
                         method: 'POST',
@@ -897,7 +902,8 @@
                         },
                         credentials: 'same-origin',
                         body: JSON.stringify({
-                            item_id: itemId
+                            item_id: itemId,
+                            bookmark_type: bookmarkType
                         })
                     })
                     .then(res => res.json())

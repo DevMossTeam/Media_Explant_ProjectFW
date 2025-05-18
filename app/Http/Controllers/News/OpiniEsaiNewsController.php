@@ -19,6 +19,9 @@ class OpiniEsaiNewsController extends Controller
         $terbaru = OpiniEsaiNews::with('user')
             ->whereIn('kategori', ['Opini', 'Esai'])
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(10)
             ->get();
@@ -26,6 +29,9 @@ class OpiniEsaiNewsController extends Controller
         $rekomendasi = OpiniEsaiNews::with('user')
             ->whereIn('kategori', ['Opini', 'Esai'])
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(8)
             ->get();
@@ -33,6 +39,9 @@ class OpiniEsaiNewsController extends Controller
         $terpopuler_opini = OpiniEsaiNews::with('user')
             ->where('kategori', 'Opini')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(5)
             ->get();
@@ -40,6 +49,9 @@ class OpiniEsaiNewsController extends Controller
         $terpopuler_esai = OpiniEsaiNews::with('user')
             ->where('kategori', 'Esai')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(5)
             ->get();

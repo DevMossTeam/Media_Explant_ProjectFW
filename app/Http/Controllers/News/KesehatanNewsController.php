@@ -19,12 +19,18 @@ class KesehatanNewsController extends Controller
         $terbaru = KesehatanNews::with('user')
             ->where('kategori', 'Kesehatan')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(10)
             ->get();
 
         $terpopuler = KesehatanNews::with('user')
             ->where('kategori', 'Kesehatan')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->take(10)
@@ -32,6 +38,9 @@ class KesehatanNewsController extends Controller
 
         $rekomendasi = KesehatanNews::with('user')
             ->where('kategori', 'Kesehatan')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->take(8)

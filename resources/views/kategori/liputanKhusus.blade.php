@@ -32,11 +32,13 @@
                                 <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                 <div class="flex gap-2 text-xs">
                                     <div class="flex items-center gap-1">
-                                        <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                        <i class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
                                     </div>
-                                    <div class="flex items-center gap-1">
-                                        <i class="fa-solid fa-share-nodes"></i><span>Share</span>
-                                    </div>
+                                    <button class="flex items-center gap-1 openShareModal"
+                                        data-url="{{ route('liputan-khusus.detail', ['a' => $item->id]) }}">
+                                        <i class="fa-solid fa-share-nodes"></i>
+                                        <span>Share</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -66,11 +68,13 @@
                                 <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                 <div class="flex gap-2 text-xs">
                                     <div class="flex items-center gap-1">
-                                        <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                        <i class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
                                     </div>
-                                    <div class="flex items-center gap-1">
-                                        <i class="fa-solid fa-share-nodes"></i><span>Share</span>
-                                    </div>
+                                    <button class="flex items-center gap-1 openShareModal"
+                                        data-url="{{ route('liputan-khusus.detail', ['a' => $item->id]) }}">
+                                        <i class="fa-solid fa-share-nodes"></i>
+                                        <span>Share</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -110,11 +114,14 @@
                                     <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                     <div class="flex gap-2 text-xs">
                                         <div class="flex items-center gap-1">
-                                            <i class="fa-regular fa-thumbs-up"></i><span>107</span>
+                                            <i
+                                                class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
                                         </div>
-                                        <div class="flex items-center gap-1">
-                                            <i class="fa-solid fa-share-nodes"></i><span>Share</span>
-                                        </div>
+                                        <button class="flex items-center gap-1 openShareModal"
+                                            data-url="{{ route('liputan-khusus.detail', ['a' => $item->id]) }}">
+                                            <i class="fa-solid fa-share-nodes"></i>
+                                            <span>Share</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -124,4 +131,69 @@
             </div>
         </div>
     </main>
+    @include('kategori.components.share-modal')
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const shareModal = document.getElementById('shareModal');
+            const closeShareModal = document.getElementById('closeShareModal');
+            const copyLinkBtn = document.getElementById('copyLink');
+            const shareLinkInput = document.getElementById('shareLink');
+            const iconContainer = document.getElementById('iconContainer');
+            const slideLeftBtn = document.getElementById('slideLeft');
+            const slideRightBtn = document.getElementById('slideRight');
+
+            document.querySelectorAll('.openShareModal').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = button.dataset.url;
+                    shareLinkInput.value = url;
+
+                    iconContainer.querySelectorAll('a').forEach(link => {
+                        const baseHref = link.dataset.base;
+                        if (baseHref) {
+                            link.href = baseHref + encodeURIComponent(url);
+                        }
+                    });
+
+                    shareModal.classList.remove('hidden');
+                });
+            });
+
+            closeShareModal.addEventListener('click', () => {
+                shareModal.classList.add('hidden');
+            });
+
+            shareModal.addEventListener('click', (e) => {
+                if (e.target === shareModal) {
+                    shareModal.classList.add('hidden');
+                }
+            });
+
+            copyLinkBtn.addEventListener('click', () => {
+                shareLinkInput.select();
+                document.execCommand('copy');
+                copyLinkBtn.textContent = 'Disalin!';
+                setTimeout(() => {
+                    copyLinkBtn.textContent = 'Salin';
+                }, 2000);
+            });
+
+            slideLeftBtn?.addEventListener('click', () => {
+                iconContainer.scrollBy({
+                    left: -150,
+                    behavior: 'smooth'
+                });
+            });
+
+            slideRightBtn?.addEventListener('click', () => {
+                iconContainer.scrollBy({
+                    left: 150,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+@endpush

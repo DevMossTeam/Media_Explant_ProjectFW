@@ -18,6 +18,9 @@ class KesenianHiburanNewsController extends Controller
     {
         $terbaru = KesenianHiburanNews::with('user')
             ->whereIn('kategori', ['Kesenian', 'Hiburan'])
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->take(10)
@@ -25,12 +28,18 @@ class KesenianHiburanNewsController extends Controller
 
         $rekomendasi = KesenianHiburanNews::with('user')
             ->whereIn('kategori', ['Kesenian', 'Hiburan'])
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->take(8)
             ->get();
 
         $terpopuler_kesenian = KesenianHiburanNews::with('user')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->where('kategori', 'Kesenian')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
@@ -38,6 +47,9 @@ class KesenianHiburanNewsController extends Controller
             ->get();
 
         $terpopuler_hiburan = KesenianHiburanNews::with('user')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->where('kategori', 'Hiburan')
             ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')

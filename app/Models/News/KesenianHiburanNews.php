@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\UserReact\Reaksi;
 
 class KesenianHiburanNews extends Berita
 {
@@ -43,5 +44,12 @@ class KesenianHiburanNews extends Berita
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'uid');
+    }
+
+    public function reaksiSuka()
+    {
+        return $this->hasMany(Reaksi::class, 'item_id', 'id')
+            ->where('reaksi_type', 'Berita')
+            ->where('jenis_reaksi', 'Suka');
     }
 }

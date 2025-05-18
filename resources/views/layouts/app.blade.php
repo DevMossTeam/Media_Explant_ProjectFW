@@ -24,6 +24,8 @@
     <!-- Footer -->
     @include('header-footer.footer')
 
+    @stack('scripts')
+
 </body>
 
 </html>

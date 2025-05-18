@@ -16,9 +16,12 @@ class KampusNewsController extends Controller
      */
     public function index()
     {
-        $terbaru = KampusNews::with(relations: 'user')
+        $terbaru = KampusNews::with('user')
             ->where('kategori', 'Kampus')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(10)
             ->get();
@@ -26,6 +29,9 @@ class KampusNewsController extends Controller
         $terpopuler = KampusNews::with('user')
             ->where('kategori', 'Kampus')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(10)
             ->get();
@@ -33,6 +39,9 @@ class KampusNewsController extends Controller
         $rekomendasi = KampusNews::with('user')
             ->where('kategori', 'Kampus')
             ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as like_count'
+            ])
             ->latest('tanggal_diterbitkan')
             ->take(8)
             ->get();
