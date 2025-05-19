@@ -79,13 +79,13 @@
                     </div>
                     <div class="flex justify-between">
                         <span>Visibilitas:</span>
-                        <span class="font-medium">{{ ucfirst($karya->visibilitas) }}</span>
+                        <span class="font-medium">{{ ucfirst($produk->visibilitas) }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">View Count:</span>
                         <span class="font-medium">
-                            @if($karya->view_count > 0)
-                                {{ $karya->view_count }} 
+                            @if($produk->view_count > 0)
+                                {{ $produk->view_count }} 
                             @else
                                0
                             @endif
