@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Models\UserReact\Reaksi;
+use App\Models\User;
 
 class Berita extends Model
 {
@@ -36,5 +37,13 @@ class Berita extends Model
     public function reaksi()
     {
         return $this->morphMany(\App\Models\UserReact\Reaksi::class, 'reaksiable', 'reaksi_type', 'item_id');
+    }    
+
+    /**
+    * Relasi ke penulis berita
+    */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'uid');
     }
 }

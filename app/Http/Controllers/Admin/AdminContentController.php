@@ -6,186 +6,288 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Author\Berita;
 use App\Models\Author\Tag;
-use App\Models\Karya\DesainGrafis;
-use App\Models\Karya\Fotografi;
-use App\Models\Karya\Pantun;
-use App\Models\Karya\Puisi;
-use App\Models\Karya\Syair;
-use App\Models\Produk\Buletin;
-use App\Models\Produk\Majalah;
+use App\Models\API\Karya;
+use App\Models\API\Produk;
 use App\Models\User;
+use Illuminate\Support\Facades\Response;
+use App\Exports\BeritaExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminContentController extends Controller
 {
+    // ======================= Berita =======================
     public function berita(Request $request)
     {
         $perPage = $request->input('perPage', 10);
-        $beritas = Berita::with('user')->paginate($perPage);
+        $searchTerm = $request->input('search', '');
+    
+        $query = Berita::with('user');
+    
+        // 🔍 Search
+        if ($searchTerm) {
+            $query->where('judul', 'like', "%$searchTerm%")
+                  ->orWhereHas('user', fn($q) => $q->where('nama_pengguna', 'like', "%$searchTerm%"));
+        }
+    
+        // 📦 Filter
+        if ($kategori = $request->input('kategori')) {
+            $query->whereIn('kategori', $kategori);
+        }
+    
+        if ($status = $request->input('status')) {
+            $query->where('visibilitas', $status);
+        }
+    
+        if ($tanggalDari = $request->input('tanggal_dari')) {
+            $query->whereDate('tanggal_diterbitkan', '>=', $tanggalDari);
+        }
+    
+        if ($tanggalSampai = $request->input('tanggal_sampai')) {
+            $query->whereDate('tanggal_diterbitkan', '<=', $tanggalSampai);
+        }
+    
+        // 🔁 Sorting
+        if ($order = $request->input('order')) {
+            if ($order === 'terbaru') {
+                $query->orderByDesc('tanggal_diterbitkan'); // Pastikan kolom ini ada di database
+            } elseif ($order === 'terpopuler') {
+                $query->orderByDesc('view_count'); // Pastikan kolom ini ada di database
+            }
+        }
+    
+        // 📄 Pagination
+        $beritas = $query->paginate($perPage)->appends([
+            'search' => $searchTerm,
+            'perPage' => $perPage,
+            'kategori' => $request->input('kategori'),
+            'order' => $request->input('order'),
+            'tanggal_dari' => $request->input('tanggal_dari'),
+            'tanggal_sampai' => $request->input('tanggal_sampai'),
+            'status' => $request->input('status'),
+        ]);
+    
         $tags = Tag::all();
-        return view('dashboard-admin.menu.berita', compact('beritas', 'tags', 'perPage'));
+        return view('dashboard-admin.menu.berita.berita', compact('beritas', 'tags', 'perPage', 'searchTerm'));
     }
 
-    public function _detail_berita($id)
+    public function detailBerita($id)
     {
         $beritas = Berita::with(['user', 'tags'])->findOrFail($id);
         $tags = Tag::all();
         $users = User::all();
-        return view('dashboard-admin.menu._detail_berita', compact('beritas', 'tags', 'users'));
+        return view('dashboard-admin.menu.berita._detail', compact('beritas', 'tags', 'users'));
     }
 
-    public function delete_berita($id)
+    public function delete(Request $request, $id)
     {
         $berita = Berita::findOrFail($id);
         $berita->delete();
-        return redirect()->back()->with('success', 'Berita berhasil dihapus.');
+
+        return redirect()
+            ->route('admin.berita')
+            ->with('success', 'Berita berhasil dihapus');
     }
 
-    // ======================= Majalah =======================
-    public function majalah(Request $request)
+    // public function exportBerita() 
+    // {
+    //     return Excel::download(new BeritaExport, 'berita.xlsx');
+    // }
+
+    // ======================= Produk =======================
+    public function produk(Request $request)
     {
         $perPage = $request->input('perPage', 10);
-        $majalah = Majalah::with('user')->paginate($perPage);
-        $tags = Tag::all();
-        return view('dashboard-admin.menu.majalah', compact('majalah', 'tags', 'perPage'));
+        $searchTerm = $request->input('search', '');
+
+        $query = Produk::with('user'); // Pastikan relasi 'user' ada di model Produk
+
+        // 🔍 Search
+        if ($searchTerm) {
+            $query->where('judul', 'like', "%$searchTerm%")
+                ->orWhereHas('user', fn($q) => $q->where('nama_pengguna', 'like', "%$searchTerm%"));
+        }
+
+        // 📦 Filter
+        if ($kategori = $request->input('kategori')) {
+            $query->whereIn('kategori', $kategori);
+        }
+
+        if ($status = $request->input('status')) {
+            $query->where('visibilitas', $status);
+        }
+
+        if ($tanggalDari = $request->input('tanggal_dari')) {
+            $query->whereDate('release_date', '>=', $tanggalDari);
+        }
+
+        if ($tanggalSampai = $request->input('tanggal_sampai')) {
+            $query->whereDate('release_date', '<=', $tanggalSampai);
+        }
+
+        // 🔁 Sorting
+        if ($order = $request->input('order')) {
+            if ($order === 'terbaru') {
+                $query->orderByDesc('release_date');
+            } elseif ($order === 'terlama') {
+                $query->orderBy('release_date');
+            }
+        }
+
+        // 📄 Pagination (hapus 'tags' & 'users' dari appends karena tidak digunakan)
+        $produks = $query->paginate($perPage)->appends([
+            'search' => $searchTerm,
+            'perPage' => $perPage,
+            'kategori' => $request->input('kategori'),
+            'order' => $request->input('order'),
+            'tanggal_dari' => $request->input('tanggal_dari'),
+            'tanggal_sampai' => $request->input('tanggal_sampai'),
+            'status' => $request->input('status'),
+        ]);
+
+        // ✅ Hapus jika tidak digunakan
+        // $tags = Tag::all(); // Tidak digunakan, bisa dihapus
+        $users = User::all(); // Jika digunakan di view, biarkan
+
+        return view('dashboard-admin.menu.produk.produk', compact('produks', 'users', 'perPage', 'searchTerm'));
     }
 
-    public function detail_majalah($id)
+    public function detailProduk(Request $request, $id)
     {
-        $majalah = Majalah::with('user')->findOrFail($id);
-        return view('dashboard-admin.menu.detail_majalah', compact('majalah'));
+        $produk = Produk::with(['user'])->findOrFail($id);
+        $users = User::all();
+        $tags = Tag::all(); // Optional, depends on your detail view
+
+        return view('dashboard-admin.menu.produk.detail', compact('produk', 'users', 'tags'));
     }
 
-    public function delete_majalah($id)
+    public function deleteProduk(Request $request, $id)
     {
-        $majalah = Majalah::findOrFail($id);
-        $majalah->delete();
-        return redirect()->back()->with('success', 'Majalah berhasil dihapus.');
+        $produk = Produk::findOrFail($id);
+        $produk->delete();
+
+        return redirect()
+            ->route('admin.produk')
+            ->with('success', 'Produk berhasil dihapus');
     }
 
-    // ======================= Buletin =======================
-    public function buletin(Request $request)
+    public function pdfPreview($id)
     {
-        $perPage = $request->input('perPage', 10);
-        $buletin = Buletin::with('user')->paginate($perPage);
-        $tags = Tag::all();
-        return view('dashboard-admin.menu.buletin', compact('buletin', 'tags', 'perPage'));
+        $produk = Produk::findOrFail($id);
+    
+        // Ensure media exists and is accessible
+        if (!$produk->media) {
+            return abort(404, "PDF tidak ditemukan.");
+        }
+    
+        // If media is stored as a file path (e.g., in storage/public)
+        if (file_exists($produk->media)) {
+            return response()->file($produk->media, [
+                'Content-Type' => 'application/pdf',
+            ]);
+        }
+    
+        // If media is stored as binary data (e.g., BLOB in DB)
+        return response($produk->media, 200, [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 
-    public function detail_buletin($id)
+    public function downloadPdf($id)
     {
-        $buletin = Buletin::with('user')->findOrFail($id);
-        return view('dashboard-admin.menu.detail_buletin', compact('buletin'));
-    }
+        $majalah = Produk::findOrFail($id);
 
-    public function delete_buletin($id)
-    {
-        $buletin = Buletin::findOrFail($id);
-        $buletin->delete();
-        return redirect()->back()->with('success', 'Buletin berhasil dihapus.');
-    }
+        if (!$majalah || !$majalah->media) {
+            return abort(404, "PDF tidak ditemukan.");
+        }
 
-    // ======================= Desain Grafis =======================
-    public function desainGrafis(Request $request)
-    {
-        $perPage = $request->input('perPage', 10);
-        $desainGrafis = DesainGrafis::with('user')->paginate($perPage);
-        return view('dashboard-admin.menu.desain_grafis', compact('desainGrafis', 'perPage'));
-    }
+        $filename = str_replace(' ', '_', $majalah->judul) . '.pdf';
 
-    public function detail_desain_grafis($id)
-    {
-        $desainGrafis = DesainGrafis::with('user')->findOrFail($id);
-        return view('dashboard-admin.menu.detail_desain_grafis', compact('desainGrafis'));
+        return Response::make($majalah->media, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
     }
+    
+    // ======================= Karya =======================
+    /**
+     * Menampilkan daftar karya dengan filter, pencarian, dan pagination
+     */ 
 
-    public function delete_desain_grafis($id)
-    {
-        $desainGrafis = DesainGrafis::findOrFail($id);
-        $desainGrafis->delete();
-        return redirect()->back()->with('success', 'Desain grafis berhasil dihapus.');
-    }
-
-    // ======================= Fotografi =======================
-    public function fotografi(Request $request)
-    {
-        $perPage = $request->input('perPage', 10);
-        $fotografi = Fotografi::with('user')->paginate($perPage);
-        return view('dashboard-admin.menu.fotografi', compact('fotografi', 'perPage'));
-    }
-
-    public function detail_fotografi($id)
-    {
-        $fotografi = Fotografi::with('user')->findOrFail($id);
-        return view('dashboard-admin.menu.detail_fotografi', compact('fotografi'));
-    }
-
-    public function delete_fotografi($id)
-    {
-        $fotografi = Fotografi::findOrFail($id);
-        $fotografi->delete();
-        return redirect()->back()->with('success', 'Fotografi berhasil dihapus.');
-    }
-
-    // ======================= Pantun =======================
-    public function pantun(Request $request)
-    {
-        $perPage = $request->input('perPage', 10);
-        $pantun = Pantun::with('user')->paginate($perPage);
-        return view('dashboard-admin.menu.pantun', compact('pantun', 'perPage'));
-    }
-
-    public function detail_pantun($id)
-    {
-        $pantun = Pantun::with('user')->findOrFail($id);
-        return view('dashboard-admin.menu.detail_pantun', compact('pantun'));
-    }
-
-    public function delete_pantun($id)
-    {
-        $pantun = Pantun::findOrFail($id);
-        $pantun->delete();
-        return redirect()->back()->with('success', 'Pantun berhasil dihapus.');
-    }
-
-    // ======================= Puisi =======================
-    public function puisi(Request $request)
-    {
-        $perPage = $request->input('perPage', 10);
-        $puisi = Puisi::with('user')->paginate($perPage);
-        return view('dashboard-admin.menu.puisi', compact('puisi', 'perPage'));
-    }
-
-    public function detail_puisi($id)
-    {
-        $puisi = Puisi::with('user')->findOrFail($id);
-        return view('dashboard-admin.menu.detail_puisi', compact('puisi'));
-    }
-
-    public function delete_puisi($id)
-    {
-        $puisi = Puisi::findOrFail($id);
-        $puisi->delete();
-        return redirect()->back()->with('success', 'Puisi berhasil dihapus.');
-    }
-
-    // ======================= Syair =======================
-    public function syair(Request $request)
+    public function karya(Request $request)
     {
         $perPage = $request->input('perPage', 10);
-        $syair = Syair::with('user')->paginate($perPage);
-        return view('dashboard-admin.menu.syair', compact('syair', 'perPage'));
+        $searchTerm = $request->input('search', '');
+    
+        $query = Karya::with('user');
+    
+        // 🔍 Search
+        if ($searchTerm) {
+            $query->where('judul', 'like', "%$searchTerm%")
+                  ->orWhereHas('user', fn($q) => $q->where('nama_pengguna', 'like', "%$searchTerm%"));
+        }
+    
+        // 📦 Filter categories
+        $availableCategories = ['puisi', 'pantun', 'syair', 'fotografi', 'desain grafis'];
+        
+        if ($kategori = $request->input('kategori')) {
+            $query->whereIn('kategori', $kategori);
+        }
+    
+        // Status filter (assuming visibility field exists)
+        if ($status = $request->input('status')) {
+            $query->where('visibilitas', $status);
+        }
+    
+        // Date range filter
+        if ($tanggalDari = $request->input('tanggal_dari')) {
+            $query->whereDate('tanggal_diterbitkan', '>=', $tanggalDari);
+        }
+    
+        if ($tanggalSampai = $request->input('tanggal_sampai')) {
+            $query->whereDate('tanggal_diterbitkan', '<=', $tanggalSampai);
+        }
+    
+        // 🔁 Sorting
+        if ($order = $request->input('order')) {
+            if ($order === 'terbaru') {
+                $query->orderByDesc('tanggal_diterbitkan');
+            } elseif ($order === 'terpopuler') {
+                $query->orderByDesc('view_count'); 
+            }
+        }
+    
+        // 📄 Pagination
+        $karyas = $query->paginate($perPage)->appends([
+            'search' => $searchTerm,
+            'perPage' => $perPage,
+            'kategori' => $request->input('kategori'),
+            'order' => $request->input('order'),
+            'tanggal_dari' => $request->input('tanggal_dari'),
+            'tanggal_sampai' => $request->input('tanggal_sampai'),
+            'status' => $request->input('status'),
+        ]);
+    
+        return view('dashboard-admin.menu.karya.karya', compact(
+            'karyas', 
+            'perPage', 
+            'searchTerm',
+            'availableCategories'
+        ));
     }
 
-    public function detail_syair($id)
+    public function detailKarya($id)
     {
-        $syair = Syair::with('user')->findOrFail($id);
-        return view('dashboard-admin.menu.detail_syair', compact('syair'));
-    }
+        $karya = Karya::with(['user', 'tags'])->findOrFail($id);
+        return view('dashboard-admin.menu.karya.detail', compact('karya'));
+    }    
 
-    public function delete_syair($id)
+    public function deleteKarya(Request $request, $id)
     {
-        $syair = Syair::findOrFail($id);
-        $syair->delete();
-        return redirect()->back()->with('success', 'Syair berhasil dihapus.');
-    }
+        $karya = Karya::findOrFail($id);
+        $karya->delete();
+
+        return redirect()
+            ->route('admin.karya')
+            ->with('success', 'Produk berhasil dihapus');
+    }    
 }

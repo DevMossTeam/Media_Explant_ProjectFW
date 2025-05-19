@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     <title>@yield('title', 'Admin Dashboard')</title>
 
     <!-- Tailwind CSS -->
@@ -104,8 +106,57 @@
                                 </span>
                             </a>
                         </li>
-                        <!-- Tables with Submenu Example -->
                         <li>
+                            <!-- Toggle for Submenu -->
+                            <div
+                                class="tableToggle flex items-center justify-between px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer transition-colors duration-300">
+                                <div class="flex items-center gap-2">
+                                    <i
+                                        class="tableIcon fa-solid fa-chart-bar text-xl text-gray-500 w-8 text-center transition-colors duration-300"></i>
+                                    <span
+                                        class="tableText sidebar-text ml-1 text-base font-medium transition-colors duration-300">
+                                        Analitik grafic
+                                    </span>
+                                </div>
+                                <i
+                                    class="tableChevron fas fa-chevron-down text-sm text-gray-500 submenu-arrow transition-transform duration-300"></i>
+                            </div>
+
+                            <!-- Submenu -->
+                            <ul
+                                class="tableSubmenu ml-12 mt-1 overflow-hidden transition-[max-height] duration-500 ease-in-out space-y-2 max-h-0">
+                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Analitik Konten</a>
+                                </li>
+                                <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Analitik Pengunjung</a></li>
+                                
+                            </ul>
+                        </li>
+                        <li>
+                            <!-- Toggle for Submenu -->
+                            <div
+                                class="tableToggle flex items-center justify-between px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer transition-colors duration-300">
+                                <div class="flex items-center gap-2">
+                                    <i
+                                        class="tableIcon fa-solid fa-newspaper text-xl text-gray-500 w-8 text-center transition-colors duration-300"></i>
+                                    <span
+                                        class="tableText sidebar-text ml-1 text-base font-medium transition-colors duration-300">
+                                        Manajemen Konten 
+                                    </span>
+                                </div>
+                                <i
+                                    class="tableChevron fas fa-chevron-down text-sm text-gray-500 submenu-arrow transition-transform duration-300"></i>
+                            </div>
+
+                            <!-- Submenu -->
+                            <ul class="tableSubmenu ml-12 mt-1 overflow-hidden transition-[max-height] duration-500 ease-in-out space-y-2 max-h-0">
+                                <li><a href="{{ route('admin.berita') }}" class="block py-2 text-gray-600 hover:text-gray-800">Berita</a>
+                                </li>
+                                <li><a href="{{ route('admin.karya') }}" class="block py-2 text-gray-600 hover:text-gray-800">Karya</a></li>
+                                <li><a href="{{ route('admin.produk') }}" class="block py-2 text-gray-600 hover:text-gray-800">Produk</a></li>                                
+                            </ul>
+                        </li>
+                        <!-- Tables with Submenu Example -->
+                        {{-- <li>
                             <!-- Toggle for Submenu -->
                             <div
                                 class="tableToggle flex items-center justify-between px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer transition-colors duration-300">
@@ -127,9 +178,9 @@
                                 <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Bulletin</a></li>
                                 <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Majalah</a></li>
                             </ul>
-                        </li>
+                        </li> --}}
 
-                        <li>
+                        {{-- <li>
                             <!-- Toggle for Submenu -->
                             <div
                                 class="tableToggle flex items-center justify-between px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer transition-colors duration-300">
@@ -155,9 +206,9 @@
                                 <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Puisi</a></li>
                                 <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Syair</a></li>
                             </ul>
-                        </li>
+                        </li> --}}
 
-                        <li>
+                        {{-- <li>
                             <!-- Toggle for Submenu -->
                             <div
                                 class="tableToggle flex items-center justify-between px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer transition-colors duration-300">
@@ -180,7 +231,7 @@
                                         class="block py-2 text-gray-600 hover:text-gray-800">Berita</a></li>
                                 <li>
                             </ul>
-                        </li>
+                        </li> --}}
                         <li>
                             <a href="/dashboard-admin/pengguna"
                                 class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md">
@@ -264,13 +315,19 @@
                     </details>
 
                     <div class="relative">
+                        @php
+                        $base64Image = $user && $user->profile_pic 
+                            ? 'data:image/jpeg;base64,' . base64_encode($user->profile_pic) 
+                            : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb2F1sRrmj0rFgZyVmC8yBgXxyccFRJf7LPQ&s';
+                        @endphp
+                        
                         <button id="profileButton" class="flex items-center focus:outline-none">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb2F1sRrmj0rFgZyVmC8yBgXxyccFRJf7LPQ&s"
+                            <img src="{{ $base64Image }}"
                                 alt="Profil" class="w-10 h-10 rounded-full object-cover border" />
                             <div class="ml-2 text-left">
-                                <span class="text-gray-700 font-medium">{{$user->nama_pengguna}}</span>
+                                <span class="text-gray-700 font-medium">{{ $user->nama_pengguna }}</span>
                                 <br />
-                                <span class="text-gray-500 text-sm">{{$user->email}}</span>
+                                <span class="text-gray-500 text-sm">{{ $user->email }}</span>
                             </div>
                             <svg class="w-4 h-4 ml-2 text-gray-700" xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24" fill="currentColor">
@@ -342,30 +399,39 @@
         // For Mobile: toggle the entire sidebar wrapper visibility
         toggleSidebarBtnMobile.addEventListener('click', () => {
             sidebarWrapper.classList.toggle('hidden');
-        });
+                });
 
-        // For Desktop: toggle collapsed state (width change)
-        toggleSidebarBtnDesktop.addEventListener('click', () => {
-            sidebarEl.classList.toggle('collapsed');
+                // For Desktop: toggle collapsed state (width change)
+                toggleSidebarBtnDesktop.addEventListener('click', () => {
+                    sidebarEl.classList.toggle('collapsed');
 
-            // If collapsed, hide text and submenu
-            if (sidebarEl.classList.contains('collapsed')) {
-                sidebarEl.classList.remove('w-64');
-                sidebarEl.classList.add('w-20');
+                    // If collapsed, hide text, arrows, and submenus
+                    if (sidebarEl.classList.contains('collapsed')) {
+                        sidebarEl.classList.remove('w-64');
+                        sidebarEl.classList.add('w-20');
 
-                // Hide text labels and submenus
-                document.querySelectorAll('.sidebar-text, .submenu-arrow').forEach(el => el.classList.add(
-                    'hidden'));
-                document.querySelectorAll('#tableSubmenu').forEach(el => el.classList.add('hidden'));
-            } else {
-                sidebarEl.classList.remove('w-20');
-                sidebarEl.classList.add('w-64');
+                        // Hide text labels, arrows, and submenus
+                        document.querySelectorAll('.sidebar-text, .submenu-arrow').forEach(el => el.classList.add('hidden'));
 
-                // Show text labels and submenu arrows
-                // document.querySelectorAll('#tableSubmenu').forEach(el => el.classList.remove('hidden'));
-                document.querySelectorAll('.sidebar-text, .submenu-arrow').forEach(el => el.classList.remove(
-                    'hidden'));
-            }
+                        // Hide all submenus (using class selector) and reset max-height
+                        document.querySelectorAll('.tableSubmenu').forEach(submenu => {
+                            submenu.classList.add('hidden');
+                            submenu.style.maxHeight = '0'; // Force collapse
+                        });
+                    } else {
+                        sidebarEl.classList.remove('w-20');
+                        sidebarEl.classList.add('w-64');
+
+                        // Show text labels and arrows
+                        document.querySelectorAll('.sidebar-text, .submenu-arrow').forEach(el => el.classList.remove('hidden'));
+
+                        // Show submenus
+                        document.querySelectorAll('.tableSubmenu').forEach(submenu => {
+                            submenu.classList.remove('hidden');
+                            // Optional: Restore max-height if needed for animation
+                            // submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                        });
+                    }
         });
 
         // ========== Tables Submenu Toggle ==========
@@ -409,7 +475,6 @@
                 chevron.classList.toggle('rotate-180');
             });
         });
-
     </script>
 </body>
 

@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\AdminContentController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\KotakMasukController;
+use App\Http\Controllers\Admin\TentangKamiController;
 use App\Http\Controllers\UserReact\BookmarkController;
 use App\Http\Controllers\UserReact\KomentarController;
 use App\Http\Controllers\Search\SearchController;
@@ -279,8 +280,6 @@ Route::middleware('web')->group(function () {
     Route::post('/report-news', [ReportController::class, 'store'])->name('report.news');
 });
 
-// Route untuk Admin
-
 Route::middleware(['checkRole:Admin'])->group(function () {
     // Dashboard admin utama
     Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -291,17 +290,36 @@ Route::middleware(['checkRole:Admin'])->group(function () {
         Route::delete('/{id}', [KotakMasukController::class, 'destroy'])->name('destroy');
     });
 
-    Route::get('/dashboard-admin/settings', function () {
-        return view('dashboard-admin.menu.settings');
-    })->name('admin.settings');
-
-    Route::get('/dashboard-admin/berita/{id}/detail', [AdminContentController::class, '_detail_berita'])->name('admin.berita.detail');;
-
     // Halaman daftar user
-    Route::get('/dashboard-admin/pengguna', [AdminUserController::class, 'user'])->name('admin.users');
-    // Route::delete('/dashboard-admin/pengguna', [AdminController::class, 'user_delete'])->name('admin.users.delete');
+    Route::get('/dashboard-admin/pengguna', [AdminUserController::class, 'user'])->name('admin.user');
+    // Detail pengguna
+    Route::get('/dashboard-admin/detail-pengguna/{id}', [AdminUserController::class, 'detail'])->name('admin.user.detail');
+    // Hapus pengguna
+    Route::delete('/dashboard-admin/hapus-pengguna/{uid}', [AdminUserController::class, 'deleteUser'])
+    ->name('admin.user.delete');
+    Route::put('/dashboard-admin/user/change-role/{uid}', [AdminUserController::class, 'updateRole'])
+    ->name('admin.user.change-role');
 
-    // Berita
-    Route::get('/dashboard-admin/berita', [AdminContentController::class, 'berita'])->name('admin.berita.index');
-    Route::delete('/dashboard-admin/berita/delete/{id}', [AdminContentController::class, 'delete'])->name('admin.berita.delete');
-});
+    // Berita Routes
+    Route::get('/dashboard-admin/berita', [AdminContentController::class, 'berita'])->name('admin.berita');
+    Route::get('/dashboard-admin/berita/{id}/detail', [AdminContentController::class, 'detailBerita'])->name('admin.berita.detail');;
+    Route::delete('/dashboard-admin/berita/delete/{id}', [AdminContentController::class, 'delete'])
+    ->name('admin.berita.delete');
+    Route::get('/berita/export', [AdminContentController::class, 'exportBerita']);
+
+    // Produk Routes
+    Route::get('/dashboard-admin/produk', [AdminContentController::class, 'produk'])->name('admin.produk');
+    Route::get('/dashboard-admin/produk/detail/{id}', [AdminContentController::class, 'detailProduk'])->name('admin.produk.detail');
+    Route::delete('/dashboard-admin/produk/delete/{id}', [AdminContentController::class, 'deleteProduk'])->name('admin.produk.delete');
+    Route::get('/dashboard-admin/produk/pdf-preview/{id}', [AdminContentController::class, 'pdfPreview'])->name('admin.pdfPreview');
+    Route::get('/dashboard-admin/produk/pdf-download/{id}', [AdminContentController::class, 'downloadPdf'])->name('admin.downloadPdf');
+
+    // Daftar karya
+    Route::get('/dashboard-admin/karya', [AdminContentController::class, 'karya'])->name('admin.karya');
+    Route::get('/dashboard-admin/karya/detail/{id}', [AdminContentController::class, 'detailKarya'])->name('admin.karya.detail');
+    Route::delete('/dashboard-admin/karya/delete/{id}', [AdminContentController::class, 'deleteKarya'])->name('admin.karya.delete');    
+
+    Route::get('/dashboard-admin/settings', [TentangKamiController::class, 'index'])->name('admin.settings');
+    Route::post('/dashboard-admin/settings/update', [TentangKamiController::class, 'update'])->name('admin.settings.update');
+
+});    

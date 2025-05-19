@@ -19,7 +19,7 @@ class Produk extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class,'user_id', 'uid');
+        return $this->belongsTo(User::class, 'user_id', 'uid');
     }
 
     public function bookmarks()
@@ -35,5 +35,20 @@ class Produk extends Model
     public function komentars()
     {
         return $this->morphMany(Komentar::class, 'komentarable', 'komentar_type', 'item_id');
+    }
+    
+    public function tags()
+    {
+        return $this->hasMany(Tag::class, 'berita_id');
+    }
+
+    public function getMediaBase64Attribute()
+    {
+        if (!$this->media) {
+            return null;
+        }
+    
+        $mime = finfo_buffer(finfo_open(), $this->media, FILEINFO_MIME_TYPE);
+        return "data:$mime;base64," . base64_encode($this->media);
     }
 }
