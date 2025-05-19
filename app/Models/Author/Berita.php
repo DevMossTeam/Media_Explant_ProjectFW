@@ -5,6 +5,7 @@ namespace App\Models\Author;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\API\Reaksi;
 
 class Berita extends Model
 {
@@ -32,5 +33,10 @@ class Berita extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+    
+    public function reaksi()
+    {
+        return $this->morphMany(Reaksi::class, 'reaksiable', 'reaksi_type', 'item_id');
     }
 }

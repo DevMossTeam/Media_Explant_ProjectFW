@@ -92,6 +92,14 @@
                         </span>
                     </div>
                     <div class="flex justify-between">
+                        <span class="text-gray-600">Like</span>
+                        <span class="font-medium">{{ $likeCount }}</span>
+                    </div>     
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Tidak Suka</span>
+                        <span class="font-medium">{{ $dislikeCount }}</span>
+                    </div>
+                    <div class="flex justify-between">
                         <span>Tanggal Rilis:</span>
                         <span class="font-medium">{{ date('d M Y', strtotime($produk->release_date)) }}</span>
                     </div>

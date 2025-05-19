@@ -11,6 +11,7 @@ use App\Models\API\Produk;
 use App\Models\User;
 use Illuminate\Support\Facades\Response;
 use App\Exports\BeritaExport;
+use App\Models\API\Reaksi;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AdminContentController extends Controller
@@ -72,10 +73,21 @@ class AdminContentController extends Controller
 
     public function detailBerita($id)
     {
-        $beritas = Berita::with(['user', 'tags'])->findOrFail($id);
+        $beritas = Berita::with(['user', 'tags', 'reaksi'])->findOrFail($id);
         $tags = Tag::all();
         $users = User::all();
-        return view('dashboard-admin.menu.berita._detail', compact('beritas', 'tags', 'users'));
+    
+        $likeCount = Reaksi::where('item_id', $beritas->id)
+            ->where('jenis_reaksi', 'Suka')
+            ->where('reaksi_type', 'Berita') // perbaiki ini
+            ->count();
+
+        $dislikeCount = Reaksi::where('item_id', $beritas->id)
+            ->where('jenis_reaksi', 'Tidak Suka')
+            ->where('reaksi_type', 'Berita') // perbaiki ini
+            ->count();
+
+        return view('dashboard-admin.menu.berita._detail', compact('beritas', 'tags', 'users', 'likeCount', 'dislikeCount'));
     }
 
     public function delete(Request $request, $id)
@@ -155,9 +167,19 @@ class AdminContentController extends Controller
     {
         $produk = Produk::with(['user'])->findOrFail($id);
         $users = User::all();
-        $tags = Tag::all(); // Optional, depends on your detail view
+        $tags = Tag::all(); 
 
-        return view('dashboard-admin.menu.produk.detail', compact('produk', 'users', 'tags'));
+        $likeCount = Reaksi::where('item_id', $produk->id)
+        ->where('jenis_reaksi', 'Suka')
+        ->where('reaksi_type', 'Produk') 
+        ->count();
+
+        $dislikeCount = Reaksi::where('item_id', $produk->id)
+            ->where('jenis_reaksi', 'Tidak Suka')
+            ->where('reaksi_type', 'Produk') 
+            ->count();
+
+        return view('dashboard-admin.menu.produk.detail', compact('produk', 'users', 'tags', 'likeCount', 'dislikeCount'));
     }
 
     public function deleteProduk(Request $request, $id)
@@ -278,7 +300,20 @@ class AdminContentController extends Controller
     public function detailKarya($id)
     {
         $karya = Karya::with(['user', 'tags'])->findOrFail($id);
-        return view('dashboard-admin.menu.karya.detail', compact('karya'));
+        $users = User::all();
+        $tags = Tag::all(); 
+
+        $likeCount = Reaksi::where('item_id', $karya->id)
+        ->where('jenis_reaksi', 'Suka')
+        ->where('reaksi_type', 'Karya') 
+        ->count();
+
+        $dislikeCount = Reaksi::where('item_id', $karya->id)
+            ->where('jenis_reaksi', 'Tidak Suka')
+            ->where('reaksi_type', 'Karya') 
+            ->count();
+
+        return view('dashboard-admin.menu.karya.detail', compact('karya','users','tags','likeCount','dislikeCount'));
     }    
 
     public function deleteKarya(Request $request, $id)
