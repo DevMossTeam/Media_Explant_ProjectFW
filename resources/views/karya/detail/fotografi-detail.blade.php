@@ -66,7 +66,7 @@
 
             {{-- Deskripsi --}}
             <div class="text-[15px] leading-relaxed text-justify">
-                {!! nl2br(e($karya->deskripsi)) !!}
+                {!! strip_tags($karya->deskripsi, '<p><br>') !!}
             </div>
         </div>
 

@@ -31,6 +31,11 @@ class HomeNewsController extends Controller
 
             $newsList = (new HomeNews)->getBeritaTeratasHariIni();
 
+            $sliderNews = HomeNews::where('visibilitas', 'public')
+                ->orderBy('tanggal_diterbitkan', 'desc')
+                ->take(10)
+                ->get();
+
             $puisiList = Puisi::where('kategori', 'puisi')
                 ->where('visibilitas', 'public')
                 ->orderBy('release_date', 'desc')
@@ -49,23 +54,30 @@ class HomeNewsController extends Controller
                 ->take(6)
                 ->get();
 
+            $totalFotografiCount = Fotografi::where('kategori', 'fotografi')
+                ->where('visibilitas', 'public')
+                ->count();
+
             $fotografiList = Fotografi::where('kategori', 'fotografi')
                 ->where('visibilitas', 'public')
-                ->orderBy('release_date', 'desc')
-                ->take(6)
+                ->take(9)
                 ->get();
+
+            $totalDesainGrafisCount = DesainGrafis::where('kategori', 'desain_grafis')
+                ->where('visibilitas', 'public')
+                ->count();
 
             $desainGrafisList = DesainGrafis::where('kategori', 'desain_grafis')
                 ->where('visibilitas', 'public')
                 ->orderBy('release_date', 'desc')
-                ->take(6)
+                ->take(9)
                 ->get();
 
             // Ambil data buletin & majalah
             $buletinList = Buletin::getHomeBuletin();
             $majalahList = Majalah::getHomeMajalah();
 
-            return view('home', compact('news', 'newsList', 'buletinList', 'majalahList', 'puisiList', 'pantunList', 'syairList', 'fotografiList', 'desainGrafisList'));
+            return view('home', compact('news', 'newsList', 'sliderNews', 'buletinList', 'majalahList', 'puisiList', 'pantunList', 'syairList', 'totalFotografiCount', 'fotografiList', 'desainGrafisList', 'totalDesainGrafisCount'));
         }
 
         $news = HomeNews::where('kategori', str_replace('-', ' ', $category))
@@ -145,6 +157,6 @@ class HomeNewsController extends Controller
             ->take(8)
             ->get();
 
-            return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi', 'komentarList'));
+        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi', 'komentarList'));
     }
 }

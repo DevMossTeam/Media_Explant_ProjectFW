@@ -34,7 +34,9 @@
                             <a href="{{ route('karya.syair.read', ['k' => $item->id]) }}">
                                 <h3 class="text-base font-bold mb-1">{{ $item->judul }}</h3>
                             </a>
-                            <p class="text-sm text-left">{{ \Illuminate\Support\Str::limit($item->deskripsi, 50) }}</p>
+                            <p class="text-sm text-left">
+                                {{ \Illuminate\Support\Str::limit(strip_tags($item->deskripsi), 50) }}
+                            </p>
                         </div>
                     @endforeach
                 </div>
@@ -67,7 +69,7 @@
                                         <h3 class="text-base font-bold mb-1">{{ $item->judul }}</h3>
                                     </a>
                                     <p class="text-sm text-gray-700 mb-2">
-                                        {{ \Illuminate\Support\Str::limit($item->deskripsi, 80) }}
+                                        {{ \Illuminate\Support\Str::limit(strip_tags($item->deskripsi), 80) }}
                                     </p>
                                     <div class="flex justify-between items-center">
                                         <p class="text-sm text-[#ABABAB] font-semibold">

@@ -58,7 +58,7 @@
         <div class="flex flex-col lg:flex-row gap-10">
             {{-- Deskripsi --}}
             <div class="lg:w-1/2 text-[15px] leading-relaxed text-justify">
-                {!! nl2br(e($karya->deskripsi)) !!}
+                {!! strip_tags($karya->deskripsi, '<p><br>') !!}
             </div>
 
             {{-- Gambar --}}
