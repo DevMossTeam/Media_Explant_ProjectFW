@@ -119,7 +119,6 @@
             <div class="flex flex-col space-y-4 mt-10">
                 <a href="{{ route('home') }}" class="text-gray-700 hover:text-[#990505] font-semibold">Beranda</a>
 
-<<<<<<< Updated upstream
                 @if (session('user') && session('user')->role === 'Penulis')
                     <!-- Media Dropdown -->
                     <div class="group">
@@ -136,24 +135,6 @@
                         </ul>
                     </div>
                 @endif
-=======
-                <!-- Media Dropdown -->
-                @role('Penulis')
-                <div class="group">
-                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
-                        Buat <i class="fa-solid fa-chevron-down float-right"></i>
-                    </button>
-                    <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li><a href="{{ route('create-news') }}" class="text-gray-600 hover:text-[#990505]">Buat
-                                Berita</a></li>
-                        <li><a href="{{ route('create-product') }}"
-                                class="text-gray-600 hover:text-[#990505]">Tambahkan Produk</a></li>
-                        <li><a href="{{ route('creation') }}" class="text-gray-600 hover:text-[#990505]">Tambahkan
-                                Karya</a></li>
-                    </ul>
-                </div>
-                @endrole
->>>>>>> Stashed changes
 
                 <!-- Profil Dropdown -->
                 <div class="group">
@@ -162,13 +143,8 @@
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
                         <li>
-<<<<<<< Updated upstream
                             <a href="{{ route('settings.umum') }}"
                                 class="text-gray-600 hover:text-[#990505]">Pengaturan</a>
-=======
-                            <button onclick="openSettingsModal()"
-                                class="text-gray-600 hover:text-[#990505]">Pengaturan</button>
->>>>>>> Stashed changes
                         </li>
                         <li><a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a></li>
                         <li><a href="{{ route('bookmarked') }}" class="text-gray-600 hover:text-[#990505]">Disimpan</a>
@@ -340,22 +316,25 @@
                 </div>
             </div>
 
-            <!-- Media Dropdown -->
-            @role('Penulis')
-            <div class="relative">
-                <button id="articleButton"
-                    class="flex items-center space-x-2 text-gray-700 hover:text-red-700 focus:outline-none">
-                    <i class="fa-solid fa-square-plus text-lg text-gray-500 hover:text-red-700 focus:outline-none"></i>
-                </button>
-                <div id="articleDropdown"
-                    class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
-                    <a href="{{ route('create-news') }}" class="block px-4 py-2 hover:bg-gray-100">Buat Berita</a>
-                    <a href="{{ route('create-product') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan
-                        Produk</a>
-                    <a href="{{ route('creation') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan Karya</a>
+            @if (session('user') && session('user')->role === 'Penulis')
+                <!-- Media Dropdown -->
+                <div class="relative">
+                    <button id="articleButton"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-red-700 focus:outline-none">
+                        <i
+                            class="fa-solid fa-square-plus text-lg text-gray-500 hover:text-red-700 focus:outline-none"></i>
+                    </button>
+                    <div id="articleDropdown"
+                        class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
+                        <a href="{{ route('create-news') }}" class="block px-4 py-2 hover:bg-gray-100">Buat
+                            Berita</a>
+                        <a href="{{ route('create-product') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan
+                            Produk</a>
+                        <a href="{{ route('creation') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan
+                            Karya</a>
+                    </div>
                 </div>
-            </div>
-            @endrole
+            @endif
 
             <!-- Profil Dropdown -->
             <div class="relative z-50">
@@ -389,7 +368,7 @@
                             </div>
                         </div>
 
-                        <a onclick="openSettingsModal()"
+                        <a href="{{ route('settings.umum') }}"
                             class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
                             <img src="https://img.icons8.com/ios-filled/24/808080/settings.png" alt="Settings Icon"
                                 class="w-5 h-5 mr-3"> Pengaturan
@@ -443,10 +422,18 @@
         const notifButton = document.getElementById("notifButton");
         const notifDropdown = document.getElementById("notifDropdown");
 
-        // Fungsi untuk menutup semua dropdown
+        // Fungsi untuk menutup semua dropdown, kecuali yang diklik
         function closeAllDropdowns(except = null) {
-            if (articleDropdown && except !== articleDropdown) articleDropdown.classList.add("hidden");
-            if (profileDropdown && except !== profileDropdown) profileDropdown.classList.add("hidden");
+            if (articleDropdown && except !== articleDropdown) {
+                articleDropdown.classList.add("hidden");
+            }
+            if (profileDropdown && except !== profileDropdown) {
+                profileDropdown.classList.add("hidden");
+            }
+            if (notifDropdown && except !== notifDropdown) {
+                notifDropdown.classList.add("hidden", "opacity-0", "scale-95");
+                notifDropdown.classList.remove("opacity-100", "scale-100");
+            }
         }
 
         // Artikel dropdown
@@ -469,10 +456,28 @@
             });
         }
 
-        // Tutup dropdown ketika klik di luar dropdown atau tombolnya
-        document.addEventListener("click", () => closeAllDropdowns());
+        // Notifikasi dropdown
+        if (notifButton && notifDropdown) {
+            notifButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const isHidden = notifDropdown.classList.contains("hidden");
+                closeAllDropdowns(notifDropdown);
+                if (isHidden) {
+                    notifDropdown.classList.remove("hidden", "opacity-0", "scale-95");
+                    notifDropdown.classList.add("opacity-100", "scale-100");
+                } else {
+                    notifDropdown.classList.add("hidden", "opacity-0", "scale-95");
+                    notifDropdown.classList.remove("opacity-100", "scale-100");
+                }
+            });
+        }
 
-        // Sidebar Toggle
+        // Klik di luar dropdown akan menutup semuanya
+        document.addEventListener("click", function() {
+            closeAllDropdowns();
+        });
+
+        // === SIDEBAR TOGGLE ===
         const toggleButton = document.getElementById("toggleSearchNotif");
         const closeButton = document.getElementById("closeSidebar");
         const searchNotifContainer = document.getElementById("searchNotifContainer");
