@@ -45,8 +45,8 @@
                         class="block px-4 py-2 text-sm hover:bg-gray-100">A-Z Judul</a>
                     <a href="{{ route('draft-media', ['sort' => 'desc']) }}"
                         class="block px-4 py-2 text-sm hover:bg-gray-100">Z-A Judul</a>
-                    <a href="{{ route('draft-media') }}"
-                        class="block px-4 py-2 text-sm hover:bg-gray-100">Terbaru</a>
+                    <a href="{{ route('draft-media', ['sort' => 'recent']) }}"
+                            class="block px-4 py-2 text-sm hover:bg-gray-100">Terbaru</a>
                 </div>
             </div>
         </div>

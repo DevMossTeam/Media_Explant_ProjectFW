@@ -29,7 +29,7 @@ class PublishedController extends Controller
             $query->orderBy('judul', 'asc');
         } elseif ($request->sort == 'desc') {
             $query->orderBy('judul', 'desc');
-        } elseif ($request->sort == 'recent') {
+        } else {
             $query->orderBy('tanggal_diterbitkan', 'desc');
         }
 

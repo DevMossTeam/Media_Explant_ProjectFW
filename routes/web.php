@@ -44,6 +44,7 @@ use App\Http\Controllers\Profile\BookmarkedController;
 use App\Http\Controllers\Setting\NotifikasiController;
 use App\Http\Controllers\Setting\BantuanController;
 use App\Http\Controllers\UserReact\ReportController;
+use App\Http\Controllers\Setting\AccountController;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
 
@@ -105,6 +106,11 @@ Route::prefix('settings')->middleware('remember.prev')->group(function () {
     Route::get('/umum', [SettingController::class, 'umumSettings'])->name('settings.umum');
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('settings.notifikasi');
     Route::get('/bantuan', [BantuanController::class, 'index'])->name('settings.bantuan');
+
+    Route::post('/akun/send-otp-current', [AccountController::class, 'sendOtpToCurrentEmail'])->name('settings.sendOtpToCurrentEmail');
+    Route::post('/akun/verify-otp', [AccountController::class, 'verifyOtp'])->name('settings.verifyOtp');
+    Route::post('/akun/update-email', [AccountController::class, 'updateEmail'])->name('settings.updateEmail');
+    Route::post('/akun/update-password', [AccountController::class, 'updatePassword'])->name('settings.updatePassword');
 });
 
 // upload & simpan profil
@@ -212,7 +218,6 @@ Route::middleware(['guestOrRole'])->group(function () {
     Route::view('/kode-etik', 'header-footer.footer-menu.kode-etik');
     Route::view('/struktur-organisasi', 'header-footer.footer-menu.strukturOrganisasi');
     Route::view('/pusat-bantuan', 'header-footer.footer-menu.pusatBantuan');
-
 });
 
 Route::middleware(['guestOrRole'])->group(function () {
@@ -261,7 +266,6 @@ Route::middleware(['guestOrRole'])->group(function () {
     Route::get('/search-preview', [SearchController::class, 'preview']);
     Route::get('/search', [SearchController::class, 'index'])->name('search');
     Route::get('/search/{section}', [SearchController::class, 'paginateSection']);
-
 });
 
 Route::post('/reaksi', [ReaksiController::class, 'store'])->name('reaksi.store');
@@ -296,15 +300,15 @@ Route::middleware(['checkRole:Admin'])->group(function () {
     Route::get('/dashboard-admin/detail-pengguna/{id}', [AdminUserController::class, 'detail'])->name('admin.user.detail');
     // Hapus pengguna
     Route::delete('/dashboard-admin/hapus-pengguna/{uid}', [AdminUserController::class, 'deleteUser'])
-    ->name('admin.user.delete');
+        ->name('admin.user.delete');
     Route::put('/dashboard-admin/user/change-role/{uid}', [AdminUserController::class, 'updateRole'])
-    ->name('admin.user.change-role');
+        ->name('admin.user.change-role');
 
     // Berita Routes
     Route::get('/dashboard-admin/berita', [AdminContentController::class, 'berita'])->name('admin.berita');
     Route::get('/dashboard-admin/berita/{id}/detail', [AdminContentController::class, 'detailBerita'])->name('admin.berita.detail');;
     Route::delete('/dashboard-admin/berita/delete/{id}', [AdminContentController::class, 'delete'])
-    ->name('admin.berita.delete');
+        ->name('admin.berita.delete');
     Route::get('/berita/export', [AdminContentController::class, 'exportBerita']);
 
     // Produk Routes
@@ -317,9 +321,8 @@ Route::middleware(['checkRole:Admin'])->group(function () {
     // Daftar karya
     Route::get('/dashboard-admin/karya', [AdminContentController::class, 'karya'])->name('admin.karya');
     Route::get('/dashboard-admin/karya/detail/{id}', [AdminContentController::class, 'detailKarya'])->name('admin.karya.detail');
-    Route::delete('/dashboard-admin/karya/delete/{id}', [AdminContentController::class, 'deleteKarya'])->name('admin.karya.delete');    
+    Route::delete('/dashboard-admin/karya/delete/{id}', [AdminContentController::class, 'deleteKarya'])->name('admin.karya.delete');
 
     Route::get('/dashboard-admin/settings', [TentangKamiController::class, 'index'])->name('admin.settings');
     Route::post('/dashboard-admin/settings/update', [TentangKamiController::class, 'update'])->name('admin.settings.update');
-
-});    
+});

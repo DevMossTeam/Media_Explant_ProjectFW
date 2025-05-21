@@ -45,7 +45,7 @@
                             class="block px-4 py-2 text-sm hover:bg-gray-100">A-Z Judul</a>
                         <a href="{{ route('published-media', ['sort' => 'desc']) }}"
                             class="block px-4 py-2 text-sm hover:bg-gray-100">Z-A Judul</a>
-                        <a href="{{ route('published-media') }}"
+                        <a href="{{ route('published-media', ['sort' => 'recent']) }}"
                             class="block px-4 py-2 text-sm hover:bg-gray-100">Terbaru</a>
                     </div>
                 </div>
