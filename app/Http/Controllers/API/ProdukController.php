@@ -19,12 +19,12 @@ class ProdukController extends Controller
             'judul',
             'deskripsi',
             'release_date',
-            'kategori'  
+            'kategori'
         ])
             ->where('kategori', 'Majalah')
             ->with(['user:uid,nama_lengkap,profile_pic', 'bookmarks', 'reaksis', 'komentars'])
             ->orderBy('release_date', 'desc')
-             ->where('visibilitas', 'public')
+            ->where('visibilitas', 'public')
             ->paginate(5);
 
         return response()->json($this->formatProdukResponse($produk, $userId));
@@ -56,6 +56,7 @@ class ProdukController extends Controller
     {
         return $produks->map(function ($produk) use ($userId) {
             $tanggalDiterbitkan = Carbon::parse($produk->release_date);
+            $profilePic = !empty($produk->user->profile_pic) ? base64_encode($produk->user->profile_pic) : null;
 
 
             return [
@@ -64,7 +65,7 @@ class ProdukController extends Controller
                 'deskripsi' => $produk->deskripsi,
                 'release_date' => $tanggalDiterbitkan->toDateTimeString(),
                 'penulis' => $produk->user->nama_lengkap ?? null,
-                'profil' => $produk->user->profile_pic ?? null,
+                'profil' => $profilePic,
                 'kategori' => $produk->kategori,
                 'media_url' => url('/api/produk-majalah/' . $produk->id . '/media'),
                 'jumlahLike' => $produk->reaksis->where('jenis_reaksi', 'Suka')->count(),
@@ -76,19 +77,18 @@ class ProdukController extends Controller
             ];
         })->toArray();
     }
-    
+
     public function getProdukMedia($id)
-{
-    $produk = Produk::findOrFail($id);
+    {
+        $produk = Produk::findOrFail($id);
 
-    if (!$produk->media) {
-        return response()->json(['message' => 'Media tidak ditemukan'], 404);
+        if (!$produk->media) {
+            return response()->json(['message' => 'Media tidak ditemukan'], 404);
+        }
+
+        return response($produk->media)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="produk-' . $produk->id . '.pdf"')
+            ->header('Accept-Ranges', 'bytes'); // penting agar browser bisa render
     }
-
-    return response($produk->media)
-        ->header('Content-Type', 'application/pdf')
-        ->header('Content-Disposition', 'inline; filename="produk-' . $produk->id . '.pdf"')
-        ->header('Accept-Ranges', 'bytes'); // penting agar browser bisa render
-}
-
 }

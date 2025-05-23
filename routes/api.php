@@ -7,6 +7,7 @@ use App\Http\Controllers\API\PesanController;
 use App\Http\Controllers\API\BeritaController;
 use App\Http\Controllers\API\ProdukController;
 use App\Http\Controllers\API\ReaksiController;
+use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\SignInController;
 use App\Http\Controllers\API\SignUpController;
 use App\Http\Controllers\API\BookmarkController;
@@ -78,6 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
+
 // toggle bookmark
 Route::post('/bookmark/toggle', [BookmarkController::class, 'toggle']);
 
@@ -99,7 +101,7 @@ Route::get('/produk-buletin', [ProdukController::class, 'getProdukBuletin']);
 Route::get('/produk-majalah/{id}/media', [ProdukController::class, 'getProdukMedia']);
 
 //karya
-Route::get('/puisi/terbaru', [KaryaController::class, 'getPuisiTerbaru']);
+Route::get('/puisi/terbaru  ', [KaryaController::class, 'getPuisiTerbaru']);
 Route::get('/syair/terbaru', [KaryaController::class, 'getSyairTerbaru']);
 Route::get('/desain-grafis/terbaru', [KaryaController::class, 'getDesainGrafisTerbaru']);
 Route::get('/fotografi/terbaru', [KaryaController::class, 'getFotografiTerbaru']);
@@ -107,11 +109,11 @@ Route::get('/fotografi/terbaru', [KaryaController::class, 'getFotografiTerbaru']
 // komentar
 Route::post('/komentar', [KomentarController::class, 'store']);
 Route::get('/get-komentar', [KomentarController::class, 'index']);
-Route::delete('/delete-komentar', [KomentarController::class, 'destroy']);
-
-
 
 // search
 Route::get('/berita/search', [BeritaController::class, 'searchBerita']);
 Route::get('/berita/search/kategori', [BeritaController::class, 'searchByKategori']);
 
+
+//report
+Route::post('/report', [ReportController::class, 'store']);

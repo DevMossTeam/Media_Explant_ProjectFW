@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class BeritaController extends Controller
 {
-    // Fungsi bantu ambil limit & page dari query
+    // Fungsi bantu ambil limit & page dari query parameter
     private function getPaginationParams(Request $request)
     {
         $limit = $request->query('limit', 10);
@@ -17,7 +17,7 @@ class BeritaController extends Controller
         return [(int) $limit, (int) $page];
     }
 
-    // Format response berita
+    // Format response berita dengan tambahan data reaksi, komentar, bookmark, dll
     private function formatBeritaResponse($beritas, $userId)
     {
         return $beritas->map(function ($berita) use ($userId) {
@@ -44,6 +44,7 @@ class BeritaController extends Controller
         });
     }
 
+    // Ambil berita terbaru dengan pagination
     public function getBeritaTerbaru(Request $request)
     {
         $userId = $request->query('user_id');
@@ -59,11 +60,10 @@ class BeritaController extends Controller
         ]);
     }
 
+    // Ambil berita populer berdasarkan jumlah like dan view count
     public function getBeritaPopuler(Request $request)
     {
         $userId = $request->query('user_id');
-        [$limit, $page] = $this->getPaginationParams($request);
-
         $beritas = Berita::withCount(['reaksis as jumlah_like' => function ($q) {
                 $q->where('jenis_reaksi', 'Suka');
             }])
@@ -71,13 +71,15 @@ class BeritaController extends Controller
             ->where('visibilitas', 'public')
             ->orderByDesc('jumlah_like')
             ->orderByDesc('view_count')
-            ->paginate($limit, ['*'], 'page', $page);
+            ->limit(5)
+            ->get();
 
         return response()->json([
             'data' => $this->formatBeritaResponse($beritas, $userId)
         ]);
     }
 
+    // Ambil berita teratas (top 1 berdasarkan view count dan like)
     public function getBeritaTeratas(Request $request)
     {
         $userId = $request->query('user_id');
@@ -97,6 +99,7 @@ class BeritaController extends Controller
         ]);
     }
 
+    // Ambil berita terkait berdasarkan kategori dan berita id
     public function getBeritaTerkait(Request $request)
     {
         $userId = $request->query('user_id');
@@ -125,6 +128,7 @@ class BeritaController extends Controller
         ]);
     }
 
+    // Ambil berita rekomendasi berdasarkan kategori favorit user (bookmark)
     public function getBeritaRekomendasi(Request $request)
     {
         $userId = $request->query('user_id');
@@ -159,6 +163,7 @@ class BeritaController extends Controller
         ]);
     }
 
+    // Ambil rekomendasi lainnya yang belum di-bookmark user
     public function getRekomendasiLainnya(Request $request)
     {
         $userId = $request->query('user_id');
@@ -179,6 +184,7 @@ class BeritaController extends Controller
         ]);
     }
 
+    // Pencarian berita dengan query bebas
     public function searchBerita(Request $request)
     {
         $userId = $request->query('user_id');
@@ -193,7 +199,7 @@ class BeritaController extends Controller
             ->where('visibilitas', 'public')
             ->where(function ($q) use ($query) {
                 $q->where('judul', 'like', "%$query%")
-                    ->orWhere('konten_berita', 'like', "%$query%")
+                    // ->orWhere('konten_berita', 'like', "%$query%")
                     ->orWhere('kategori', 'like', "%$query%");
             })
             ->orderByDesc('tanggal_diterbitkan')
@@ -204,6 +210,7 @@ class BeritaController extends Controller
         ]);
     }
 
+    // Cari berita berdasarkan kategori tertentu
     public function searchByKategori(Request $request)
     {
         $userId = $request->query('user_id');

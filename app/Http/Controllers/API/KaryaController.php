@@ -58,7 +58,7 @@ class KaryaController extends Controller
             ->where('visibilitas', 'public')
             ->orderByDesc('release_date')
             ->paginate(5);
-            // ->paginate(5);
+        // ->paginate(5);
         return response()->json($this->formatKaryaResponse($karyas, $userId));
     }
 
@@ -119,11 +119,12 @@ class KaryaController extends Controller
     {
         return $karyas->map(function ($karya) use ($userId) {
             $tanggalDiterbitkan = Carbon::parse($karya->release_date);
+            $profilePic = !empty($karya->user->profile_pic) ? base64_encode($karya->user->profile_pic) : null;
 
             return [
                 'idKarya' => $karya->id,
                 'penulis' => $karya->user->nama_lengkap ?? null,
-                'profil' => $karya->user->profile_pic ?? null,
+                'profil' => $profilePic,
                 'krator' => $karya->creator,
                 'judul' => $karya->judul,
                 'deskripsi' => $karya->deskripsi,

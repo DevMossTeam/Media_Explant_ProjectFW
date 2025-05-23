@@ -24,7 +24,7 @@ class Berita extends Model
         return $this->belongsTo(User::class,'user_id', 'uid');
     }
 
-    public function tags()
+    public function tags()  
     {
         return $this->hasMany(Tag::class, 'berita_id', 'id');
     }
