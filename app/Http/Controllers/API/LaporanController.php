@@ -8,12 +8,12 @@ use Illuminate\Support\Str;
 use App\Models\API\Pesan;
 use Illuminate\Support\Carbon;
 
-class ReportController extends Controller
+class LaporanController extends Controller
 {
     public function store(Request $request)
     {
         $request->validate([
-            'user_id'      => 'required|exists:user,uid',
+            'user_id'      => 'nullable|exists:user,uid',
             'pesan'        => 'required|string',
             'status_read'  => 'required|in:sudah,belum',
             'status'       => 'required|in:laporan,masukan',

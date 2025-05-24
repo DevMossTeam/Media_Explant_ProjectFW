@@ -7,13 +7,13 @@ use App\Http\Controllers\API\PesanController;
 use App\Http\Controllers\API\BeritaController;
 use App\Http\Controllers\API\ProdukController;
 use App\Http\Controllers\API\ReaksiController;
-use App\Http\Controllers\API\ReportController;
 use App\Http\Controllers\API\SignInController;
 use App\Http\Controllers\API\SignUpController;
 use App\Http\Controllers\API\BookmarkController;
 use App\Http\Controllers\API\KomentarController;
 use App\Http\Controllers\API\SecurityController;
 use App\Http\Controllers\API\GetProfileController;
+use App\Http\Controllers\API\LaporanController;
 use App\Http\Controllers\API\UpdateProfileController;
 
 /*
@@ -116,4 +116,4 @@ Route::get('/berita/search/kategori', [BeritaController::class, 'searchByKategor
 
 
 //report
-Route::post('/report', [ReportController::class, 'store']);
+Route::post('/laporan', [LaporanController::class, 'store']);
