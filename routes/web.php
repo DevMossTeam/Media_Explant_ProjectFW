@@ -45,6 +45,7 @@ use App\Http\Controllers\Setting\NotifikasiController;
 use App\Http\Controllers\Setting\BantuanController;
 use App\Http\Controllers\UserReact\ReportController;
 use App\Http\Controllers\Setting\AccountController;
+use App\Http\Controllers\Setting\HubungiKamiController;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\User;
 
@@ -106,6 +107,7 @@ Route::prefix('settings')->middleware('remember.prev')->group(function () {
     Route::get('/umum', [SettingController::class, 'umumSettings'])->name('settings.umum');
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('settings.notifikasi');
     Route::get('/bantuan', [BantuanController::class, 'index'])->name('settings.bantuan');
+    Route::get('/hubungiKami', [HubungiKamiController::class, 'index'])->name('settings.hubungiKami');
 
     Route::post('/akun/send-otp-current', [AccountController::class, 'sendOtpToCurrentEmail'])->name('settings.sendOtpToCurrentEmail');
     Route::post('/akun/verify-otp', [AccountController::class, 'verifyOtp'])->name('settings.verifyOtp');

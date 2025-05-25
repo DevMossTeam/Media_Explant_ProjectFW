@@ -11,38 +11,42 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-white text-gray-800">
+<body class="bg-white text-gray-800 h-screen overflow-hidden">
 
-    <!-- Header -->
-    <div class="flex items-center px-6 py-4 border-b">
+    <!-- Header Sticky -->
+    <div class="sticky top-0 z-50 bg-white border-b px-6 py-4 flex items-center">
         <a href="{{ session('settings_previous_url', url('/')) }}" class="flex items-center">
             <img src="{{ asset('assets/Medex-M-IC.png') }}" alt="Logo" class="w-6 h-6 mr-2">
             <h1 class="text-lg font-semibold text-red-600">Pengaturan</h1>
         </a>
     </div>
 
-    <!-- Layout -->
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div class="w-60 bg-gray-100 p-4 flex flex-col gap-4 border-r">
-            <a href="{{ route('settings.umum') }}" class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
-                <i class="fas fa-user"></i> Akun
-            </a>
-            <a href="{{ route('settings.notifikasi') }}"
-                class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
-                <i class="fas fa-bell"></i> Notifikasi
-            </a>
-            <a href="{{ route('settings.bantuan') }}" class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
-                <i class="fas fa-question-circle"></i> Pusat Bantuan
-            </a>
+    <!-- Layout Container -->
+    <div class="flex h-[calc(100vh-64px)]"> {{-- 64px: tinggi header --}}
+        <!-- Sidebar Sticky -->
+        <div class="w-60 bg-gray-100 p-4 border-r sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto">
+            <nav class="flex flex-col gap-4">
+                <a href="{{ route('settings.umum') }}" class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-user"></i> Akun
+                </a>
+                <a href="{{ route('settings.notifikasi') }}"
+                   class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-bell"></i> Notifikasi
+                </a>
+                <a href="{{ route('settings.bantuan') }}" class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-question-circle"></i> Pusat Bantuan
+                </a>
+                <a href="{{ route('settings.hubungiKami') }}" class="flex items-center gap-2 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-clipboard-question"></i> Hubungi Kami
+                </a>
+            </nav>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 p-8 overflow-y-auto">
+        <!-- Main Content Scrollable -->
+        <div class="flex-1 overflow-y-auto p-8">
             @yield('setting-content')
         </div>
     </div>
 
 </body>
-
 </html>

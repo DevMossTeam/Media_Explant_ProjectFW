@@ -13,7 +13,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class DraftController extends Controller
 {
-     public function index(Request $request)
+    public function index(Request $request)
     {
         $user = Session::get('user');
         Carbon::setLocale('id');
@@ -29,7 +29,7 @@ class DraftController extends Controller
         if ($search) {
             $beritaQuery->where(function ($q) use ($search) {
                 $q->where('judul', 'like', "%$search%")
-                  ->orWhere('kategori', 'like', "%$search%");
+                    ->orWhere('kategori', 'like', "%$search%");
             });
         }
 
@@ -59,7 +59,7 @@ class DraftController extends Controller
         if ($search) {
             $karyaQuery->where(function ($q) use ($search) {
                 $q->where('judul', 'like', "%$search%")
-                  ->orWhere('kategori', 'like', "%$search%");
+                    ->orWhere('kategori', 'like', "%$search%");
             });
         }
 
@@ -88,7 +88,7 @@ class DraftController extends Controller
         if ($search) {
             $produkQuery->where(function ($q) use ($search) {
                 $q->where('judul', 'like', "%$search%")
-                  ->orWhere('kategori', 'like', "%$search%");
+                    ->orWhere('kategori', 'like', "%$search%");
             });
         }
 
@@ -156,11 +156,27 @@ class DraftController extends Controller
         return view('authors.edit', compact('berita'));
     }
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         $user = session('user');
-        $berita = Draft::where('id', $id)->where('user_id', $user->uid)->firstOrFail();
-        $berita->delete();
-        return redirect()->route('draft-media')->with('success', 'Berita berhasil dihapus.');
+        $tipe = $request->input('tipe');
+
+        switch ($tipe) {
+            case 'berita':
+                $item = Draft::where('id', $id)->where('user_id', $user->uid)->firstOrFail();
+                break;
+            case 'karya':
+                $item = Karya::where('id', $id)->where('user_id', $user->uid)->firstOrFail();
+                break;
+            case 'produk':
+                $item = Produk::where('id', $id)->where('user_id', $user->uid)->firstOrFail();
+                break;
+            default:
+                abort(404); 
+        }
+
+        $item->delete();
+
+        return redirect()->route('draft-media')->with('success', ucfirst($tipe) . ' berhasil dihapus.');
     }
 }

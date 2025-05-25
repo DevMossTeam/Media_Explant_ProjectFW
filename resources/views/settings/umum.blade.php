@@ -220,7 +220,7 @@
     @endif
 
     <!-- Modal untuk Verifikasi Email -->
-    <div id="emailModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex justify-center items-center">
+    <div id="emailModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex justify-center items-center z-50">
         <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
             <img src="https://img.icons8.com/ios-filled/50/000000/verified-account.png" alt="Verified Icon"
                 class="mx-auto mb-4" />
@@ -241,7 +241,7 @@
     </div>
 
     <!-- Modal untuk Memasukkan Kode OTP -->
-    <div id="otpModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex justify-center items-center">
+    <div id="otpModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex justify-center items-center z-50">
         <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
             <img src="https://img.icons8.com/ios-filled/50/000000/lock.png" alt="OTP Icon" class="mx-auto mb-4" />
             <h2 class="text-xl font-bold mb-4">Masukkan Kode OTP</h2>
@@ -271,7 +271,7 @@
     </div>
 
     <!-- Modal untuk Memasukkan Email Baru -->
-    <div id="newEmailModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex justify-center items-center">
+    <div id="newEmailModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden flex justify-center items-center z-50">
         <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
             <img src="https://img.icons8.com/ios-filled/50/000000/edit.png" alt="Edit Icon" class="mx-auto mb-4" />
             <h2 class="text-xl font-bold mb-4">Masukkan Email Baru</h2>
@@ -300,7 +300,7 @@
 
     <!-- Modal untuk Sukses Memperbarui Email -->
     @if (session('success') && session('otpFor') === 'newEmail')
-        <div id="successModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+        <div id="successModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
             <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
                 <img src="https://img.icons8.com/ios-filled/50/000000/checked.png" alt="Success Icon"
                     class="mx-auto mb-4" />

@@ -71,17 +71,15 @@
                             class="text-black text-2xl font-bold focus:outline-none">&#8942;</button>
                         <div id="menu-{{ $item['id'] }}"
                             class="absolute right-0 mt-2 w-24 bg-white border border-gray-200 rounded shadow-md hidden z-50">
-                            @if ($item['tipe'] === 'berita')
-                                <a href="{{ route('published.edit', $item['id']) }}"
-                                    class="block px-3 py-2 hover:bg-gray-100 text-sm">Edit</a>
-                                <form action="{{ route('published.destroy', $item['id']) }}" method="POST"
-                                    onsubmit="return confirm('Yakin ingin menghapus?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 text-sm">Hapus</button>
-                                </form>
-                            @endif
+                            <a href="{{ route('published.edit', $item['id']) }}"
+                                class="block px-3 py-2 hover:bg-gray-100 text-sm">Edit</a>
+                            <form action="{{ route('published.destroy', [$item['id'], 'tipe' => $item['tipe']]) }}"
+                                method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 text-sm">Hapus</button>
+                            </form>
                         </div>
                     </div>
                 </div>
