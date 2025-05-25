@@ -56,6 +56,7 @@ class KampusNewsController extends Controller
     {
         $newsId = $request->query('a');
         $news = KampusNews::where('id', $newsId)->firstOrFail();
+        $news->increment('view_count');
 
         $likeCount = Reaksi::where('item_id', $news->id)
             ->where('jenis_reaksi', 'Suka')
@@ -82,18 +83,21 @@ class KampusNewsController extends Controller
 
         $relatedNews = KampusNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
+            ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->take(6)
             ->get();
 
         $recommendedNews = KampusNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
+            ->where('visibilitas', 'public')
             ->inRandomOrder()
             ->take(6)
             ->get();
 
         $otherTopics = KampusNews::where('kategori', '!=', $news->kategori)
             ->latest('tanggal_diterbitkan')
+            ->where('visibilitas', 'public')
             ->take(8)
             ->get();
 

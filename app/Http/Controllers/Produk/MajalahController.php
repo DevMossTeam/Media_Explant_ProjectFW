@@ -49,6 +49,8 @@ class MajalahController extends Controller
             return abort(404, "Majalah tidak ditemukan.");
         }
 
+        $majalah->increment('view_count');
+
         // Ambil jumlah like dan dislike
         $likeCount = Reaksi::where('item_id', $majalah->id)
             ->where('jenis_reaksi', 'Suka')

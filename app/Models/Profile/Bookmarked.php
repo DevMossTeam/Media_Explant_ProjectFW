@@ -16,4 +16,9 @@ class Bookmarked extends Model
     {
         return $this->belongsTo(\App\Models\Author\Published::class, 'item_id', 'id');
     }
+
+    public function karya()
+    {
+        return $this->belongsTo(\App\Models\Karya\Karya::class, 'item_id');
+    }
 }

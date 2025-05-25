@@ -44,6 +44,8 @@ class SyairController extends Controller
             ->where('visibilitas', 'public')
             ->firstOrFail();
 
+        $karya->increment('view_count');
+
         $rekomendasi = Syair::with('user')
             ->where('id', '!=', $id)
             ->where('kategori', 'syair')

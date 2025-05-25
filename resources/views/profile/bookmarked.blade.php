@@ -45,8 +45,7 @@
                             class="block px-4 py-2 text-sm hover:bg-gray-100">A-Z Judul</a>
                         <a href="{{ route('bookmarked', ['sort' => 'desc']) }}"
                             class="block px-4 py-2 text-sm hover:bg-gray-100">Z-A Judul</a>
-                        <a href="{{ route('bookmarked') }}"
-                            class="block px-4 py-2 text-sm hover:bg-gray-100">Terbaru</a>
+                        <a href="{{ route('bookmarked') }}" class="block px-4 py-2 text-sm hover:bg-gray-100">Terbaru</a>
                     </div>
                 </div>
             </div>
@@ -58,7 +57,7 @@
                     <img src="{{ $item['thumbnail'] }}" alt="Thumbnail" class="w-28 h-20 object-cover rounded">
                     <div class="flex-1">
                         <p class="text-xs font-semibold">
-                            <span class="text-[#990505]">{{ strtoupper($item['kategori']) }}</span>
+                            <span class="text-[#990505]">{{ $item['kategori'] }}</span>
                             <span class="text-[#990505] mx-1">|</span>
                             <span class="text-[#A8A8A8] font-normal">Disimpan
                                 {{ \Carbon\Carbon::parse($item['tanggal_disimpan'])->translatedFormat('d F Y') }}</span>
@@ -71,7 +70,7 @@
                             class="text-gray-700 hover:text-gray-900 focus:outline-none text-2xl px-2 leading-none">⋮</button>
                         <div id="menu-{{ $item['id'] }}"
                             class="absolute right-0 mt-2 w-28 bg-white border border-gray-200 rounded shadow-md hidden z-50">
-                            <a href="/kategori/{{ strtolower($item['kategori']) }}/read?a={{ $item['id'] }}"
+                            <a href="{{ $item['url'] }}"
                                 class="block px-3 py-2 text-sm hover:bg-gray-100 text-gray-700">Lihat</a>
                             <button onclick="openModal('{{ route('bookmarked.destroy', $item['id']) }}')"
                                 class="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 text-sm">Hapus</button>
@@ -81,6 +80,9 @@
             @empty
                 <p class="text-center text-gray-500">Belum ada karya yang disimpan.</p>
             @endforelse
+            <div class="mt-6">
+                {{ $bookmarkedItems->links() }}
+            </div>
         </div>
     </div>
 

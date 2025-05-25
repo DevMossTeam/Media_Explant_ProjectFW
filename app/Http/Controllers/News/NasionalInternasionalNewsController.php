@@ -71,6 +71,7 @@ class NasionalInternasionalNewsController extends Controller
     {
         $newsId = $request->query('a');
         $news = NasionalInternasionalNews::where('id', $newsId)->firstOrFail();
+        $news->increment('view_count');
 
         $likeCount = Reaksi::where('item_id', $news->id)
             ->where('jenis_reaksi', 'Suka')
@@ -97,6 +98,7 @@ class NasionalInternasionalNewsController extends Controller
 
         // Berita terkait berdasarkan kategori yang sama
         $relatedNews = NasionalInternasionalNews::where('kategori', $news->kategori)
+            ->where('visibilitas', 'public')
             ->where('id', '!=', $news->id)
             ->latest('tanggal_diterbitkan')
             ->take(6)
@@ -105,12 +107,14 @@ class NasionalInternasionalNewsController extends Controller
         // Berita rekomendasi (bisa gunakan kriteria lain)
         $recommendedNews = NasionalInternasionalNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
+            ->where('visibilitas', 'public')
             ->inRandomOrder()
             ->take(6)
             ->get();
 
         // Topik lainnya (berita dari kategori berbeda)
         $otherTopics = NasionalInternasionalNews::where('kategori', '!=', $news->kategori)
+            ->where('visibilitas', 'public')
             ->latest('tanggal_diterbitkan')
             ->take(8)
             ->get();

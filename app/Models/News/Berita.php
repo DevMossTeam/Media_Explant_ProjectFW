@@ -16,6 +16,7 @@ class Berita extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
+    public $timestamps = false;
 
     protected $fillable = [
         'judul',
@@ -37,7 +38,7 @@ class Berita extends Model
     public function reaksi()
     {
         return $this->morphMany(\App\Models\UserReact\Reaksi::class, 'reaksiable', 'reaksi_type', 'item_id');
-    }    
+    }
 
     /**
     * Relasi ke penulis berita

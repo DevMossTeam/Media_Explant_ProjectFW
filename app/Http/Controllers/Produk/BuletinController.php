@@ -58,6 +58,8 @@ class BuletinController extends Controller
             return abort(404, "Buletin tidak ditemukan.");
         }
 
+        $buletin->increment('view_count');
+
         // Pagination rekomendasi buletin dengan limit dan tanpa eager loading user (jika user tidak dibutuhkan)
         $rekomendasiBuletin = Buletin::select('id', 'judul', 'release_date')
             ->where('kategori', 'Buletin')

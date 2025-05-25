@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Profile;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Profile\Bookmarked;
+use App\Models\Produk\Buletin;
+use App\Models\Produk\Majalah;
 use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
 
@@ -15,43 +17,112 @@ class BookmarkedController extends Controller
         $user = Session::get('user');
         Carbon::setLocale('id');
 
-        $query = Bookmarked::with('berita')
+        $query = Bookmarked::with(['berita', 'karya'])
             ->where('user_id', $user->uid);
 
-        // Filter pencarian berdasarkan judul berita
+        // Filter pencarian
         if ($request->filled('search')) {
-            $query->whereHas('berita', function ($q) use ($request) {
-                $q->where('judul', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('berita', function ($q1) use ($request) {
+                    $q1->where('judul', 'like', '%' . $request->search . '%');
+                })->orWhereHas('karya', function ($q2) use ($request) {
+                    $q2->where('judul', 'like', '%' . $request->search . '%');
+                });
             });
         }
 
         // Sorting
-        if ($request->sort == 'asc') {
-            $query->orderBy(\App\Models\Author\Published::select('judul')->whereColumn('id', 'bookmark.item_id'), 'asc');
-        } elseif ($request->sort == 'desc') {
-            $query->orderBy(\App\Models\Author\Published::select('judul')->whereColumn('id', 'bookmark.item_id'), 'desc');
-        } else {
-            $query->orderBy('tanggal_bookmark', 'desc'); // Default terbaru
-        }
+        $query->orderBy('tanggal_bookmark', $request->sort === 'asc' ? 'asc' : 'desc');
 
-        $bookmarkedItems = $query->get()
-            ->filter(fn($bookmark) => $bookmark->berita && $bookmark->berita->visibilitas === 'public')
-            ->map(function ($bookmark) {
-                $berita = $bookmark->berita;
-                preg_match('/<img.*?src=["\']([^"\']+)/', $berita->konten_berita, $matches);
-                $thumbnail = $matches[1] ?? asset('images/default-thumbnail.jpg');
+        // Pagination
+        $bookmarkedRaw = $query->paginate(50);
+        $bookmarkedRaw->appends($request->query());
 
-                return [
-                    'id' => $berita->id,
-                    'judul' => $berita->judul,
-                    'kategori' => $berita->kategori,
-                    'thumbnail' => $thumbnail,
-                    'tanggal_disimpan' => $bookmark->tanggal_bookmark,
-                    'disimpan_ago' => Carbon::parse($bookmark->tanggal_bookmark)->diffForHumans(),
-                ];
-            });
+        // Proses item bookmark
+        $bookmarkedItems = collect($bookmarkedRaw->items())->filter(function ($bookmark) {
+            switch ($bookmark->bookmark_type) {
+                case 'Berita':
+                    return $bookmark->berita && $bookmark->berita->visibilitas === 'public';
+                case 'Karya':
+                    return $bookmark->karya && $bookmark->karya->visibilitas === 'public';
+                case 'Produk':
+                    $produk = $this->getProduk($bookmark->item_id);
+                    return $produk && $produk->visibilitas === 'public';
+                default:
+                    return false;
+            }
+        })->map(function ($bookmark) {
+            switch ($bookmark->bookmark_type) {
+                case 'Berita':
+                    $item = $bookmark->berita;
+                    preg_match('/<img.*?src=["\']([^"\']+)/', $item->konten_berita, $matches);
+                    $thumbnail = $matches[1] ?? asset('images/default-thumbnail.jpg');
 
-        return view('profile.bookmarked', ['bookmarkedItems' => $bookmarkedItems]);
+                    $kategoriRaw = $item->kategori ?? 'Berita';
+                    $kategoriName = strtoupper($kategoriRaw);
+
+                    $kategoriSlug = match (strtolower($kategoriRaw)) {
+                        'opini', 'esai' => 'opini-esai',
+                        'nasional', 'internasional' => 'nasional-internasional',
+                        'liputan khusus' => 'liputan-khusus',
+                        'kesenian', 'hiburan' => 'kesenian-hiburan',
+                        default => str_replace(' ', '-', strtolower($kategoriRaw)),
+                    };
+
+                    $judul = $item->judul;
+                    $url = url("/kategori/{$kategoriSlug}/read?a={$item->id}");
+                    break;
+
+                case 'Karya':
+                    $item = $bookmark->karya;
+                    $thumbnail = 'data:image/jpeg;base64,' . $item->media;
+                    $kategoriName = strtoupper(str_replace('_', ' ', $item->kategori));
+                    $kategoriSlug = str_replace('_', '-', strtolower($item->kategori));
+                    $judul = $item->judul;
+                    $url = url("/karya/{$kategoriSlug}/read?k={$item->id}");
+                    break;
+
+                case 'Produk':
+                    $item = $this->getProduk($bookmark->item_id);
+                    $thumbnail = asset('assets/IC-pdf-P.png');
+                    $kategoriName = strtoupper(str_replace('_', ' ', $item->kategori ?? 'Produk'));
+                    $judul = $item->judul;
+                    $url = url("/produk/" . strtolower($item->kategori ?? 'produk') . "/browse?f={$item->id}");
+                    break;
+
+                default:
+                    return null;
+            }
+
+            return [
+                'id' => $bookmark->item_id,
+                'judul' => $judul,
+                'kategori' => $kategoriName,
+                'thumbnail' => $thumbnail,
+                'tanggal_disimpan' => $bookmark->tanggal_bookmark,
+                'disimpan_ago' => Carbon::parse($bookmark->tanggal_bookmark)->diffForHumans(),
+                'url' => $url,
+            ];
+        })->filter();
+
+        // Replace collection on paginator
+        $bookmarkedRaw = new \Illuminate\Pagination\LengthAwarePaginator(
+            $bookmarkedItems->values(),
+            $bookmarkedRaw->total(),
+            $bookmarkedRaw->perPage(),
+            $bookmarkedRaw->currentPage(),
+            [
+                'path' => $request->url(),
+                'query' => $request->query(),
+            ]
+        );
+
+        return view('profile.bookmarked', ['bookmarkedItems' => $bookmarkedRaw]);
+    }
+
+    protected function getProduk($id)
+    {
+        return Buletin::find($id) ?? Majalah::find($id);
     }
 
     public function destroy($id)

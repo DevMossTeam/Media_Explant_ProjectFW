@@ -70,7 +70,7 @@
                             class="text-gray-700 hover:text-gray-900 focus:outline-none text-2xl px-2 leading-none">⋮</button>
                         <div id="menu-{{ $item['id'] }}"
                             class="absolute right-0 mt-2 w-28 bg-white border border-gray-200 rounded shadow-md hidden z-50">
-                            <a href="/kategori/{{ strtolower($item['kategori']) }}/read?a={{ $item['id'] }}"
+                            <a href="{{ $item['url'] }}"
                                 class="block px-3 py-2 text-sm hover:bg-gray-100 text-gray-700">Lihat</a>
                             <button onclick="openModal('{{ route('liked.destroy', $item['id']) }}')"
                                 class="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 text-sm">Hapus</button>
@@ -80,6 +80,9 @@
             @empty
                 <p class="text-center text-gray-500">Belum ada karya yang disukai.</p>
             @endforelse
+            <div class="mt-4">
+                {{ $likedItems->links() }}
+            </div>
         </div>
     </div>
 

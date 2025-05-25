@@ -44,6 +44,8 @@ class PuisiController extends Controller
             ->where('visibilitas', 'public')
             ->firstOrFail();
 
+        $karya->increment('view_count');
+
         $rekomendasi = Puisi::with('user')
             ->where('id', '!=', $id)
             ->where('kategori', 'puisi')

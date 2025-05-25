@@ -13,21 +13,30 @@ class SearchController extends Controller
         $keyword = $request->get('query');
 
         $judulProduk = DB::table('produk')
-            ->where('judul', 'like', "%$keyword%")
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            })
             ->orderByDesc('release_date')
             ->limit(5)
             ->pluck('judul')
             ->toArray();
 
         $judulBerita = DB::table('berita')
-            ->where('judul', 'like', "%$keyword%")
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            })
             ->orderByDesc('tanggal_diterbitkan')
             ->limit(5)
             ->pluck('judul')
             ->toArray();
 
         $judulKarya = DB::table('karya')
-            ->where('judul', 'like', "%$keyword%")
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            })
             ->orderByDesc('release_date')
             ->limit(5)
             ->pluck('judul')
@@ -50,15 +59,25 @@ class SearchController extends Controller
 
         // Produk
         $produk = DB::table('produk')
-            ->select('id', 'judul', 'kategori', 'release_date')
-            ->where('judul', 'like', "%$keyword%")
+            ->select('id', 'judul', 'kategori', 'deskripsi', 'release_date')
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            })
             ->orderByDesc('release_date')
             ->paginate(20, ['*'], 'produk_page');
+
+        foreach ($produk as $item) {
+            $item->thumbnail = asset('assets/IC-pdf-P.png');
+        }
 
         // Berita dari judul
         $beritaByJudul = DB::table('berita')
             ->select('id', 'judul', 'kategori', 'konten_berita', 'tanggal_diterbitkan')
-            ->where('judul', 'like', "%$keyword%");
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            });
 
         // Berita dari tag.nama_tag
         $beritaByTag = DB::table('tag')
@@ -78,7 +97,10 @@ class SearchController extends Controller
         // Karya
         $karya = DB::table('karya')
             ->select('id', 'judul', 'kategori', 'media', 'deskripsi', 'release_date')
-            ->where('judul', 'like', "%$keyword%")
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            })
             ->orderByDesc('release_date')
             ->paginate(50, ['*'], 'karya_page');
 
