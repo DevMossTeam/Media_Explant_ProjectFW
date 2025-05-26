@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     integrity="sha512-yadaYadaHashKey" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<header class="relative z-50 bg-white shadow-md w-full flex items-center justify-between px-6 md:px-12 lg:px-24">
+<header id="site-header"
+    class="sticky top-0 z-50 bg-white shadow-md w-full flex items-center justify-between px-6 md:px-12 lg:px-24 transition-transform duration-300">
     <div class="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-3">
         <!-- Logo -->
         <div class="flex items-center">
@@ -117,6 +118,13 @@
             </button>
 
             <div class="flex flex-col space-y-4 mt-10">
+                <div class="relative">
+                    <input id="sidebarSearchInput" type="text" placeholder="Cari..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    <button id="sidebarSearchButton" class="absolute right-2 top-2 text-gray-500 hover:text-red-700">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
                 <a href="{{ route('home') }}" class="text-gray-700 hover:text-[#990505] font-semibold">Beranda</a>
 
                 @if (session('user') && session('user')->role === 'Penulis')
@@ -136,46 +144,6 @@
                     </div>
                 @endif
 
-                <!-- Profil Dropdown -->
-                <div class="group">
-                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
-                        Profil <i class="fa-solid fa-chevron-down float-right"></i>
-                    </button>
-                    <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li>
-                            <a href="{{ route('settings.umum') }}"
-                                class="text-gray-600 hover:text-[#990505]">Pengaturan</a>
-                        </li>
-                        <li><a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a></li>
-                        <li><a href="{{ route('bookmarked') }}" class="text-gray-600 hover:text-[#990505]">Disimpan</a>
-                        </li>
-                        @if (session('user') && session('user')->role === 'Penulis')
-                            <li><a href="{{ route('draft-media') }}" class="text-gray-600 hover:text-[#990505]">Draf
-                                    Karya</a></li>
-                            <li><a href="{{ route('published-media') }}"
-                                    class="text-gray-600 hover:text-[#990505]">Publikasi Karya</a></li>
-                        @endif
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="text-left text-gray-600 hover:text-[#990505] w-full">
-                                    Keluar
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Notifikasi -->
-                <div class="relative">
-                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
-                        Notifikasi <i class="fa-solid fa-bell float-right"></i>
-                    </button>
-                    <ul class="hidden mt-2 pl-4 space-y-2">
-                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Belum ada notifikasi</a></li>
-                    </ul>
-                </div>
-
                 <!-- Berita Dropdown -->
                 <div class="group">
                     <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
@@ -186,8 +154,8 @@
                         </li>
                         <li><a href="{{ route('nasional-internasional') }}"
                                 class="text-gray-600 hover:text-[#990505]">Nasional dan Internasional</a></li>
-                        <li><a href="{{ route('liputan-khusus') }}"
-                                class="text-gray-600 hover:text-[#990505]">Liputan Khusus</a>
+                        <li><a href="{{ route('liputan-khusus') }}" class="text-gray-600 hover:text-[#990505]">Liputan
+                                Khusus</a>
                         <li><a href="{{ route('teknologi') }}"
                                 class="text-gray-600 hover:text-[#990505]">Teknologi</a>
                         </li>
@@ -236,6 +204,67 @@
                                 Grafis</a></li>
                     </ul>
                 </div>
+
+                <!-- Profil Dropdown -->
+                <div class="group">
+                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
+                        Profil <i class="fa-solid fa-chevron-down float-right"></i>
+                    </button>
+
+                    @if (session('user'))
+                        <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
+                            <li>
+                                <a href="{{ route('settings.umum') }}"
+                                    class="text-gray-600 hover:text-[#990505]">Pengaturan</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('bookmarked') }}"
+                                    class="text-gray-600 hover:text-[#990505]">Disimpan</a>
+                            </li>
+                            @if (session('user')->role === 'Penulis')
+                                <li>
+                                    <a href="{{ route('draft-media') }}"
+                                        class="text-gray-600 hover:text-[#990505]">Draf Karya</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('published-media') }}"
+                                        class="text-gray-600 hover:text-[#990505]">Publikasi Karya</a>
+                                </li>
+                            @endif
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="text-left text-gray-600 hover:text-[#990505] w-full">Keluar</button>
+                                </form>
+                            </li>
+                        </ul>
+                    @else
+                        <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
+                            <li>
+                                <a href="{{ route('login') }}" class="text-gray-600 hover:text-[#990505]">Login</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('settings.umum') }}"
+                                    class="text-gray-600 hover:text-[#990505]">Pengaturan</a>
+                            </li>
+                        </ul>
+                    @endif
+                </div>
+
+                <!-- Notifikasi -->
+                <div class="relative">
+                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
+                        Notifikasi
+                    </button>
+                    <ul class="hidden mt-2 pl-4 space-y-2">
+                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Belum ada notifikasi</a></li>
+                    </ul>
+                </div>
+
             </div>
         </div>
 
@@ -405,6 +434,8 @@
                         </form>
                     @else
                         <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-gray-100">Login</a>
+                        <a href="{{ route('settings.umum') }}"
+                            class="block px-4 py-2 hover:bg-gray-100">Pengaturan</a>
                     @endif
                 </div>
             </div>
@@ -414,6 +445,22 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        let lastScrollY = window.scrollY;
+        const header = document.getElementById("site-header");
+
+        window.addEventListener("scroll", function() {
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                // Scroll down, hide header
+                header.style.transform = "translateY(-100%)";
+            } else {
+                // Scroll up, show header
+                header.style.transform = "translateY(0)";
+            }
+
+            lastScrollY = currentScrollY;
+        });
         // Ambil elemen dropdown
         const articleButton = document.getElementById("articleButton");
         const articleDropdown = document.getElementById("articleDropdown");
@@ -501,6 +548,19 @@
         if (closeButton) closeButton.addEventListener("click", closeSidebar);
         if (overlay) overlay.addEventListener("click", closeSidebar);
 
+        // === AUTO CLOSE SIDEBAR on LARGE SCREEN ===
+        let wasSmallScreen = window.innerWidth < 1024;
+
+        window.addEventListener('resize', () => {
+            const isNowLargeScreen = window.innerWidth >= 1024;
+
+            if (isNowLargeScreen && wasSmallScreen) {
+                closeSidebar();
+            }
+
+            wasSmallScreen = window.innerWidth < 1024;
+        });
+
         // === SEARCH TOGGLE ===
         const searchButton = document.getElementById("searchButton");
         const searchContainer = document.getElementById("searchContainer");
@@ -515,10 +575,19 @@
         }
 
         function closeSearchFunc() {
+            // Tutup sidebar pencarian
             searchContainer.classList.add("translate-x-full");
             searchContainer.classList.remove("translate-x-0");
+
+            // Sembunyikan overlay
             searchOverlay.classList.add("hidden");
             searchOverlay.classList.remove("opacity-100");
+
+            // Tampilkan kembali sidebar menu hanya di layar kecil (< 1024px)
+            if (window.innerWidth < 1024) {
+                searchNotifContainer.classList.remove("translate-x-full");
+                searchNotifContainer.classList.add("translate-x-0");
+            }
         }
 
         if (searchButton) searchButton.addEventListener("click", openSearch);
@@ -560,6 +629,43 @@
                 }
             }
         });
+
+        const sidebarSearchInput = document.getElementById('sidebarSearchInput');
+        const sidebarSearchButton = document.getElementById('sidebarSearchButton');
+
+        function showSearchSidebar() {
+            // Tutup sidebar menu jika terbuka
+            if (!searchNotifContainer.classList.contains('translate-x-full')) {
+                searchNotifContainer.classList.add('translate-x-full');
+                searchNotifContainer.classList.remove('translate-x-0');
+            }
+
+            // Buka sidebar pencarian
+            searchContainer.classList.remove("translate-x-full");
+            searchContainer.classList.add("translate-x-0");
+
+            // Tampilkan overlay
+            searchOverlay.classList.remove("hidden");
+            searchOverlay.classList.add("opacity-100");
+
+            // Fokus ke input search utama
+            const mainSearchInput = searchContainer.querySelector("input");
+            if (mainSearchInput) mainSearchInput.focus();
+        }
+
+        // Klik icon search di sidebar
+        if (sidebarSearchButton) {
+            sidebarSearchButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSearchSidebar();
+            });
+        }
+
+        // Klik field input langsung
+        if (sidebarSearchInput) {
+            sidebarSearchInput.addEventListener('focus', showSearchSidebar);
+        }
+
     });
 </script>
 

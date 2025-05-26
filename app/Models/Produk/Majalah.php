@@ -34,6 +34,7 @@ class Majalah extends Model
     public static function getHomeMajalah($limit = 6)
     {
         return self::where('kategori', 'Majalah')
+            ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take($limit)
             ->get();

@@ -34,6 +34,7 @@ class Buletin extends Model
     public static function getHomeBuletin($limit = 6)
     {
         return self::where('kategori', 'Buletin')
+            ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take($limit)
             ->get();
