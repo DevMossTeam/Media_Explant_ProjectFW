@@ -11,70 +11,181 @@
         </p>
 
         <!-- Form -->
-        <form action="#" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <form id="hubungiKamiForm" enctype="multipart/form-data" class="space-y-4">
             @csrf
 
-            <!-- Pesan -->
+            <input type="text" name="nama" maxlength="90"
+                class="w-full p-4 bg-gray-100 text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-600"
+                placeholder="Nama Anda" required>
+
+            <input type="email" name="email" maxlength="90"
+                class="w-full p-4 bg-gray-100 text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-600"
+                placeholder="Email Anda" required>
+
             <textarea name="pesan" rows="4"
-                class="w-full p-4 bg-gray-100 text-sm text-gray-700 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
-                placeholder="Tulis pesan Anda di sini..."></textarea>
+                class="w-full p-4 bg-gray-100 text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-600 resize-none"
+                placeholder="Tulis pesan Anda di sini..." required></textarea>
 
             <!-- Upload Gambar -->
-            <div x-data="{ isDragging: false, fileName: '' }"
-                @dragover.prevent="isDragging = true"
-                @dragleave.prevent="isDragging = false"
-                @drop.prevent="isDragging = false"
-                class="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-white transition"
-                :class="isDragging ? 'bg-gray-100 border-red-600' : ''">
-
-                <input type="file" name="gambar"
-                    accept="image/png, image/jpeg"
-                    class="hidden" id="uploadGambar"
-                    @change="fileName = $event.target.files.length ? $event.target.files[0].name : ''; validateFile($event.target)">
-
-                <label for="uploadGambar" class="cursor-pointer text-sm text-gray-600">
-                    <span class="block font-medium mb-1">Unggah Gambar (opsional)</span>
-                    <span class="text-xs text-gray-400">Format PNG/JPG, maksimal 10MB</span>
-                </label>
-
-                <template x-if="fileName">
-                    <p class="mt-2 text-xs text-gray-500">File dipilih: <span x-text="fileName"></span></p>
-                </template>
+            <div>
+                <label class="block text-sm text-gray-700 font-medium mb-1">Upload Gambar (Opsional)</label>
+                <div id="upload-area"
+                    class="relative flex flex-col items-center justify-center w-full h-52 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-red-400 transition overflow-hidden">
+                    <div id="upload-placeholder" class="flex flex-col items-center justify-center pointer-events-none">
+                        <img src="https://img.icons8.com/ios/50/image.png" alt="Upload Icon"
+                            class="w-10 h-10 mb-2 opacity-60">
+                        <p class="text-sm text-gray-500">Klik di sini untuk memilih gambar</p>
+                        <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, GIF | Maksimal 2MB</p>
+                    </div>
+                    <input id="gambar-upload" type="file" name="gambar" accept="image/*"
+                        class="absolute inset-0 opacity-0 cursor-pointer">
+                    <div id="preview-container" class="absolute inset-0 hidden">
+                        <img id="image-preview" src="#" alt="Preview"
+                            class="object-contain w-full h-full rounded-lg">
+                        <button type="button" id="remove-image"
+                            class="absolute top-2 right-2 bg-white text-gray-600 rounded-full p-1 shadow hover:bg-gray-200">
+                            &times;
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Submit -->
-            <button type="submit"
+            <button id="submitBtn" type="submit"
                 class="w-full bg-red-600 text-white text-sm font-semibold py-2 rounded-lg hover:bg-red-700 transition">
                 Kirim Pesan
             </button>
         </form>
 
-        <!-- Info Kontak -->
+        <!-- Modal -->
+        <div id="modal" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-xl p-6 w-80 text-center shadow-xl animate-fadeIn relative">
+                <div id="modal-icon" class="mb-3 flex justify-center"></div>
+                <p id="modal-message" class="text-sm text-gray-700"></p>
+                <p id="modal-submessage" class="text-xs text-gray-500 mt-2 leading-relaxed">
+                    Terima kasih telah menghubungi kami. Kami akan meninjau pesan Anda dan merespons sesegera mungkin. Mohon
+                    periksa email Anda secara berkala.
+                </p>
+                <button onclick="closeModal()" class="mt-4 bg-red-600 text-white py-1 px-4 rounded hover:bg-red-700">
+                    Tutup
+                </button>
+            </div>
+        </div>
+
         <p class="text-xs text-gray-400 mt-6 text-center leading-relaxed">
             Kami akan merespons Anda melalui email atau Anda dapat menghubungi kami langsung melalui
             email resmi kami di <span class="text-gray-500">ukpmexplant@journalist.com</span>.
         </p>
     </div>
 
-    <!-- Script Validasi -->
     <script>
-        function validateFile(input) {
-            const file = input.files[0];
-            if (!file) return;
+        const form = document.getElementById('hubungiKamiForm');
+        const modal = document.getElementById('modal');
+        const modalMessage = document.getElementById('modal-message');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalSubMessage = document.getElementById('modal-submessage');
+        const submitBtn = document.getElementById('submitBtn');
 
-            const allowedTypes = ['image/jpeg', 'image/png'];
-            const maxSize = 10 * 1024 * 1024; // 10MB
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Mengirim...';
 
-            if (!allowedTypes.includes(file.type)) {
-                alert('Hanya format PNG dan JPG yang diperbolehkan.');
-                input.value = '';
-                return;
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch("{{ route('settings.hubungiKami.store') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                modalMessage.innerText = result.message ?? 'Terjadi kesalahan.';
+                modalIcon.innerHTML = result.status === 'success' ?
+                    '<img src="https://img.icons8.com/ios-filled/50/12B886/checked--v1.png" class="w-10 h-10">' :
+                    '<img src="https://img.icons8.com/ios-filled/50/F24C4C/delete-sign--v1.png" class="w-10 h-10">';
+
+                modalSubMessage.innerText = result.status === 'success' ?
+                    'Terima kasih telah menghubungi kami. Kami akan meninjau pesan Anda dan merespons sesegera mungkin. Mohon periksa email Anda secara berkala.' :
+                    'Mohon pastikan semua kolom telah diisi dengan benar dan coba lagi. Jika masalah berlanjut, silakan hubungi kami lewat email.';
+
+                modal.classList.remove('hidden');
+
+                if (result.status === 'success') {
+                    form.reset();
+                    document.getElementById('preview-container').classList.add('hidden');
+                    document.getElementById('upload-placeholder').classList.remove('hidden');
+                }
+
+            } catch (error) {
+                modalMessage.innerText = 'Terjadi kesalahan. Silakan coba lagi.';
+                modalIcon.innerHTML =
+                    '<img src="https://img.icons8.com/ios-filled/50/F24C4C/delete-sign--v1.png" class="w-10 h-10">';
+                modalSubMessage.innerText =
+                    'Terjadi masalah saat mengirimkan pesan Anda. Silakan coba beberapa saat lagi atau hubungi kami melalui email.';
+                modal.classList.remove('hidden');
             }
 
-            if (file.size > maxSize) {
-                alert('Ukuran file maksimal 10MB.');
-                input.value = '';
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Kirim Pesan';
+        });
+
+        function closeModal() {
+            modal.classList.add('hidden');
+        }
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Preview logic
+        const input = document.getElementById('gambar-upload');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('image-preview');
+        const uploadPlaceholder = document.getElementById('upload-placeholder');
+        const removeButton = document.getElementById('remove-image');
+
+        input.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.classList.remove('hidden');
+                    uploadPlaceholder.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeButton.addEventListener('click', function() {
+            input.value = '';
+            previewImage.src = '#';
+            previewContainer.classList.add('hidden');
+            uploadPlaceholder.classList.remove('hidden');
+        });
+    </script>
+
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
             }
         }
-    </script>
+
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
 @endsection

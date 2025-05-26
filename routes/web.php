@@ -109,6 +109,8 @@ Route::prefix('settings')->middleware('remember.prev')->group(function () {
     Route::get('/bantuan', [BantuanController::class, 'index'])->name('settings.bantuan');
     Route::get('/hubungiKami', [HubungiKamiController::class, 'index'])->name('settings.hubungiKami');
 
+    Route::post('/hubungiKami', [HubungiKamiController::class, 'store'])->name('settings.hubungiKami.store');
+
     Route::post('/akun/send-otp-current', [AccountController::class, 'sendOtpToCurrentEmail'])->name('settings.sendOtpToCurrentEmail');
     Route::post('/akun/verify-otp', [AccountController::class, 'verifyOtp'])->name('settings.verifyOtp');
     Route::post('/akun/update-email', [AccountController::class, 'updateEmail'])->name('settings.updateEmail');
