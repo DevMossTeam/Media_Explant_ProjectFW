@@ -127,7 +127,7 @@
                             <div class="flex items-center space-x-2 text-xs mb-1">
                                 <span class="text-[#990505] font-semibold uppercase">MAJALAH</span>
                                 <div class="w-[2px] h-3.5 bg-[#990505]"></div>
-                                <span>{{ \Carbon\Carbon::parse($majalah->release_date)->translatedFormat('d M Y') }}</span>
+                                <span>{{ \Carbon\Carbon::parse($majalah->release_date)->setTimezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
                             </div>
                             <h3 class="text-base font-semibold leading-tight mb-1">{{ $majalah->judul }}</h3>
                             <a href="{{ route('majalah.browse', ['f' => $majalah->id]) }}"
@@ -198,7 +198,7 @@
                             <div class="flex items-center space-x-2 text-xs mb-1">
                                 <span class="text-[#990505] font-semibold uppercase">BULETIN</span>
                                 <div class="w-[2px] h-3.5 bg-[#990505]"></div>
-                                <span>{{ \Carbon\Carbon::parse($buletin->release_date)->translatedFormat('d M Y') }}</span>
+                                <span>{{ \Carbon\Carbon::parse($buletin->release_date)->setTimezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
                             </div>
                             <h3 class="text-base font-semibold leading-tight mb-1">{{ $buletin->judul }}</h3>
                             <a href="{{ route('buletin.browse', ['f' => $buletin->id]) }}"
@@ -277,7 +277,7 @@
                             <div class="flex items-center space-x-2 text-xs mb-1">
                                 <span class="text-[#990505] font-semibold uppercase">PUISI</span>
                                 <div class="w-[2px] h-3.5 bg-[#990505]"></div>
-                                <span>{{ \Carbon\Carbon::parse($puisi->release_date)->translatedFormat('d M Y') }}</span>
+                                <span>{{ \Carbon\Carbon::parse($puisi->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
                             </div>
                             <h3 class="text-base font-semibold leading-tight mb-1">{{ $puisi->judul }}</h3>
                             <div class="text-xs italic font-medium text-gray-800">
@@ -323,7 +323,7 @@
                             <div class="flex items-center space-x-2 text-xs mb-1">
                                 <span class="text-[#990505] font-semibold uppercase">PANTUN</span>
                                 <div class="w-[2px] h-3.5 bg-[#990505]"></div>
-                                <span>{{ \Carbon\Carbon::parse($pantun->release_date)->translatedFormat('d M Y') }}</span>
+                                <span>{{ \Carbon\Carbon::parse($pantun->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
                             </div>
                             <h3 class="text-base font-semibold leading-tight mb-1">{{ $pantun->judul }}</h3>
                             <div class="text-xs italic font-medium text-gray-800">
@@ -369,7 +369,7 @@
                             <div class="flex items-center space-x-2 text-xs mb-1">
                                 <span class="text-[#990505] font-semibold uppercase">SYAIR</span>
                                 <div class="w-[2px] h-3.5 bg-[#990505]"></div>
-                                <span>{{ \Carbon\Carbon::parse($syair->release_date)->translatedFormat('d M Y') }}</span>
+                                <span>{{ \Carbon\Carbon::parse($syair->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
                             </div>
                             <h3 class="text-base font-semibold leading-tight mb-1">{{ $syair->judul }}</h3>
                             <div class="text-xs italic font-medium text-gray-800">
@@ -422,7 +422,7 @@
                                     <div class="flex items-center gap-2 mb-1 text-xs font-semibold uppercase">
                                         FOTOGRAFI
                                         <div class="w-[2px] h-3.5 bg-white"></div>
-                                        <span>{{ \Carbon\Carbon::parse($fotografi->release_date)->translatedFormat('d M Y') }}</span>
+                                        <span>{{ \Carbon\Carbon::parse($fotografi->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
                                     </div>
                                     <h3 class="text-lg font-bold leading-snug">
                                         {{ $fotografi->judul }}
@@ -444,7 +444,7 @@
                                 <div class="flex items-center space-x-2 mb-1">
                                     <span class="text-[#990505] font-semibold uppercase">FOTOGRAFI</span>
                                     <div class="w-[2px] h-3.5 bg-[#990505]"></div>
-                                    <span>{{ \Carbon\Carbon::parse($fotografi->release_date)->translatedFormat('d M Y') }}</span>
+                                    <span>{{ \Carbon\Carbon::parse($fotografi->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
                                 </div>
                                 <h3 class="text-sm font-semibold leading-tight mb-1">{{ $fotografi->judul }}</h3>
                                 <div class="text-xs italic font-medium text-gray-800">
@@ -501,7 +501,7 @@
                                     <div class="flex items-center gap-2 mb-1 text-xs font-semibold uppercase">
                                         DESAIN GRAFIS
                                         <div class="w-[2px] h-3.5 bg-white"></div>
-                                        <span>{{ \Carbon\Carbon::parse($desainGrafis->release_date)->translatedFormat('d M Y') }}</span>
+                                        <span>{{ \Carbon\Carbon::parse($desainGrafis->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
                                     </div>
                                     <h3 class="text-lg font-bold leading-snug">
                                         {{ $desainGrafis->judul }}
@@ -524,7 +524,7 @@
                                 <div class="flex items-center space-x-2 mb-1">
                                     <span class="text-[#990505] font-semibold uppercase">DESAIN GRAFIS</span>
                                     <div class="w-[2px] h-3.5 bg-[#990505]"></div>
-                                    <span>{{ \Carbon\Carbon::parse($desainGrafis->release_date)->translatedFormat('d M Y') }}</span>
+                                    <span>{{ \Carbon\Carbon::parse($desainGrafis->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
                                 </div>
                                 <h3 class="text-sm font-semibold leading-tight mb-1">{{ $desainGrafis->judul }}</h3>
                                 <div class="text-xs italic font-medium text-gray-800">

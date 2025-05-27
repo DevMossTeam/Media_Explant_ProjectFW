@@ -5,6 +5,7 @@ namespace App\Models\Produk;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class Majalah extends Model
 {
@@ -33,9 +34,16 @@ class Majalah extends Model
 
     public static function getHomeMajalah($limit = 6)
     {
-        return self::where('kategori', 'Majalah')
+        return self::select('produk.*')
+            ->where('kategori', 'Majalah')
             ->where('visibilitas', 'public')
-            ->orderBy('release_date', 'desc')
+            ->leftJoin(DB::raw("(SELECT item_id, COUNT(*) as suka_count
+            FROM reaksi
+            WHERE jenis_reaksi = 'Suka' AND reaksi_type = 'Produk'
+            GROUP BY item_id) as r"), 'produk.id', '=', 'r.item_id')
+            ->orderByDesc(DB::raw('COALESCE(r.suka_count, 0)'))
+            ->orderByDesc('view_count')
+            ->orderByDesc('release_date')
             ->take($limit)
             ->get();
     }

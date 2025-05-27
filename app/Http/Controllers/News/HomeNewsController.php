@@ -36,21 +36,30 @@ class HomeNewsController extends Controller
                 ->take(10)
                 ->get();
 
-            $puisiList = Puisi::where('kategori', 'puisi')
+            $puisiList = Puisi::withCount('reaksiSuka')
+                ->where('kategori', 'puisi')
                 ->where('visibilitas', 'public')
-                ->orderBy('release_date', 'desc')
+                ->orderByDesc('reaksi_suka_count')
+                ->orderByDesc('view_count')
+                ->orderByDesc('release_date')
                 ->take(6)
                 ->get();
 
-            $pantunList = Pantun::where('kategori', 'pantun')
+            $pantunList = Pantun::withCount('reaksiSuka')
+                ->where('kategori', 'pantun')
                 ->where('visibilitas', 'public')
-                ->orderBy('release_date', 'desc')
+                ->orderByDesc('reaksi_suka_count')
+                ->orderByDesc('view_count')
+                ->orderByDesc('release_date')
                 ->take(6)
                 ->get();
 
-            $syairList = Syair::where('kategori', 'syair')
+            $syairList = Syair::withCount('reaksiSuka')
+                ->where('kategori', 'syair')
                 ->where('visibilitas', 'public')
-                ->orderBy('release_date', 'desc')
+                ->orderByDesc('reaksi_suka_count')
+                ->orderByDesc('view_count')
+                ->orderByDesc('release_date')
                 ->take(6)
                 ->get();
 
@@ -58,8 +67,12 @@ class HomeNewsController extends Controller
                 ->where('visibilitas', 'public')
                 ->count();
 
-            $fotografiList = Fotografi::where('kategori', 'fotografi')
+            $fotografiList = Fotografi::withCount('reaksiSuka')
+                ->where('kategori', 'fotografi')
                 ->where('visibilitas', 'public')
+                ->orderByDesc('reaksi_suka_count')
+                ->orderByDesc('view_count')
+                ->orderByDesc('release_date')
                 ->take(9)
                 ->get();
 
@@ -67,9 +80,12 @@ class HomeNewsController extends Controller
                 ->where('visibilitas', 'public')
                 ->count();
 
-            $desainGrafisList = DesainGrafis::where('kategori', 'desain_grafis')
+            $desainGrafisList = DesainGrafis::withCount('reaksiSuka')
+                ->where('kategori', 'desain_grafis')
                 ->where('visibilitas', 'public')
-                ->orderBy('release_date', 'desc')
+                ->orderByDesc('reaksi_suka_count')
+                ->orderByDesc('view_count')
+                ->orderByDesc('release_date')
                 ->take(9)
                 ->get();
 
@@ -134,7 +150,7 @@ class HomeNewsController extends Controller
         $komentarList = Komentar::with(['user', 'replies.user'])
             ->where('komentar_type', 'Berita')
             ->where('item_id', $news->id)
-            ->whereNull('parent_id') // hanya komentar utama
+            ->whereNull('parent_id')
             ->orderBy('tanggal_komentar', 'desc')
             ->get();
 
