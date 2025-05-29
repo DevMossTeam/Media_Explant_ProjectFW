@@ -14,7 +14,16 @@ class Produk extends Model
     protected $table = 'produk';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'id', 'user_id', 'judul', 'deskripsi', 'kategori', 'media', 'release_date', 'visibilitas'
+        'id',
+        'user_id',
+        'judul',
+        'deskripsi',
+        'kategori',
+        'media',
+        'cover',
+        'release_date',
+        'visibilitas',
+        'view_count'
     ];
 
     public function user()
@@ -31,12 +40,12 @@ class Produk extends Model
     {
         return $this->morphMany(Reaksi::class, 'reaksiable', 'reaksi_type', 'item_id');
     }
-    
+
     public function komentars()
     {
         return $this->morphMany(Komentar::class, 'komentarable', 'komentar_type', 'item_id');
     }
-    
+
     public function tags()
     {
         return $this->hasMany(Tag::class, 'berita_id');
@@ -47,7 +56,7 @@ class Produk extends Model
         if (!$this->media) {
             return null;
         }
-    
+
         $mime = finfo_buffer(finfo_open(), $this->media, FILEINFO_MIME_TYPE);
         return "data:$mime;base64," . base64_encode($this->media);
     }

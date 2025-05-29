@@ -92,10 +92,14 @@ Route::get('/berita/populer', [BeritaController::class, 'getBeritaPopuler']);
 Route::get('/berita/rekomendasi', [BeritaController::class, 'getBeritaRekomendasi']);
 Route::get('/berita/rekomendasi-lainnya', [BeritaController::class, 'getRekomendasiLainnya']);
 Route::get('/berita/terkait', [BeritaController::class, 'getBeritaTerkait']);
+Route::get('/berita/topik-lainnya', [BeritaController::class, 'getBeritaTopikLainnya']);
+Route::get('/berita/detail', [BeritaController::class, 'getDetailBerita']);
 
-
+//produk
 Route::get('/produk-majalah', [ProdukController::class, 'getProdukMajalah']);
 Route::get('/produk-buletin', [ProdukController::class, 'getProdukBuletin']);
+Route::get('/produk/detail', [ProdukController::class, 'getDetailProduk']);
+
 
 // download produk
 Route::get('/produk-majalah/{id}/media', [ProdukController::class, 'getProdukMedia']);
@@ -109,11 +113,11 @@ Route::get('/fotografi/terbaru', [KaryaController::class, 'getFotografiTerbaru']
 // komentar
 Route::post('/komentar', [KomentarController::class, 'store']);
 Route::get('/get-komentar', [KomentarController::class, 'index']);
+Route::delete('/delete-komentar', [KomentarController::class, 'destroy']);
 
 // search
 Route::get('/berita/search', [BeritaController::class, 'searchBerita']);
 Route::get('/berita/search/kategori', [BeritaController::class, 'searchByKategori']);
-
 
 //report
 Route::post('/laporan', [LaporanController::class, 'store']);
