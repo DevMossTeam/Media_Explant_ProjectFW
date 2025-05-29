@@ -84,7 +84,7 @@ class BookmarkedController extends Controller
 
                 case 'Produk':
                     $item = $this->getProduk($bookmark->item_id);
-                    $thumbnail = asset('assets/IC-pdf-P.png');
+                    $thumbnail = $item->cover ?? asset('images/default-thumbnail.jpg');
                     $kategoriName = strtoupper(str_replace('_', ' ', $item->kategori ?? 'Produk'));
                     $judul = $item->judul;
                     $url = url("/produk/" . strtolower($item->kategori ?? 'produk') . "/browse?f={$item->id}");

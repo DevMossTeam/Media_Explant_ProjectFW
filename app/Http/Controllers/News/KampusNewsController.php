@@ -84,20 +84,36 @@ class KampusNewsController extends Controller
         $relatedNews = KampusNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->where('visibilitas', 'public')
-            ->latest('tanggal_diterbitkan')
+            ->orderByDesc('view_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
 
         $recommendedNews = KampusNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->where('visibilitas', 'public')
-            ->inRandomOrder()
+            ->withCount([
+                'reaksiSuka as suka_count'
+            ])
+            ->orderByDesc('suka_count')
+            ->orderByDesc('view_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
 
-        $otherTopics = KampusNews::where('kategori', '!=', $news->kategori)
-            ->latest('tanggal_diterbitkan')
+        $randomKategori = KampusNews::where('kategori', '!=', $news->kategori)
             ->where('visibilitas', 'public')
+            ->inRandomOrder()
+            ->value('kategori');
+
+        $otherTopics = KampusNews::where('kategori', $randomKategori)
+            ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as suka_count'
+            ])
+            ->orderByDesc('view_count')
+            ->orderByDesc('suka_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(8)
             ->get();
 

@@ -96,26 +96,39 @@ class OpiniEsaiNewsController extends Controller
             ->orderBy('tanggal_komentar', 'desc')
             ->get();
 
-        // Berita terkait berdasarkan kategori yang sama
         $relatedNews = OpiniEsaiNews::where('kategori', $news->kategori)
-            ->where('visibilitas', 'public')
             ->where('id', '!=', $news->id)
-            ->latest('tanggal_diterbitkan')
+            ->where('visibilitas', 'public')
+            ->orderByDesc('view_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
 
-        // Berita rekomendasi (bisa gunakan kriteria lain)
         $recommendedNews = OpiniEsaiNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->where('visibilitas', 'public')
-            ->inRandomOrder()
+            ->withCount([
+                'reaksiSuka as suka_count'
+            ])
+            ->orderByDesc('suka_count')
+            ->orderByDesc('view_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
 
-        // Topik lainnya (berita dari kategori berbeda)
-        $otherTopics = OpiniEsaiNews::where('kategori', '!=', $news->kategori)
+        $randomKategori = OpiniEsaiNews::where('kategori', '!=', $news->kategori)
             ->where('visibilitas', 'public')
-            ->latest('tanggal_diterbitkan')
+            ->inRandomOrder()
+            ->value('kategori');
+
+        $otherTopics = OpiniEsaiNews::where('kategori', $randomKategori)
+            ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as suka_count'
+            ])
+            ->orderByDesc('view_count')
+            ->orderByDesc('suka_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(8)
             ->get();
 

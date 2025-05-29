@@ -222,16 +222,16 @@
                             </li>
                             <li>
                                 <a href="{{ route('bookmarked') }}"
-                                    class="text-gray-600 hover:text-[#990505]">Disimpan</a>
+                                    class="text-gray-600 hover:text-[#990505]">Bookmark</a>
                             </li>
                             @if (session('user')->role === 'Penulis')
                                 <li>
                                     <a href="{{ route('draft-media') }}"
-                                        class="text-gray-600 hover:text-[#990505]">Draf Karya</a>
+                                        class="text-gray-600 hover:text-[#990505]">Draf Konten</a>
                                 </li>
                                 <li>
                                     <a href="{{ route('published-media') }}"
-                                        class="text-gray-600 hover:text-[#990505]">Publikasi Karya</a>
+                                        class="text-gray-600 hover:text-[#990505]">Publikasi Konten</a>
                                 </li>
                             @endif
                             <li>
@@ -414,12 +414,12 @@
                             <a href="{{ route('draft-media') }}"
                                 class="flex items-center px-4 py-2 hover:bg-gray-100">
                                 <img src="https://img.icons8.com/ios-filled/24/808080/edit-property.png"
-                                    class="w-5 h-5 mr-3"> Draft Karya
+                                    class="w-5 h-5 mr-3"> Draf Konten
                             </a>
                             <a href="{{ route('published-media') }}"
                                 class="flex items-center px-4 py-2 hover:bg-gray-100">
                                 <img src="https://img.icons8.com/ios-filled/24/808080/internet.png"
-                                    class="w-5 h-5 mr-3"> Publikasi Karya
+                                    class="w-5 h-5 mr-3"> Publikasi Konten
                             </a>
                         @endif
 

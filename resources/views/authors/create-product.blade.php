@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-6xl mx-auto p-6">
+    <div class="max-w-[84rem] mx-auto px-4 sm:px-6 lg:px-8 py-6"">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <!-- Bagian Kiri: Tambahkan Produk -->
@@ -30,15 +30,41 @@
                             class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
                     </div>
 
+                    <!-- Upload Cover -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-bold mb-1">Unggah Cover</label>
+
+                        <div id="cover-drop-area"
+                            class="border-dashed border-2 border-gray-300 p-4 text-center cursor-pointer relative rounded-lg hover:border-blue-500 transition">
+                            <p class="text-gray-500 mb-2">Klik atau seret gambar di sini untuk mengunggah</p>
+                            <input type="file" name="cover" id="coverInput" accept=".jpg,.jpeg,.png" class="hidden"
+                                required>
+                            <p id="cover-error" class="text-red-500 text-sm mt-1 hidden"></p>
+
+                            <!-- Preview Container -->
+                            <div id="cover-preview"
+                                class="relative mx-auto max-w-xs rounded overflow-hidden shadow-md hidden">
+                                <img id="cover-preview-img" src="" alt="Preview Cover"
+                                    class="w-full h-auto object-cover rounded" />
+                                <button type="button" id="cover-clear-btn"
+                                    class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-700 transition">
+                                    &times;
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 text-sm mt-1">Hanya gambar JPG/PNG, maks 10 MB</p>
+                    </div>
+
                     <!-- Media Upload -->
                     <div class="mb-4">
                         <label class="block text-gray-700 font-bold mb-1">Unggah File</label>
                         <div id="drop-area"
                             class="border-dashed border-2 border-gray-300 p-6 text-center cursor-pointer relative">
                             <p class="text-gray-500">Seret dan letakkan file di sini atau klik untuk unggah</p>
-                            <input type="file" name="media" required class="hidden" id="fileInput"
-                                accept=".pdf,.doc,.docx">
+                            <input type="file" name="media" required class="hidden" id="fileInput" accept=".pdf">
+                            <p id="media-error" class="text-red-500 text-sm mt-1 hidden"></p>
                         </div>
+                        <p class="text-gray-500 text-sm mt-1">Hanya file PDF, maks 10 MB</p>
                         <p id="file-name" class="text-gray-500 mt-2"></p>
 
                         <!-- Preview File -->
@@ -194,11 +220,181 @@
             e.preventDefault();
             dropArea.classList.remove("border-blue-500");
 
-            if (e.dataTransfer.files.length > 0) {
-                const file = e.dataTransfer.files[0];
-                fileInput.files = e.dataTransfer.files;
-                previewFile(file);
+            const file = e.dataTransfer.files[0];
+            const errorEl = document.getElementById("media-error");
+
+            if (!file) return;
+
+            if (file.type !== "application/pdf") {
+                errorEl.textContent = "Format tidak didukung. Hanya file PDF yang diizinkan.";
+                errorEl.classList.remove("hidden");
+                fileInput.value = '';
+                filePreview.classList.add("hidden");
+                return;
             }
+
+            if (file.size > MAX_FILE_SIZE) {
+                errorEl.textContent = "Ukuran file terlalu besar. Maksimal 10 MB.";
+                errorEl.classList.remove("hidden");
+                fileInput.value = '';
+                filePreview.classList.add("hidden");
+                return;
+            }
+
+            errorEl.classList.add("hidden");
+
+            // Set file secara manual dan tampilkan preview
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+
+            previewFile(file);
+        });
+
+        const coverDropArea = document.getElementById('cover-drop-area');
+        const coverInput = document.getElementById('coverInput');
+        const coverPreview = document.getElementById('cover-preview');
+        const coverPreviewImg = document.getElementById('cover-preview-img');
+        const coverClearBtn = document.getElementById('cover-clear-btn');
+
+        // Klik area untuk buka file dialog
+        coverDropArea.addEventListener('click', () => {
+            coverInput.click();
+        });
+
+        // Saat file dipilih
+        coverInput.addEventListener('change', () => {
+            const file = coverInput.files[0];
+            if (file) {
+                // Validasi tipe file jika perlu
+                const reader = new FileReader();
+                reader.onload = e => {
+                    coverPreviewImg.src = e.target.result;
+                    coverPreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Tombol clear
+        coverClearBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            coverInput.value = '';
+            coverPreviewImg.src = '';
+            coverPreview.classList.add('hidden');
+        });
+
+        // Optional: support drag & drop file
+        coverDropArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            coverDropArea.classList.add('border-blue-500');
+        });
+
+        coverDropArea.addEventListener('dragleave', e => {
+            e.preventDefault();
+            coverDropArea.classList.remove('border-blue-500');
+        });
+
+        coverDropArea.addEventListener('drop', e => {
+            e.preventDefault();
+            coverDropArea.classList.remove('border-blue-500');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                const errorEl = document.getElementById("cover-error");
+
+                if (!allowedTypes.includes(file.type)) {
+                    errorEl.textContent = "Format tidak didukung. Hanya JPG dan PNG yang diizinkan.";
+                    errorEl.classList.remove("hidden");
+                    coverInput.value = '';
+                    coverPreview.classList.add("hidden");
+                    return;
+                }
+
+                if (file.size > MAX_FILE_SIZE) {
+                    errorEl.textContent = "Ukuran file terlalu besar. Maksimal 10 MB.";
+                    errorEl.classList.remove("hidden");
+                    coverInput.value = '';
+                    coverPreview.classList.add("hidden");
+                    return;
+                }
+
+                errorEl.classList.add("hidden");
+                // Set file secara manual dan tampilkan preview
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                coverInput.files = dataTransfer.files;
+
+                const reader = new FileReader();
+                reader.onload = e => {
+                    coverPreviewImg.src = e.target.result;
+                    coverPreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+        // ==== VALIDASI COVER ====
+        coverInput.addEventListener('change', () => {
+            const file = coverInput.files[0];
+            const errorEl = document.getElementById("cover-error");
+
+            if (!file) return;
+
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                errorEl.textContent = "Format tidak didukung. Hanya JPG dan PNG yang diizinkan.";
+                errorEl.classList.remove("hidden");
+                coverInput.value = '';
+                coverPreview.classList.add("hidden");
+                return;
+            }
+
+            if (file.size > MAX_FILE_SIZE) {
+                errorEl.textContent = "Ukuran file terlalu besar. Maksimal 10 MB.";
+                errorEl.classList.remove("hidden");
+                coverInput.value = '';
+                coverPreview.classList.add("hidden");
+                return;
+            }
+
+            errorEl.classList.add("hidden");
+            const reader = new FileReader();
+            reader.onload = e => {
+                coverPreviewImg.src = e.target.result;
+                coverPreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // ==== VALIDASI MEDIA (PDF) ====
+        fileInput.addEventListener("change", () => {
+            const file = fileInput.files[0];
+            const errorEl = document.getElementById("media-error");
+
+            if (!file) return;
+
+            if (file.type !== "application/pdf") {
+                errorEl.textContent = "Format tidak didukung. Hanya file PDF yang diizinkan.";
+                errorEl.classList.remove("hidden");
+                fileInput.value = '';
+                filePreview.classList.add("hidden");
+                return;
+            }
+
+            if (file.size > MAX_FILE_SIZE) {
+                errorEl.textContent = "Ukuran file terlalu besar. Maksimal 10 MB.";
+                errorEl.classList.remove("hidden");
+                fileInput.value = '';
+                filePreview.classList.add("hidden");
+                return;
+            }
+
+            errorEl.classList.add("hidden");
+            previewFile(file);
         });
     </script>
 @endsection

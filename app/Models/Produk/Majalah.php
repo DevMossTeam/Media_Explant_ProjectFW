@@ -34,7 +34,7 @@ class Majalah extends Model
 
     public static function getHomeMajalah($limit = 6)
     {
-        return self::select('produk.*')
+        return self::select('produk.*', 'produk.cover')
             ->where('kategori', 'Majalah')
             ->where('visibilitas', 'public')
             ->leftJoin(DB::raw("(SELECT item_id, COUNT(*) as suka_count

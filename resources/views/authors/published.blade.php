@@ -4,8 +4,8 @@
     <div class="max-w-[1320px] mx-auto px-4 sm:px-6 py-10">
         <div class="flex justify-between items-center pb-2 border-b border-black mb-4">
             <div>
-                <h1 class="text-2xl font-semibold">Publikasi Karya</h1>
-                <p class="text-sm text-gray-500 italic">Kumpulan Karya</p>
+                <h1 class="text-2xl font-semibold">Publikasi Konten</h1>
+                <p class="text-sm text-gray-500 italic">Kumpulan konten yang sudah dipublikasikan</p>
             </div>
 
             <div class="flex items-center space-x-2 relative z-30">
@@ -73,13 +73,9 @@
                             class="absolute right-0 mt-2 w-24 bg-white border border-gray-200 rounded shadow-md hidden z-50">
                             <a href="{{ route('published.edit', $item['id']) }}"
                                 class="block px-3 py-2 hover:bg-gray-100 text-sm">Edit</a>
-                            <form action="{{ route('published.destroy', [$item['id'], 'tipe' => $item['tipe']]) }}"
-                                method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    class="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 text-sm">Hapus</button>
-                            </form>
+                            <button
+                                onclick="openModal('{{ route('draft.destroy', [$item['id'], 'tipe' => $item['tipe']]) }}')"
+                                class="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 text-sm">Hapus</button>
                         </div>
                     </div>
                 </div>
@@ -91,6 +87,36 @@
                     {{ $berita->links() }}
                 </div>
             @endif
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi -->
+    <div id="deleteModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900 bg-opacity-50 transition-opacity duration-300 ease-out">
+        <div id="modalContent"
+            class="mx-auto mt-40 bg-white rounded-2xl shadow-xl p-6 w-96 transform scale-95 opacity-0 transition-all duration-300 ease-out">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gray-800">Konfirmasi Hapus</h2>
+                <button onclick="closeModal()"
+                    class="text-gray-500 hover:text-gray-700 text-2xl leading-none">&times;</button>
+            </div>
+            <div class="mt-5 flex items-center justify-center">
+                <svg class="w-14 h-14 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+            </div>
+            <p class="text-center mt-4 text-gray-600">Apakah Anda yakin ingin menghapus item yang ini?</p>
+            <div class="mt-6 flex justify-end gap-3">
+                <button onclick="closeModal()"
+                    class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition">Batal</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                        class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">Hapus</button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -112,6 +138,56 @@
                 document.querySelectorAll('[id^="menu-"], #sortDropdown').forEach(el => {
                     el.classList.add('hidden');
                 });
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            const clickedInsideDropdown = e.target.closest(
+                '[id^="menu-"], #sortDropdown, [onclick^="toggleDropdown"], #deleteModal');
+            if (!clickedInsideDropdown) {
+                document.querySelectorAll('[id^="menu-"], #sortDropdown').forEach(el => {
+                    el.classList.add('hidden');
+                });
+            }
+        });
+
+        function openModal(actionUrl) {
+            const modal = document.getElementById('deleteModal');
+            const content = document.getElementById('modalContent');
+            document.getElementById('deleteForm').action = actionUrl;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('opacity-0', 'scale-95');
+                content.classList.add('opacity-100', 'scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('deleteModal');
+            const content = document.getElementById('modalContent');
+
+            content.classList.remove('opacity-100', 'scale-100');
+            content.classList.add('opacity-0', 'scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        document.addEventListener('click', function(e) {
+            const clickedInsideDropdown = e.target.closest(
+                '[id^="menu-"], #sortDropdown, [onclick^="toggleDropdown"], #deleteModal > *');
+            if (!clickedInsideDropdown) {
+                document.querySelectorAll('[id^="menu-"], #sortDropdown').forEach(el => {
+                    el.classList.add('hidden');
+                });
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'deleteModal') {
+                closeModal();
             }
         });
     </script>

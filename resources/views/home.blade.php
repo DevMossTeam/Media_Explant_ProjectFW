@@ -42,7 +42,7 @@
             <h2 class="text-2xl font-semibold mb-2">Berita Teratas Hari Ini</h2>
             <p class="text-sm text-gray-600 mb-6">Kumpulan Berita Terbaik</p>
 
-            <div class="grid grid-cols-12 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">
                 @foreach ($newsList as $index => $item)
                     @php
                         $isHeadline = $index <= 2;
@@ -50,7 +50,7 @@
                     @endphp
 
                     @if ($isHeadline)
-                        <div class="col-span-4 relative">
+                        <div class="col-span-12 sm:col-span-1 lg:col-span-4 relative">
                             <a href="{{ $item->article_url }}" class="block relative">
                                 <img src="{{ $item->first_image }}" alt="{{ $item->judul }}"
                                     class="w-full h-80 object-cover rounded-lg">
@@ -71,7 +71,7 @@
                             </a>
                         </div>
                     @elseif($isSecondRow)
-                        <div class="col-span-3">
+                        <div class="col-span-12 sm:col-span-1 lg:col-span-3">
                             <a href="{{ $item->article_url }}">
                                 <img src="{{ $item->first_image }}" alt="{{ $item->judul }}"
                                     class="w-full h-40 object-cover rounded-lg">
@@ -95,19 +95,19 @@
 
     <!-- Bagian Majalah -->
     <section class="mt-12">
-        <div class="max-w-7xl mx-auto px-5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Judul Atas -->
             <div class="mb-6">
                 <h1 class="text-xl md:text-2xl font-bold text-gray-900">Produk Kami</h1>
                 <p class="text-sm md:text-base text-gray-700">Kumpulan Produk Terbaik</p>
-                <div class="w-full h-[1px] bg-[#000000]"></div>
+                <div class="w-full h-[1px] bg-black"></div>
             </div>
 
             <!-- Heading Majalah -->
             <div class="flex flex-col mb-6">
                 <div class="flex items-center">
-                    <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
-                    <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605] flex items-center justify-center text-center"
+                    <div class="w-2 h-9 bg-[#9A0605] mr-1"></div>
+                    <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605] text-center"
                         style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
                         Majalah
                     </h2>
@@ -115,15 +115,18 @@
                 <div class="w-full h-[2px] bg-gray-300"></div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            <!-- Grid Majalah -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-6">
                 @foreach ($majalahList as $majalah)
-                    <div class="flex flex-col items-start">
+                    <div class="flex flex-col">
                         <a href="{{ route('majalah.browse', ['f' => $majalah->id]) }}">
-                            <canvas id="pdf-thumbnail-majalah-{{ $majalah->id }}"
-                                class="w-full h-64 object-cover rounded-lg shadow-md"></canvas>
+                            <div class="aspect-[3/4] w-full rounded-lg overflow-hidden shadow-md">
+                                <img src="{{ $majalah->cover }}" alt="Cover {{ $majalah->judul }}"
+                                    class="w-full h-full object-cover rounded-lg shadow-md" />
+                            </div>
                         </a>
 
-                        <div class="mt-3 text-sm text-gray-700 w-full">
+                        <div class="mt-3 text-sm text-gray-700">
                             <div class="flex items-center space-x-2 text-xs mb-1">
                                 <span class="text-[#990505] font-semibold uppercase">MAJALAH</span>
                                 <div class="w-[2px] h-3.5 bg-[#990505]"></div>
@@ -134,36 +137,10 @@
                                 class="text-[#5773FF] font-medium text-sm">Lihat Majalah</a>
                         </div>
                     </div>
-
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                            var pdfUrl = "{{ route('majalah.pdfPreview', ['id' => $majalah->id]) }}";
-
-                            var loadingTask = pdfjsLib.getDocument(pdfUrl);
-                            loadingTask.promise.then(function(pdf) {
-                                pdf.getPage(1).then(function(page) {
-                                    var canvas = document.getElementById(
-                                        'pdf-thumbnail-majalah-{{ $majalah->id }}');
-                                    var context = canvas.getContext('2d');
-
-                                    var viewport = page.getViewport({
-                                        scale: 1.5
-                                    });
-                                    canvas.width = viewport.width;
-                                    canvas.height = viewport.height;
-
-                                    page.render({
-                                        canvasContext: context,
-                                        viewport: viewport
-                                    });
-                                });
-                            });
-                        });
-                    </script>
                 @endforeach
 
                 @if ($majalahList->count() > 5)
-                    <div class="col-start-5 col-span-full flex justify-end items-end w-full">
+                    <div class="col-span-full flex justify-end">
                         <a href="{{ url('/produk/majalah') }}" class="text-red-700 font-semibold text-sm">Selengkapnya
                             >></a>
                     </div>
@@ -174,11 +151,11 @@
 
     <!-- Bagian Buletin -->
     <section class="mt-16">
-        <div class="max-w-7xl mx-auto px-5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col mb-6">
                 <div class="flex items-center">
-                    <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
-                    <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605] flex items-center justify-center text-center"
+                    <div class="w-2 h-9 bg-[#9A0605] mr-1"></div>
+                    <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605] text-center"
                         style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
                         Buletin
                     </h2>
@@ -186,15 +163,17 @@
                 <div class="w-full h-[2px] bg-gray-300"></div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-6">
                 @foreach ($buletinList as $buletin)
-                    <div class="flex flex-col items-start">
+                    <div class="flex flex-col">
                         <a href="{{ route('buletin.browse', ['f' => $buletin->id]) }}">
-                            <canvas id="pdf-thumbnail-buletin-{{ $buletin->id }}"
-                                class="w-full h-64 object-cover rounded-lg shadow-md"></canvas>
+                            <div class="aspect-[3/4] w-full rounded-lg overflow-hidden shadow-md">
+                                <img src="{{ $buletin->cover }}" alt="Cover {{ $buletin->judul }}"
+                                    class="w-full h-full object-cover" />
+                            </div>
                         </a>
 
-                        <div class="mt-3 text-sm text-gray-700 w-full">
+                        <div class="mt-3 text-sm text-gray-700">
                             <div class="flex items-center space-x-2 text-xs mb-1">
                                 <span class="text-[#990505] font-semibold uppercase">BULETIN</span>
                                 <div class="w-[2px] h-3.5 bg-[#990505]"></div>
@@ -205,36 +184,10 @@
                                 class="text-[#5773FF] font-medium text-sm">Lihat Buletin</a>
                         </div>
                     </div>
-
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                            var pdfUrl = "{{ route('buletin.pdfPreview', ['id' => $buletin->id]) }}";
-
-                            var loadingTask = pdfjsLib.getDocument(pdfUrl);
-                            loadingTask.promise.then(function(pdf) {
-                                pdf.getPage(1).then(function(page) {
-                                    var canvas = document.getElementById(
-                                        'pdf-thumbnail-buletin-{{ $buletin->id }}');
-                                    var context = canvas.getContext('2d');
-
-                                    var viewport = page.getViewport({
-                                        scale: 1.5
-                                    });
-                                    canvas.width = viewport.width;
-                                    canvas.height = viewport.height;
-
-                                    page.render({
-                                        canvasContext: context,
-                                        viewport: viewport
-                                    });
-                                });
-                            });
-                        });
-                    </script>
                 @endforeach
 
                 @if ($buletinList->count() > 5)
-                    <div class="col-start-5 col-span-full flex justify-end items-end w-full">
+                    <div class="col-span-full flex justify-end">
                         <a href="{{ url('/produk/buletin') }}" class="text-red-700 font-semibold text-sm">Selengkapnya
                             >></a>
                     </div>
@@ -243,151 +196,75 @@
         </div>
     </section>
 
-    <!-- Bagian Puisi -->
-    <section class="mt-12 mb-12">
-        <div class="max-w-7xl mx-auto px-5">
+    <!-- Komponen Karya (Bisa untuk Puisi, Pantun, Syair) -->
+    @php
+        $sections = [
+            ['title' => 'Puisi', 'list' => $puisiList, 'route' => 'karya.puisi.read', 'url' => '/karya/puisi'],
+            ['title' => 'Pantun', 'list' => $pantunList, 'route' => 'karya.pantun.read', 'url' => '/karya/pantun'],
+            ['title' => 'Syair', 'list' => $syairList, 'route' => 'karya.syair.read', 'url' => '/karya/syair'],
+        ];
+    @endphp
 
-            <!-- Judul Atas -->
-            <div class="mb-6">
-                <h1 class="text-xl md:text-2xl font-bold text-gray-900">Karya Kami</h1>
-                <p class="text-sm md:text-base text-gray-700">Kumpulan Karya Terbaik</p>
-                <div class="w-full h-[1px] bg-[#000000]"></div>
-            </div>
-
-            <div class="flex flex-col mb-6">
-                <div class="flex items-center">
-                    <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
-                    <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605] flex items-center justify-center text-center"
-                        style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
-                        Puisi
-                    </h2>
-                </div>
-                <div class="w-full h-[2px] bg-gray-300"></div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-                @foreach ($puisiList as $puisi)
-                    <div class="flex flex-col items-start">
-                        <a href="{{ route('karya.puisi.read', ['k' => $puisi->id]) }}">
-                            <img src="data:image/jpeg;base64,{{ $puisi->media }}" alt="{{ $puisi->judul }}"
-                                class="w-full h-64 object-cover rounded-lg shadow-md" />
-                        </a>
-
-                        <div class="mt-3 text-sm text-gray-700 w-full">
-                            <div class="flex items-center space-x-2 text-xs mb-1">
-                                <span class="text-[#990505] font-semibold uppercase">PUISI</span>
-                                <div class="w-[2px] h-3.5 bg-[#990505]"></div>
-                                <span>{{ \Carbon\Carbon::parse($puisi->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
-                            </div>
-                            <h3 class="text-base font-semibold leading-tight mb-1">{{ $puisi->judul }}</h3>
-                            <div class="text-xs italic font-medium text-gray-800">
-                                <span>Oleh : {{ $puisi->creator ?? '-' }}</span>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-
-                @if ($puisiList->count() > 5)
-                    <div class="col-start-5 col-span-full flex justify-end items-end w-full">
-                        <a href="{{ url('/karya/puisi') }}" class="text-red-700 font-semibold text-sm">Selengkapnya
-                            >></a>
+    @foreach ($sections as $section)
+        <section class="mt-12 {{ $loop->first ? 'mb-12' : '' }}">
+            <div class="max-w-7xl mx-auto px-5">
+                @if ($loop->first)
+                    <!-- Judul Utama -->
+                    <div class="mb-6">
+                        <h1 class="text-xl md:text-2xl font-bold text-gray-900">Karya Kami</h1>
+                        <p class="text-sm md:text-base text-gray-700">Kumpulan Karya Terbaik</p>
+                        <div class="w-full h-[1px] bg-black"></div>
                     </div>
                 @endif
-            </div>
-        </div>
-    </section>
 
-    <!-- Bagian Pantun -->
-    <section class="mt-12">
-        <div class="max-w-7xl mx-auto px-5">
-            <div class="flex flex-col mb-6">
-                <div class="flex items-center">
-                    <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
-                    <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605] flex items-center justify-center text-center"
-                        style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
-                        Pantun
-                    </h2>
+                <!-- Subjudul -->
+                <div class="flex flex-col mb-6">
+                    <div class="flex items-center">
+                        <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
+                        <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605]"
+                            style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                            {{ $section['title'] }}
+                        </h2>
+                    </div>
+                    <div class="w-full h-[2px] bg-gray-300"></div>
                 </div>
-                <div class="w-full h-[2px] bg-gray-300"></div>
-            </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-                @foreach ($pantunList as $pantun)
-                    <div class="flex flex-col items-start">
-                        <a href="{{ route('karya.pantun.read', ['k' => $pantun->id]) }}">
-                            <img src="data:image/jpeg;base64,{{ $pantun->media }}" alt="{{ $pantun->judul }}"
-                                class="w-full h-64 object-cover rounded-lg shadow-md" />
-                        </a>
-
-                        <div class="mt-3 text-sm text-gray-700 w-full">
-                            <div class="flex items-center space-x-2 text-xs mb-1">
-                                <span class="text-[#990505] font-semibold uppercase">PANTUN</span>
-                                <div class="w-[2px] h-3.5 bg-[#990505]"></div>
-                                <span>{{ \Carbon\Carbon::parse($pantun->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
-                            </div>
-                            <h3 class="text-base font-semibold leading-tight mb-1">{{ $pantun->judul }}</h3>
-                            <div class="text-xs italic font-medium text-gray-800">
-                                <span>Oleh : {{ $pantun->creator ?? '-' }}</span>
+                <!-- Grid Konten -->
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
+                    @foreach ($section['list'] as $item)
+                        <div class="flex flex-col h-full">
+                            <a href="{{ route($section['route'], ['k' => $item->id]) }}" class="w-full">
+                                <img src="data:image/jpeg;base64,{{ $item->media }}" alt="{{ $item->judul }}"
+                                    class="w-full h-64 object-cover rounded-lg shadow-md" />
+                            </a>
+                            <div class="mt-3 text-sm text-gray-700 flex flex-col justify-between h-full">
+                                <div>
+                                    <div class="flex items-center space-x-2 text-xs mb-1">
+                                        <span
+                                            class="text-[#990505] font-semibold uppercase">{{ $section['title'] }}</span>
+                                        <div class="w-[2px] h-3.5 bg-[#990505]"></div>
+                                        <span>{{ \Carbon\Carbon::parse($item->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
+                                    </div>
+                                    <h3 class="text-base font-semibold leading-tight mb-1">{{ $item->judul }}</h3>
+                                </div>
+                                <div class="text-xs italic font-medium text-gray-800">
+                                    <span>Oleh : {{ $item->creator ?? '-' }}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
 
-                @if ($pantunList->count() > 5)
-                    <div class="col-start-5 col-span-full flex justify-end items-end w-full">
-                        <a href="{{ url('/karya/pantun') }}" class="text-red-700 font-semibold text-sm">Selengkapnya
-                            >></a>
-                    </div>
-                @endif
-            </div>
-        </div>
-    </section>
-
-    <!-- Bagian Syair -->
-    <section class="mt-12">
-        <div class="max-w-7xl mx-auto px-5">
-            <div class="flex flex-col mb-6">
-                <div class="flex items-center">
-                    <div class="w-[8px] h-[36px] bg-[#9A0605] mr-[4px]"></div>
-                    <h2 class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605] flex items-center justify-center text-center"
-                        style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
-                        Syair
-                    </h2>
-                </div>
-                <div class="w-full h-[2px] bg-gray-300"></div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-                @foreach ($syairList as $syair)
-                    <div class="flex flex-col items-start">
-                        <a href="{{ route('karya.syair.read', ['k' => $syair->id]) }}">
-                            <img src="data:image/jpeg;base64,{{ $syair->media }}" alt="{{ $syair->judul }}"
-                                class="w-full h-64 object-cover rounded-lg shadow-md" />
-                        </a>
-
-                        <div class="mt-3 text-sm text-gray-700 w-full">
-                            <div class="flex items-center space-x-2 text-xs mb-1">
-                                <span class="text-[#990505] font-semibold uppercase">SYAIR</span>
-                                <div class="w-[2px] h-3.5 bg-[#990505]"></div>
-                                <span>{{ \Carbon\Carbon::parse($syair->release_date)->timezone('Asia/Jakarta')->translatedFormat('d M Y') }}</span>
-                            </div>
-                            <h3 class="text-base font-semibold leading-tight mb-1">{{ $syair->judul }}</h3>
-                            <div class="text-xs italic font-medium text-gray-800">
-                                <span>Oleh : {{ $syair->creator ?? '-' }}</span>
-                            </div>
+                    @if ($section['list']->count() > 5)
+                        <div class="col-span-full flex justify-end items-end w-full">
+                            <a href="{{ url($section['url']) }}" class="text-red-700 font-semibold text-sm">Selengkapnya
+                                >></a>
                         </div>
-                    </div>
-                @endforeach
-
-                @if ($syairList->count() > 5)
-                    <div class="col-start-5 col-span-full flex justify-end items-end w-full">
-                        <a href="{{ url('/karya/syair') }}" class="text-red-700 font-semibold text-sm">Selengkapnya
-                            >></a>
-                    </div>
-                @endif
+                    @endif
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endforeach
 
     <!-- Bagian Fotografi -->
     <section class="mt-12">

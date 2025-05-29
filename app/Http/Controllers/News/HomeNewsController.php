@@ -154,26 +154,46 @@ class HomeNewsController extends Controller
             ->orderBy('tanggal_komentar', 'desc')
             ->get();
 
-        // Berita terkait berdasarkan kategori yang sama
+        // RELATED NEWS: view_count + tanggal terbaru
         $relatedNews = HomeNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->where('visibilitas', 'public')
-            ->latest('tanggal_diterbitkan')
+            ->orderByDesc('view_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
 
-        // Berita rekomendasi (bisa gunakan kriteria lain)
-        $recommendedNews = HomeNews::where('kategori', $news->kategori)
-            ->where('id', '!=', $news->id)
+        // RECOMMENDED NEWS: suka_count + view_count + tanggal terbaru
+        $recommendedNews = HomeNews::where('id', '!=', $news->id)
+            ->where('kategori', $news->kategori)
+            ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksi as suka_count' => function ($query) {
+                    $query->where('jenis_reaksi', 'Suka');
+                }
+            ])
+            ->orderByDesc('suka_count')
+            ->orderByDesc('view_count')
+            ->orderByDesc('tanggal_diterbitkan')
+            ->take(6)
+            ->get();
+
+        // OTHER TOPICS: kategori acak, lalu view_count + suka_count + tanggal
+        $randomKategori = HomeNews::where('kategori', '!=', $news->kategori)
             ->where('visibilitas', 'public')
             ->inRandomOrder()
-            ->take(6)
-            ->get();
+            ->value('kategori');
 
-        // Topik lainnya (berita dari kategori berbeda)
-        $otherTopics = HomeNews::where('kategori', '!=', $news->kategori)
+        $otherTopics = HomeNews::where('kategori', $randomKategori)
             ->where('visibilitas', 'public')
-            ->latest('tanggal_diterbitkan')
+            ->withCount([
+                'reaksi as suka_count' => function ($query) {
+                    $query->where('jenis_reaksi', 'Suka');
+                }
+            ])
+            ->orderByDesc('view_count')
+            ->orderByDesc('suka_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(8)
             ->get();
 

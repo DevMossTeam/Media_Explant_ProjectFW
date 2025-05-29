@@ -13,9 +13,9 @@ class Produk extends Model
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false; // Matikan timestamps
+    public $timestamps = false; 
 
     protected $fillable = [
-        'id', 'judul', 'deskripsi', 'kategori', 'media', 'release_date', 'user_id', 'visibilitas'
+        'id', 'judul', 'deskripsi', 'kategori', 'media', 'cover', 'release_date', 'user_id', 'visibilitas'
     ];
 }

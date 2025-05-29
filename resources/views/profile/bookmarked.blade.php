@@ -5,7 +5,7 @@
         <div class="flex justify-between items-center pb-2 border-b border-black mb-4">
             <div>
                 <h1 class="text-2xl font-semibold">Bookmark</h1>
-                <p class="text-sm text-gray-500 italic">Kumpulan Karya yang Kamu Simpan</p>
+                <p class="text-sm text-gray-500 italic">Kumpulan konten yang anda simpan</p>
             </div>
 
             <div class="flex items-center space-x-2 relative z-10">
@@ -87,27 +87,30 @@
     </div>
 
     <!-- Modal Konfirmasi -->
-    <div id="deleteModal" class="fixed inset-0 flex items-center justify-center z-50 hidden bg-gray-900 bg-opacity-50">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+    <div id="deleteModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900 bg-opacity-50 transition-opacity duration-300 ease-out">
+        <div id="modalContent"
+            class="mx-auto mt-40 bg-white rounded-2xl shadow-xl p-6 w-96 transform scale-95 opacity-0 transition-all duration-300 ease-out">
             <div class="flex justify-between items-center">
-                <h2 class="text-xl font-semibold text-gray-800">Konfirmasi Hapus</h2>
-                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-lg">&times;</button>
+                <h2 class="text-xl font-bold text-gray-800">Konfirmasi Hapus</h2>
+                <button onclick="closeModal()"
+                    class="text-gray-500 hover:text-gray-700 text-2xl leading-none">&times;</button>
             </div>
-            <div class="mt-4 flex items-center justify-center">
-                <svg class="w-12 h-12 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            <div class="mt-5 flex items-center justify-center">
+                <svg class="w-14 h-14 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor" stroke-width="2">
                     <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
             </div>
             <p class="text-center mt-4 text-gray-600">Apakah Anda yakin ingin menghapus item ini?</p>
-            <div class="mt-6 flex justify-between">
+            <div class="mt-6 flex justify-end gap-3">
                 <button onclick="closeModal()"
-                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">Batal</button>
+                    class="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition">Batal</button>
                 <form id="deleteForm" method="POST" style="display: inline;">
                     @csrf
                     @method('DELETE')
                     <button type="submit"
-                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Hapus</button>
+                        class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">Hapus</button>
                 </form>
             </div>
         </div>
@@ -133,13 +136,38 @@
         });
 
         function openModal(actionUrl) {
+            const modal = document.getElementById('deleteModal');
+            const content = document.getElementById('modalContent');
             document.getElementById('deleteForm').action = actionUrl;
-            document.getElementById('deleteModal').classList.remove('hidden');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('opacity-0', 'scale-95');
+                content.classList.add('opacity-100', 'scale-100');
+            }, 10);
         }
 
         function closeModal() {
-            document.getElementById('deleteModal').classList.add('hidden');
+            const modal = document.getElementById('deleteModal');
+            const content = document.getElementById('modalContent');
+
+            content.classList.remove('opacity-100', 'scale-100');
+            content.classList.add('opacity-0', 'scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
         }
+
+        document.addEventListener('click', function(e) {
+            const clickedInsideDropdown = e.target.closest(
+                '[id^="menu-"], #sortDropdown, [onclick^="toggleDropdown"], #deleteModal > *');
+            if (!clickedInsideDropdown) {
+                document.querySelectorAll('[id^="menu-"], #sortDropdown').forEach(el => {
+                    el.classList.add('hidden');
+                });
+            }
+        });
 
         document.addEventListener('click', function(e) {
             if (e.target.id === 'deleteModal') {

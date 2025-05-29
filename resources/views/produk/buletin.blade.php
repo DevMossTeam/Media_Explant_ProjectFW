@@ -15,7 +15,8 @@
                         @foreach ($buletins as $buletin)
                             <a href="{{ route('buletin.browse', ['f' => $buletin->id]) }}"
                                 class="relative block rounded-lg overflow-hidden shadow-md">
-                                <canvas id="pdf-thumbnail-{{ $buletin->id }}" class="w-full h-96 object-cover"></canvas>
+                                <img src="{{ $buletin->cover }}" alt="Thumbnail {{ $buletin->judul }}"
+                                    class="w-full h-96 object-cover" />
 
                                 <!-- Overlay Gradasi -->
                                 <div class="absolute inset-0 bg-gradient-to-t from-[#990505] to-transparent opacity-90">
@@ -35,32 +36,6 @@
                                     </p>
                                 </div>
                             </a>
-
-                            <script>
-                                document.addEventListener("DOMContentLoaded", function() {
-                                    var pdfUrl = "{{ route('buletin.pdfPreview', ['id' => $buletin->id]) }}";
-
-                                    var loadingTask = pdfjsLib.getDocument(pdfUrl);
-                                    loadingTask.promise.then(function(pdf) {
-                                        pdf.getPage(1).then(function(page) {
-                                            var canvas = document.getElementById('pdf-thumbnail-{{ $buletin->id }}');
-                                            var context = canvas.getContext('2d');
-
-                                            var viewport = page.getViewport({
-                                                scale: 1.5
-                                            });
-                                            canvas.width = viewport.width;
-                                            canvas.height = viewport.height;
-
-                                            var renderContext = {
-                                                canvasContext: context,
-                                                viewport: viewport
-                                            };
-                                            page.render(renderContext);
-                                        });
-                                    });
-                                });
-                            </script>
                         @endforeach
                     </div>
                 @else
@@ -86,8 +61,8 @@
                         <div>
                             <a href="{{ route('buletin.browse', ['f' => $buletin->id]) }}" class="block">
                                 <div class="relative rounded-lg overflow-hidden shadow-md mb-4">
-                                    <canvas id="pdf-viewer-terbaru-{{ $buletin->id }}"
-                                        class="w-full h-80 object-cover rounded-lg"></canvas>
+                                    <img src="{{ $buletin->cover }}" alt="Thumbnail {{ $buletin->judul }}"
+                                        class="w-full h-96 object-cover" />
                                 </div>
                             </a>
 
@@ -107,32 +82,6 @@
                                     class="text-[#5773FF] text-lg font-medium">Lihat Buletin</a>
                             </div>
                         </div>
-
-                        <script>
-                            document.addEventListener("DOMContentLoaded", function() {
-                                var pdfUrl = "{{ route('buletin.pdfPreview', ['id' => $buletin->id]) }}";
-
-                                var loadingTask = pdfjsLib.getDocument(pdfUrl);
-                                loadingTask.promise.then(function(pdf) {
-                                    pdf.getPage(1).then(function(page) {
-                                        var canvas = document.getElementById('pdf-viewer-terbaru-{{ $buletin->id }}');
-                                        var context = canvas.getContext('2d');
-
-                                        var viewport = page.getViewport({
-                                            scale: 1.2
-                                        });
-                                        canvas.width = viewport.width;
-                                        canvas.height = viewport.height;
-
-                                        var renderContext = {
-                                            canvasContext: context,
-                                            viewport: viewport
-                                        };
-                                        page.render(renderContext);
-                                    });
-                                });
-                            });
-                        </script>
                     @endforeach
                 </div>
             </div>
@@ -157,8 +106,8 @@
                     <div>
                         <a href="{{ route('buletin.browse', ['f' => $buletin->id]) }}" class="block">
                             <div class="relative rounded-lg overflow-hidden shadow-md mb-2">
-                                <canvas id="pdf-viewer-rekomendasi-{{ $buletin->id }}"
-                                    class="w-full h-52 object-cover rounded-lg"></canvas>
+                                <img src="{{ $buletin->cover }}" alt="Thumbnail {{ $buletin->judul }}"
+                                    class="w-full h-96 object-cover" />
                             </div>
                         </a>
 
@@ -180,37 +129,8 @@
                                 class="text-[#5773FF] text-lg font-medium">Unduh Sekarang</a>
                         </div>
                     </div>
-
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function() {
-                            var pdfUrl = "{{ route('buletin.pdfPreview', ['id' => $buletin->id]) }}";
-
-                            var loadingTask = pdfjsLib.getDocument(pdfUrl);
-                            loadingTask.promise.then(function(pdf) {
-                                pdf.getPage(1).then(function(page) {
-                                    var canvas = document.getElementById(
-                                        'pdf-viewer-rekomendasi-{{ $buletin->id }}');
-                                    var context = canvas.getContext('2d');
-
-                                    var viewport = page.getViewport({
-                                        scale: 1.2
-                                    });
-                                    canvas.width = viewport.width;
-                                    canvas.height = viewport.height;
-
-                                    var renderContext = {
-                                        canvasContext: context,
-                                        viewport: viewport
-                                    };
-                                    page.render(renderContext);
-                                });
-                            });
-                        });
-                    </script>
                 @endforeach
             </div>
         </section>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 @endsection

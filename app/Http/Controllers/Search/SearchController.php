@@ -17,7 +17,7 @@ class SearchController extends Controller
             ->where('visibilitas', 'public')
             ->where(function ($query) use ($keyword) {
                 $query->where('judul', 'like', "%$keyword%")
-                      ->orWhere('kategori', 'like', "%$keyword%");
+                    ->orWhere('kategori', 'like', "%$keyword%");
             })
             ->orderByDesc('release_date')
             ->limit(5)
@@ -29,7 +29,7 @@ class SearchController extends Controller
             ->where('visibilitas', 'public')
             ->where(function ($query) use ($keyword) {
                 $query->where('judul', 'like', "%$keyword%")
-                      ->orWhere('kategori', 'like', "%$keyword%");
+                    ->orWhere('kategori', 'like', "%$keyword%");
             })
             ->orderByDesc('tanggal_diterbitkan')
             ->limit(5)
@@ -41,7 +41,7 @@ class SearchController extends Controller
             ->where('visibilitas', 'public')
             ->where(function ($query) use ($keyword) {
                 $query->where('judul', 'like', "%$keyword%")
-                      ->orWhere('kategori', 'like', "%$keyword%");
+                    ->orWhere('kategori', 'like', "%$keyword%");
             })
             ->orderByDesc('release_date')
             ->limit(5)
@@ -68,17 +68,19 @@ class SearchController extends Controller
 
         // Produk
         $produk = DB::table('produk')
-            ->select('id', 'judul', 'kategori', 'deskripsi', 'release_date')
+            ->select('id', 'judul', 'cover', 'kategori', 'deskripsi', 'release_date')
             ->where('visibilitas', 'public')
             ->where(function ($query) use ($keyword) {
                 $query->where('judul', 'like', "%$keyword%")
-                      ->orWhere('kategori', 'like', "%$keyword%");
+                    ->orWhere('kategori', 'like', "%$keyword%");
             })
             ->orderByDesc('release_date')
             ->paginate(20, ['*'], 'produk_page');
 
         foreach ($produk as $item) {
-            $item->thumbnail = asset('assets/IC-pdf-P.png');
+            $item->thumbnail = !empty($item->cover)
+                ? $item->cover
+                : asset('images/default-thumbnail.jpg');
         }
 
         // Berita dari judul
@@ -87,7 +89,7 @@ class SearchController extends Controller
             ->where('visibilitas', 'public')
             ->where(function ($query) use ($keyword) {
                 $query->where('judul', 'like', "%$keyword%")
-                      ->orWhere('kategori', 'like', "%$keyword%");
+                    ->orWhere('kategori', 'like', "%$keyword%");
             });
 
         // Berita dari tag (dengan filter visibilitas di tabel berita)
@@ -112,7 +114,7 @@ class SearchController extends Controller
             ->where('visibilitas', 'public')
             ->where(function ($query) use ($keyword) {
                 $query->where('judul', 'like', "%$keyword%")
-                      ->orWhere('kategori', 'like', "%$keyword%");
+                    ->orWhere('kategori', 'like', "%$keyword%");
             })
             ->orderByDesc('release_date')
             ->paginate(50, ['*'], 'karya_page');

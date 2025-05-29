@@ -81,7 +81,7 @@ class PublishedController extends Controller
         });
 
         // ========== Ambil Produk ==========
-        $produkQuery = Produk::select('id', 'judul', 'kategori', 'release_date')
+        $produkQuery = Produk::select('id', 'judul', 'cover', 'kategori', 'release_date')
             ->where('user_id', $user->uid)
             ->where('visibilitas', 'public');
 
@@ -95,7 +95,25 @@ class PublishedController extends Controller
         $this->applySorting($produkQuery, $sort, 'judul', 'release_date');
 
         $produk = $produkQuery->get()->map(function ($item) {
-            $thumbnail = asset('assets/IC-pdf-P.png');
+            $cover = $item->cover;
+            $thumbnail = asset('images/default-thumbnail.jpg'); // fallback
+
+            if ($cover) {
+                // Jika cover sudah mengandung data:image/
+                if (str_starts_with($cover, 'data:image/')) {
+                    $thumbnail = $cover;
+                } else {
+                    // Deteksi jenis file base64: jpg atau png
+                    $prefix = 'data:image/jpeg;base64,';
+                    if (str_starts_with($cover, 'iVBOR')) {
+                        $prefix = 'data:image/png;base64,';
+                    } elseif (str_starts_with($cover, '/9j/')) {
+                        $prefix = 'data:image/jpeg;base64,';
+                    }
+                    $thumbnail = $prefix . $cover;
+                }
+            }
+
             $tanggal = Carbon::parse($item->release_date);
 
             return [
@@ -172,7 +190,7 @@ class PublishedController extends Controller
                 $item = Produk::where('id', $id)->where('user_id', $user->uid)->firstOrFail();
                 break;
             default:
-                abort(404); 
+                abort(404);
         }
 
         $item->delete();

@@ -184,8 +184,7 @@
                                         <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                         <div class="flex gap-2">
                                             <div class="flex items-center gap-1">
-                                                <i
-                                                    class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
+                                                <i class="fa-regular fa-thumbs-up"></i><span>{{ $likeCount ?? 0 }}</span>
                                             </div>
                                             <div class="flex items-center gap-1">
                                                 <i class="fa-solid fa-share-nodes"></i><span>Share</span>
@@ -225,8 +224,8 @@
                                         <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                         <div class="flex gap-2">
                                             <div class="flex items-center gap-1">
-                                                <i
-                                                    class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
+                                                <i class="fa-regular fa-thumbs-up"></i><span>{{ $likeCount ?? 0 }}</span>
+
                                             </div>
                                             <div class="flex items-center gap-1">
                                                 <i class="fa-solid fa-share-nodes"></i><span>Share</span>
@@ -268,7 +267,7 @@
                                 <span>{{ $item->user->nama_lengkap ?? '-' }}</span>
                                 <div class="flex gap-2">
                                     <div class="flex items-center gap-1">
-                                        <i class="fa-regular fa-thumbs-up"></i><span>{{ $item->like_count ?? 0 }}</span>
+                                        <i class="fa-regular fa-thumbs-up"></i><span>{{ $likeCount ?? 0 }}</span>
                                     </div>
                                     <div class="flex items-center gap-1">
                                         <i class="fa-solid fa-share-nodes"></i><span>Share</span>

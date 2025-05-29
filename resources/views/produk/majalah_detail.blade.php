@@ -60,8 +60,8 @@
 
         <!-- Thumbnail PDF -->
         <div class="my-4">
-            <iframe src="{{ route('majalah.pdfPreview', ['id' => $majalah->id]) }}#page=1"
-                class="w-full h-72 rounded-lg shadow border" type="application/pdf"></iframe>
+            <img src="{{ $majalah->cover }}" alt="Thumbnail Majalah {{ $majalah->judul }}"
+                class="w-full h-72 object-cover rounded-lg shadow border" />
         </div>
 
         <!-- Deskripsi majalah -->

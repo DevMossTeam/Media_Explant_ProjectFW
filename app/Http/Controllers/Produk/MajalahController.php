@@ -16,14 +16,14 @@ class MajalahController extends Controller
     public function index()
     {
         // Ambil hanya field penting tanpa 'media'
-        $majalahs = Majalah::select('id', 'judul', 'kategori', 'deskripsi', 'release_date', 'user_id')
+        $majalahs = Majalah::select('id', 'judul', 'cover', 'kategori', 'deskripsi', 'release_date', 'user_id')
             ->where('kategori', 'Majalah')
             ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
             ->take(14)
             ->get();
 
-        $majalahsTerbaru = Majalah::select('id', 'judul', 'kategori', 'deskripsi', 'release_date', 'user_id')
+        $majalahsTerbaru = Majalah::select('id', 'judul', 'cover', 'kategori', 'deskripsi', 'release_date', 'user_id')
             ->where('kategori', 'Majalah')
             ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
@@ -38,7 +38,7 @@ class MajalahController extends Controller
     {
         $id = $request->query('f');
 
-        $majalah = Majalah::select('id', 'judul', 'deskripsi', 'kategori', 'deskripsi', 'release_date', 'user_id', 'media')
+        $majalah = Majalah::select('id', 'judul', 'cover', 'deskripsi', 'kategori', 'deskripsi', 'release_date', 'user_id', 'media')
             ->with('user')
             ->where('visibilitas', 'public')
             ->where('id', $id)
@@ -80,7 +80,7 @@ class MajalahController extends Controller
             ->get();
 
         // Rekomendasi Majalah lain tanpa ambil media
-        $rekomendasiMajalah = Majalah::select('id', 'judul', 'kategori', 'deskripsi', 'release_date', 'user_id')
+        $rekomendasiMajalah = Majalah::select('id', 'judul', 'cover', 'kategori', 'deskripsi', 'release_date', 'user_id')
             ->where('kategori', 'Majalah')
             ->where('visibilitas', 'public')
             ->where('id', '!=', $id)

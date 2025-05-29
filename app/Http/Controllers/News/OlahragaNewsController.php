@@ -81,26 +81,39 @@ class OlahragaNewsController extends Controller
             ->orderBy('tanggal_komentar', 'desc')
             ->get();
 
-        // Berita terkait berdasarkan kategori yang sama
         $relatedNews = OlahragaNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->where('visibilitas', 'public')
-            ->latest('tanggal_diterbitkan')
+            ->orderByDesc('view_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
 
-        // Berita rekomendasi (bisa gunakan kriteria lain)
         $recommendedNews = OlahragaNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->where('visibilitas', 'public')
-            ->inRandomOrder()
+            ->withCount([
+                'reaksiSuka as suka_count'
+            ])
+            ->orderByDesc('suka_count')
+            ->orderByDesc('view_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
 
-        // Topik lainnya (berita dari kategori berbeda)
-        $otherTopics = OlahragaNews::where('kategori', '!=', $news->kategori)
+        $randomKategori = OlahragaNews::where('kategori', '!=', $news->kategori)
             ->where('visibilitas', 'public')
-            ->latest('tanggal_diterbitkan')
+            ->inRandomOrder()
+            ->value('kategori');
+
+        $otherTopics = OlahragaNews::where('kategori', $randomKategori)
+            ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksiSuka as suka_count'
+            ])
+            ->orderByDesc('view_count')
+            ->orderByDesc('suka_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(8)
             ->get();
 
