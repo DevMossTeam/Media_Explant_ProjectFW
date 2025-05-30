@@ -35,6 +35,8 @@ class SearchController extends Controller
                     'kategori' => $item->kategori,
                 ];
             });
+        // Pastikan dikonversi ke collection Laravel
+        $berita = collect($berita);
 
         $karya = Karya::select('id', 'judul', 'release_date as tanggal', 'kategori')
             ->where('visibilitas', 'public')
@@ -53,6 +55,7 @@ class SearchController extends Controller
                     'kategori' => $item->kategori,
                 ];
             });
+        $karya = collect($karya);
 
         $produk = Produk::select('id', 'judul', 'release_date as tanggal', 'kategori')
             ->where('visibilitas', 'public')
@@ -71,7 +74,9 @@ class SearchController extends Controller
                     'kategori' => $item->kategori,
                 ];
             });
+        $produk = collect($produk);
 
+        // Merge ketiga collection yang sudah pasti collection Laravel
         $hasil = $berita->merge($karya)->merge($produk)->sortByDesc('tanggal')->values();
 
         return response()->json($hasil);
