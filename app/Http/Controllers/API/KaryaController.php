@@ -11,74 +11,48 @@ use Illuminate\Support\Facades\Auth;
 class KaryaController extends Controller
 {
 
-    // Mengambil karya terbaru
-    public function getPuisiTerbaru(Request $request)
+    public function getDetailKarya(Request $request)
     {
+        $id = $request->query('karya_id');
         $userId = $request->query('user_id');
-        $userId = $userId ? $userId : null;
-        $karyas = Karya::with(['bookmarks', 'reaksis', 'komentars', 'user'])
-            ->where('kategori', 'puisi')
-            ->where('visibilitas', 'public')
-            ->orderByDesc('release_date')
-            ->paginate(5);
-        return response()->json($this->formatKaryaResponse($karyas, $userId));
-    }
-    // Mengambil syair terbaru
-    public function getSyairTerbaru(Request $request)
-    {
-        $userId = $request->query('user_id');
-        $userId = $userId ? $userId : null;
-        $karyas = Karya::with(['bookmarks', 'reaksis', 'komentars', 'user'])
-            ->where('kategori', 'syair')
-            ->where('visibilitas', 'public')
-            ->orderByDesc('release_date')
-            ->paginate(5);
-        return response()->json($this->formatKaryaResponse($karyas, $userId));
-    }
 
-    // Mengambil desain grafis terbaru
-    public function getDesainGrafisTerbaru(Request $request)
-    {
-        $userId = $request->query('user_id');
-        $userId = $userId ? $userId : null;
-        $karyas = Karya::with(['bookmarks', 'reaksis', 'komentars', 'user'])
-            ->where('kategori', 'desain_grafis')
-            ->where('visibilitas', 'public')
-            ->orderByDesc('release_date')
-            ->paginate(5);
-        return response()->json($this->formatKaryaResponse($karyas, $userId));
-    }
-    // Mengambil desain grafis terbaru
-    public function getFotografiTerbaru(Request $request)
-    {
-        $userId = $request->query('user_id');
-        $userId = $userId ? $userId : null;
-        $karyas = Karya::with(['bookmarks', 'reaksis', 'komentars', 'user'])
-            ->where('kategori', 'fotografi')
-            ->where('visibilitas', 'public')
-            ->orderByDesc('release_date')
-            ->paginate(5);
-        // ->paginate(5);
-        return response()->json($this->formatKaryaResponse($karyas, $userId));
-    }
+        if (!$id) {
+            return response()->json(['message' => 'ID karya wajib disertakan.'], 400);
+        }
 
-    // Mengambil karya populer (berdasarkan jumlah "like".
-    public function getPantunPopuler(Request $request)
-    {
-        $userId = $request->query('user_id');
-        $userId = $userId ? $userId : null;
+        $karya = Karya::with(['bookmarks', 'reaksis', 'komentars', 'user'])
+            ->where('id', $id)
+            ->first();
 
-        $karyas = Karya::withCount(['reaksis as jumlah_like' => function ($q) {
-            $q->where('jenis_reaksi', 'Suka');
-        }])
-            ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
-            ->orderByDesc('jumlah_like')
-            ->orderByDesc('view_count')
-            ->limit(5)
-            ->get();
-        return response()->json($this->formatKaryaResponse($karyas, $userId));
+        if (!$karya) {
+            return response()->json(['message' => 'Karya tidak ditemukan.'], 404);
+        }
+
+        $tanggalDiterbitkan = Carbon::parse($karya->release_date);
+        $profilePic = !empty($karya->user->profile_pic) ? base64_encode($karya->user->profile_pic) : null;
+
+        $response = [
+            'idKarya' => $karya->id,
+            'penulis' => $karya->user->nama_lengkap ?? null,
+            'profil' => $profilePic,
+            'krator' => $karya->creator,
+            'judul' => $karya->judul,
+            'deskripsi' => $karya->deskripsi,
+            'kontenKarya' => $karya->konten,
+            'media' => $karya->media,
+            'visibilitas' => $karya->visibilitas,
+            'kategori' => $karya->kategori,
+            'release' => $tanggalDiterbitkan->toDateTimeString(),
+            'jumlahLike' => $karya->reaksis->where('jenis_reaksi', 'Suka')->count(),
+            'jumlahDislike' => $karya->reaksis->where('jenis_reaksi', 'Tidak Suka')->count(),
+            'jumlahKomentar' => $karya->komentars->count(),
+            'isBookmark' => $userId ? $karya->bookmarks->where('user_id', $userId)->count() > 0 : false,
+            'isLike' => $userId ? $karya->reaksis->where('user_id', $userId)->where('jenis_reaksi', 'Suka')->count() > 0 : false,
+            'isDislike' => $userId ? $karya->reaksis->where('user_id', $userId)->where('jenis_reaksi', 'Tidak Suka')->count() > 0 : false,
+        ];
+
+        return response()->json($response);
     }
-
 
     public function getkaryaRekomendasi(Request $request)
     {
@@ -115,30 +89,87 @@ class KaryaController extends Controller
         return response()->json($this->formatKaryaResponse($karyas, $userId));
     }
 
+
+    // Mengambil karya terbaru
+    public function getPuisiTerbaru(Request $request)
+    {
+        $userId = $request->query('user_id', null);
+
+        $karyas = Karya::with(['user'])
+            ->where('kategori', 'puisi')
+            ->where('visibilitas', 'public')
+            ->orderByDesc('release_date')
+            ->paginate(5);
+        return response()->json($this->formatKaryaResponse($karyas, $userId));
+    }
+    // Mengambil syair terbaru
+    public function getSyairTerbaru(Request $request)
+    {
+        $userId = $request->query('user_id', null);
+
+        $karyas = Karya::with(['user'])
+            ->where('kategori', 'syair')
+            ->where('visibilitas', 'public')
+            ->orderByDesc('release_date')
+            ->paginate(5);
+        return response()->json($this->formatKaryaResponse($karyas, $userId));
+    }
+
+    // Mengambil desain grafis terbaru
+    public function getDesainGrafisTerbaru(Request $request)
+    {
+        $userId = $request->query('user_id', null);
+
+        $karyas = Karya::with(['user'])
+            ->where('kategori', 'desain_grafis')
+            ->where('visibilitas', 'public')
+            ->orderByDesc('release_date')
+            ->paginate(5);
+        return response()->json($this->formatKaryaResponse($karyas, $userId));
+    }
+    // Mengambil desain grafis terbaru
+    public function getFotografiTerbaru(Request $request)
+    {
+        $userId = $request->query('user_id', null);
+
+        $karyas = Karya::with(['user'])
+            ->where('kategori', 'fotografi')
+            ->where('visibilitas', 'public')
+            ->orderByDesc('release_date')
+            ->paginate(5);
+        // ->paginate(5);
+        return response()->json($this->formatKaryaResponse($karyas, $userId));
+    }
+
+    // Mengambil karya populer (berdasarkan jumlah "like".
+    public function getPantunPopuler(Request $request)
+    {
+        $userId = $request->query('user_id', null);
+
+
+        $karyas = Karya::withCount(['reaksis as jumlah_like' => function ($q) {
+            $q->where('jenis_reaksi', 'Suka');
+        }])
+            ->with(['tags', 'bookmarks', 'reaksis', 'komentars', 'user'])
+            ->orderByDesc('jumlah_like')
+            ->orderByDesc('view_count')
+            ->limit(5)
+            ->get();
+        return response()->json($this->formatKaryaResponse($karyas, $userId));
+    }
+
     private function formatKaryaResponse($karyas, $userId)
     {
         return $karyas->map(function ($karya) use ($userId) {
             $tanggalDiterbitkan = Carbon::parse($karya->release_date);
-            $profilePic = !empty($karya->user->profile_pic) ? base64_encode($karya->user->profile_pic) : null;
+            // $profilePic = !empty($karya->user->profile_pic) ? base64_encode($karya->user->profile_pic) : null;
 
             return [
                 'idKarya' => $karya->id,
-                'penulis' => $karya->user->nama_lengkap ?? null,
-                'profil' => $profilePic,
-                'krator' => $karya->creator,
                 'judul' => $karya->judul,
-                'deskripsi' => $karya->deskripsi,
-                'kontenKarya' => $karya->konten,
                 'media' => $karya->media,
-                'visibilitas' => $karya->visibilitas,
                 'kategori' => $karya->kategori,
                 'release' => $tanggalDiterbitkan->toDateTimeString(),
-                'jumlahLike' => $karya->reaksis->where('jenis_reaksi', 'Suka')->count(),
-                'jumlahDislike' => $karya->reaksis->where('jenis_reaksi', 'Tidak Suka')->count(),
-                'jumlahKomentar' => $karya->komentars->count(),
-                'isBookmark' => $karya->bookmarks->where('user_id', $userId)->count() > 0,
-                'isLike' => $karya->reaksis->where('user_id', $userId)->where('jenis_reaksi', 'Suka')->count() > 0,
-                'isDislike' => $karya->reaksis->where('user_id', $userId)->where('jenis_reaksi', 'Tidak Suka')->count() > 0,
             ];
         });
     }

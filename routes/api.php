@@ -109,6 +109,8 @@ Route::get('/puisi/terbaru  ', [KaryaController::class, 'getPuisiTerbaru']);
 Route::get('/syair/terbaru', [KaryaController::class, 'getSyairTerbaru']);
 Route::get('/desain-grafis/terbaru', [KaryaController::class, 'getDesainGrafisTerbaru']);
 Route::get('/fotografi/terbaru', [KaryaController::class, 'getFotografiTerbaru']);
+Route::get('/karya/detail', [KaryaController::class, 'getDetailKarya']);
+
 
 // komentar
 Route::post('/komentar', [KomentarController::class, 'store']);
