@@ -7,13 +7,14 @@ use App\Http\Controllers\API\PesanController;
 use App\Http\Controllers\API\BeritaController;
 use App\Http\Controllers\API\ProdukController;
 use App\Http\Controllers\API\ReaksiController;
+use App\Http\Controllers\API\SearchController;
 use App\Http\Controllers\API\SignInController;
 use App\Http\Controllers\API\SignUpController;
+use App\Http\Controllers\API\LaporanController;
 use App\Http\Controllers\API\BookmarkController;
 use App\Http\Controllers\API\KomentarController;
 use App\Http\Controllers\API\SecurityController;
 use App\Http\Controllers\API\GetProfileController;
-use App\Http\Controllers\API\LaporanController;
 use App\Http\Controllers\API\UpdateProfileController;
 
 /*
@@ -120,6 +121,8 @@ Route::delete('/delete-komentar', [KomentarController::class, 'destroy']);
 // search
 Route::get('/berita/search', [BeritaController::class, 'searchBerita']);
 Route::get('/berita/search/kategori', [BeritaController::class, 'searchByKategori']);
+Route::get('/search', [SearchController::class, 'searchAll']);
+
 
 //report
 Route::post('/laporan', [LaporanController::class, 'store']);
