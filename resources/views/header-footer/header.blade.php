@@ -143,64 +143,6 @@
                         </ul>
                     </div>
                 @endif
-=======
-                <!-- Media Dropdown -->
-                @role('Penulis')
-                <div class="group">
-                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
-                        Buat <i class="fa-solid fa-chevron-down float-right"></i>
-                    </button>
-                    <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li><a href="{{ route('create-news') }}" class="text-gray-600 hover:text-[#990505]">Buat
-                                Berita</a></li>
-                        <li><a href="{{ route('create-product') }}"
-                                class="text-gray-600 hover:text-[#990505]">Tambahkan Produk</a></li>
-                        <li><a href="{{ route('creation') }}" class="text-gray-600 hover:text-[#990505]">Tambahkan
-                                Karya</a></li>
-                    </ul>
-                </div>
-                @endrole
->>>>>>> Stashed changes
-
-                <!-- Profil Dropdown -->
-                <div class="group">
-                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
-                        Profil <i class="fa-solid fa-chevron-down float-right"></i>
-                    </button>
-                    <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li>
-                            <button onclick="openSettingsModal()"
-                                class="text-gray-600 hover:text-[#990505]">Pengaturan</button>
-                        </li>
-                        <li><a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a></li>
-                        <li><a href="{{ route('bookmarked') }}" class="text-gray-600 hover:text-[#990505]">Disimpan</a>
-                        </li>
-                        @if (session('user') && session('user')->role === 'Penulis')
-                            <li><a href="{{ route('draft-media') }}" class="text-gray-600 hover:text-[#990505]">Draf
-                                    Karya</a></li>
-                            <li><a href="{{ route('published-media') }}"
-                                    class="text-gray-600 hover:text-[#990505]">Publikasi Karya</a></li>
-                        @endif
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="text-left text-gray-600 hover:text-[#990505] w-full">
-                                    Keluar
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Notifikasi -->
-                <div class="relative">
-                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
-                        Notifikasi <i class="fa-solid fa-bell float-right"></i>
-                    </button>
-                    <ul class="hidden mt-2 pl-4 space-y-2">
-                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Belum ada notifikasi</a></li>
-                    </ul>
-                </div>
 
                 <!-- Berita Dropdown -->
                 <div class="group">

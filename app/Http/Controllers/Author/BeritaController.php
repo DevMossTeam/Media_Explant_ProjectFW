@@ -5,69 +5,59 @@ namespace App\Http\Controllers\Author;
 use App\Http\Controllers\Controller;
 use App\Models\Author\Berita;
 use App\Models\Author\Tag;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\DeviceToken;
 use App\Providers\Services\NotificationService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class BeritaController extends Controller
 {
+
     protected NotificationService $notifier;
 
     public function __construct(NotificationService $notifier)
     {
         $this->notifier = $notifier;
     }
-
     public function store(Request $request)
     {
-        // 1. Validasi input (tags tidak wajib)
+        // Validasi input (tags tidak wajib)
         $request->validate([
-            'judul'              => 'required|string|max:100',
-            'konten_berita'      => 'required|string|max:65535',
-            'kategori'           => 'required|string',
-            'visibilitas'        => 'required|in:public,private',
-            // Jika tanggal_diterbitkan diizinkan override, bisa ditambahkan validasinya:
-            // 'tanggal_diterbitkan' => 'nullable|date',
+            'judul' => 'required|max:100',
+            'konten_berita' => 'required|string',
+            'kategori' => 'required',
+            'visibilitas' => 'required|in:public,private',
         ]);
 
-        // 2. Ambil uid pengguna dari cookie (asumsi sudah di‐set)
+        // Ambil uid dari cookie
         $userUid = $request->cookie('user_uid');
 
-        // 3. Generate ID acak untuk berita
-        $articleId = Str::random(12);
-
-        // 4. Buat berita baru
+        // Buat berita
+        $articleId = Str::random(12); // ID berita dibuat secara acak
         $article = Berita::create([
-            'id'                  => $articleId,
-            'judul'               => $request->judul,
-            'tanggal_diterbitkan' => $request->tanggal_diterbitkan ?? now(),
-            'user_id'             => $userUid,
-            'kategori'            => $request->kategori,
-            'konten_berita'       => $request->konten_berita,
-            'visibilitas'         => $request->visibilitas,
+            'id' => $articleId,
+            'judul' => $request->judul,
+            'tanggal_diterbitkan' => $request->tanggal_diterbitkan,
+            'user_id' => $userUid,
+            'kategori' => $request->kategori,
+            'konten_berita' => $request->konten_berita,
+            'visibilitas' => $request->visibilitas,
         ]);
 
-        // 5. Simpan tags jika ada (dipisah dengan koma)
-        if ($request->filled('tags')) {
-            // Contoh input: "politik, ekonomi, teknologi"
+        // Simpan tags jika ada
+        if ($request->has('tags') && !empty($request->tags)) {
             $tags = explode(',', $request->tags);
-            foreach ($tags as $tagNama) {
-                $tagNama = trim($tagNama);
-                if (strlen($tagNama) === 0) {
-                    continue;
-                }
+            foreach ($tags as $tag) {
                 Tag::create([
-                    'id'         => Str::random(12),
-                    'nama_tag'   => $tagNama,
-                    'berita_id'  => $articleId,
+                    'id' => Str::random(12),
+                    'nama_tag' => trim($tag),
+                    'berita_id' => $articleId,
                 ]);
             }
         }
 
-        // 6. Kirim notifikasi ke semua device token pembaca
-        $notificationResult = [];
+         $notificationResult = [];
         try {
             // Judul notifikasi
             $notifTitle = 'Berita Baru: ' . $article->judul;

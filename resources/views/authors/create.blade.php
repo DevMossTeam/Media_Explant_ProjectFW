@@ -36,6 +36,19 @@
                         <div id="quillEditor" class="border rounded-md" style="height: 300px;"></div>
                         <textarea id="konten_berita" name="konten_berita" hidden></textarea>
                     </div>
+                    <style>
+                        #quill-editor .ql-editor {
+                            word-break: break-word;
+                            overflow-wrap: break-word;
+                            word-wrap: break-word;
+                        }
+
+                        #quill-editor {
+                            width: 100%;
+                            max-width: 100%;
+                            box-sizing: border-box;
+                        }
+                    </style>
                 </div>
 
                 <!-- Pengaturan Publikasi -->
@@ -225,10 +238,16 @@
             placeholder: 'Tulis konten berita di sini...',
         });
 
+        document.getElementById('submitArticle').addEventListener('click', function() {
+            const quillHtml = quill.root.innerHTML;
+            document.getElementById('konten_berita').value = quillHtml;
+            document.getElementById('createArticleForm').submit();
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             const submitBtn = document.getElementById("submitArticle");
             const form = document.getElementById("createArticleForm");
-            const judulInput = document.getElementById("judul"); // pastikan id sesuai
+            const judulInput = document.getElementById("judul");
             const submitText = document.getElementById("submitArticleText");
 
             submitBtn.addEventListener("click", () => {
