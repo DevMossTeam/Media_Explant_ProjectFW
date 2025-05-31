@@ -45,6 +45,8 @@ class PantunController extends Controller
             ->where('visibilitas', 'public')
             ->firstOrFail();
 
+        $karya->increment('view_count');
+
         $rekomendasi = Pantun::with('user')
             ->where('id', '!=', $id)
             ->where('kategori', 'pantun')

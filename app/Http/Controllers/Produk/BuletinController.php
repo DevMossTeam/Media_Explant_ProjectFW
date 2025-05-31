@@ -16,7 +16,7 @@ class BuletinController extends Controller
     public function index()
     {
         // 3 buletin terbaru untuk "Produk Kami"
-        $buletins = Buletin::select('id', 'judul', 'deskripsi', 'release_date', 'user_id')
+        $buletins = Buletin::select('id', 'judul', 'cover', 'deskripsi', 'release_date', 'user_id')
             ->where('kategori', 'Buletin')
             ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
@@ -24,7 +24,7 @@ class BuletinController extends Controller
             ->get();
 
         // 9 buletin terbaru untuk "Terbaru"
-        $buletinsTerbaru = Buletin::select('id', 'judul', 'release_date', 'user_id')
+        $buletinsTerbaru = Buletin::select('id', 'judul', 'cover', 'release_date', 'user_id')
             ->where('kategori', 'Buletin')
             ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
@@ -32,7 +32,7 @@ class BuletinController extends Controller
             ->get();
 
         // 12 buletin rekomendasi terbaru
-        $buletinsRekomendasi = Buletin::select('id', 'judul', 'release_date', 'user_id')
+        $buletinsRekomendasi = Buletin::select('id', 'judul', 'cover', 'release_date', 'user_id')
             ->where('kategori', 'Buletin')
             ->where('visibilitas', 'public')
             ->orderBy('release_date', 'desc')
@@ -48,7 +48,7 @@ class BuletinController extends Controller
         $id = $request->query('f');
 
         // Ambil buletin utama tanpa media besar, hanya kolom penting saja
-        $buletin = Buletin::select('id', 'judul', 'deskripsi', 'release_date', 'user_id', 'kategori', 'visibilitas')
+        $buletin = Buletin::select('id', 'judul', 'cover', 'deskripsi', 'release_date', 'user_id', 'kategori', 'visibilitas')
             ->where('visibilitas', 'public')
             ->where('id', $id)
             ->where('kategori', 'Buletin')
@@ -58,8 +58,10 @@ class BuletinController extends Controller
             return abort(404, "Buletin tidak ditemukan.");
         }
 
+        $buletin->increment('view_count');
+
         // Pagination rekomendasi buletin dengan limit dan tanpa eager loading user (jika user tidak dibutuhkan)
-        $rekomendasiBuletin = Buletin::select('id', 'judul', 'release_date')
+        $rekomendasiBuletin = Buletin::select('id', 'cover', 'judul', 'release_date')
             ->where('kategori', 'Buletin')
             ->where('visibilitas', 'public')
             ->where('id', '!=', $id)

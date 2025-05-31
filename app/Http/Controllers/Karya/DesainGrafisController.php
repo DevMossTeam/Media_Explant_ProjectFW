@@ -37,6 +37,8 @@ class DesainGrafisController extends Controller
             ->where('visibilitas', 'public')
             ->firstOrFail();
 
+        $karya->increment('view_count');
+
         $rekomendasi = DesainGrafis::with('user')
             ->where('id', '!=', $id)
             ->where('kategori', 'desain_grafis')

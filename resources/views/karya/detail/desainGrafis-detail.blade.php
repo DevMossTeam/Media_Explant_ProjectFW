@@ -58,7 +58,7 @@
         <div class="flex flex-col lg:flex-row gap-10">
             {{-- Deskripsi --}}
             <div class="lg:w-1/2 text-[15px] leading-relaxed text-justify">
-                {!! nl2br(e($karya->deskripsi)) !!}
+                {!! strip_tags($karya->deskripsi, '<p><br>') !!}
             </div>
 
             {{-- Gambar --}}
@@ -355,7 +355,7 @@
     <!-- Modal Pelaporan -->
     <div id="reportModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20 hidden">
         <div class="bg-white p-6 rounded-lg shadow-lg w-96 relative">
-            <h2 class="text-lg font-bold mb-4">Laporkan Artikel</h2>
+            <h2 class="text-lg font-bold mb-4">Laporkan Desain Grafis</h2>
             <form id="reportForm">
                 <div class="mb-4">
                     <label class="block mb-2">Pilih alasan pelaporan:</label>
@@ -412,7 +412,7 @@
                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
             </svg>
-            <p class="text-lg font-semibold mb-4">Terima kasih telah melaporkan artikel ini!</p>
+            <p class="text-lg font-semibold mb-4">Terima kasih telah melaporkan desain grafis ini!</p>
             <p class="text-gray-600">Laporan Anda akan kami tinjau sesegera mungkin.</p>
             <button type="button" id="closeThankYouModal"
                 class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Tutup</button>
@@ -694,7 +694,7 @@
                 "Tindakan berbahaya": ["Penggunaan narkoba", "Penyalahgunaan senjata",
                     "Tindakan berbahaya lainnya"
                 ],
-                "Spam atau misinformasi": ["Berita palsu", "Iklan tidak sah", "Penipuan"],
+                "Spam atau misinformasi": ["Informasi palsu", "Iklan tidak sah", "Penipuan"],
                 "Masalah hukum": ["Pelanggaran hak cipta", "Pelanggaran privasi", "Masalah hukum lainnya"],
                 "Teks bermasalah": ["Kata-kata kasar", "Teks diskriminatif", "Teks mengandung kekerasan"]
             };

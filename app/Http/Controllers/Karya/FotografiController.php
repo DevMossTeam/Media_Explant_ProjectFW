@@ -57,6 +57,8 @@ class FotografiController extends Controller
             ->where('visibilitas', 'public')
             ->firstOrFail();
 
+        $karya->increment('view_count');
+
         $rekomendasi = Fotografi::with('user')
             ->where('id', '!=', $id)
             ->where('kategori', 'fotografi')

@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     integrity="sha512-yadaYadaHashKey" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<header class="relative z-50 bg-white shadow-md w-full flex items-center justify-between px-6 md:px-12 lg:px-24">
+<header id="site-header"
+    class="sticky top-0 z-50 bg-white shadow-md w-full flex items-center justify-between px-6 md:px-12 lg:px-24 transition-transform duration-300">
     <div class="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 py-3">
         <!-- Logo -->
         <div class="flex items-center">
@@ -117,6 +118,13 @@
             </button>
 
             <div class="flex flex-col space-y-4 mt-10">
+                <div class="relative">
+                    <input id="sidebarSearchInput" type="text" placeholder="Cari..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    <button id="sidebarSearchButton" class="absolute right-2 top-2 text-gray-500 hover:text-red-700">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
                 <a href="{{ route('home') }}" class="text-gray-700 hover:text-[#990505] font-semibold">Beranda</a>
 
                 @if (session('user') && session('user')->role === 'Penulis')
@@ -135,6 +143,24 @@
                         </ul>
                     </div>
                 @endif
+=======
+                <!-- Media Dropdown -->
+                @role('Penulis')
+                <div class="group">
+                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
+                        Buat <i class="fa-solid fa-chevron-down float-right"></i>
+                    </button>
+                    <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
+                        <li><a href="{{ route('create-news') }}" class="text-gray-600 hover:text-[#990505]">Buat
+                                Berita</a></li>
+                        <li><a href="{{ route('create-product') }}"
+                                class="text-gray-600 hover:text-[#990505]">Tambahkan Produk</a></li>
+                        <li><a href="{{ route('creation') }}" class="text-gray-600 hover:text-[#990505]">Tambahkan
+                                Karya</a></li>
+                    </ul>
+                </div>
+                @endrole
+>>>>>>> Stashed changes
 
                 <!-- Profil Dropdown -->
                 <div class="group">
@@ -143,13 +169,8 @@
                     </button>
                     <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
                         <li>
-<<<<<<< Updated upstream
-                            <a href="{{ route('settings.umum') }}"
-                                class="text-gray-600 hover:text-[#990505]">Pengaturan</a>
-=======
                             <button onclick="openSettingsModal()"
                                 class="text-gray-600 hover:text-[#990505]">Pengaturan</button>
->>>>>>> Stashed changes
                         </li>
                         <li><a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a></li>
                         <li><a href="{{ route('bookmarked') }}" class="text-gray-600 hover:text-[#990505]">Disimpan</a>
@@ -191,8 +212,8 @@
                         </li>
                         <li><a href="{{ route('nasional-internasional') }}"
                                 class="text-gray-600 hover:text-[#990505]">Nasional dan Internasional</a></li>
-                        <li><a href="{{ route('liputan-khusus') }}"
-                                class="text-gray-600 hover:text-[#990505]">Liputan Khusus</a>
+                        <li><a href="{{ route('liputan-khusus') }}" class="text-gray-600 hover:text-[#990505]">Liputan
+                                Khusus</a>
                         <li><a href="{{ route('teknologi') }}"
                                 class="text-gray-600 hover:text-[#990505]">Teknologi</a>
                         </li>
@@ -241,6 +262,67 @@
                                 Grafis</a></li>
                     </ul>
                 </div>
+
+                <!-- Profil Dropdown -->
+                <div class="group">
+                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
+                        Profil <i class="fa-solid fa-chevron-down float-right"></i>
+                    </button>
+
+                    @if (session('user'))
+                        <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
+                            <li>
+                                <a href="{{ route('settings.umum') }}"
+                                    class="text-gray-600 hover:text-[#990505]">Pengaturan</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('liked') }}" class="text-gray-600 hover:text-[#990505]">Disukai</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('bookmarked') }}"
+                                    class="text-gray-600 hover:text-[#990505]">Bookmark</a>
+                            </li>
+                            @if (session('user')->role === 'Penulis')
+                                <li>
+                                    <a href="{{ route('draft-media') }}"
+                                        class="text-gray-600 hover:text-[#990505]">Draf Konten</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('published-media') }}"
+                                        class="text-gray-600 hover:text-[#990505]">Publikasi Konten</a>
+                                </li>
+                            @endif
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                        class="text-left text-gray-600 hover:text-[#990505] w-full">Keluar</button>
+                                </form>
+                            </li>
+                        </ul>
+                    @else
+                        <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
+                            <li>
+                                <a href="{{ route('login') }}" class="text-gray-600 hover:text-[#990505]">Login</a>
+                            </li>
+                            <li>
+                                <a href="{{ route('settings.umum') }}"
+                                    class="text-gray-600 hover:text-[#990505]">Pengaturan</a>
+                            </li>
+                        </ul>
+                    @endif
+                </div>
+
+                <!-- Notifikasi -->
+                <div class="relative">
+                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
+                        Notifikasi
+                    </button>
+                    <ul class="hidden mt-2 pl-4 space-y-2">
+                        <li><a href="#" class="block px-4 py-2 hover:bg-gray-100">Belum ada notifikasi</a></li>
+                    </ul>
+                </div>
+
             </div>
         </div>
 
@@ -321,22 +403,25 @@
                 </div>
             </div>
 
-            <!-- Media Dropdown -->
-            @role('Penulis')
-            <div class="relative">
-                <button id="articleButton"
-                    class="flex items-center space-x-2 text-gray-700 hover:text-red-700 focus:outline-none">
-                    <i class="fa-solid fa-square-plus text-lg text-gray-500 hover:text-red-700 focus:outline-none"></i>
-                </button>
-                <div id="articleDropdown"
-                    class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
-                    <a href="{{ route('create-news') }}" class="block px-4 py-2 hover:bg-gray-100">Buat Berita</a>
-                    <a href="{{ route('create-product') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan
-                        Produk</a>
-                    <a href="{{ route('creation') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan Karya</a>
+            @if (session('user') && session('user')->role === 'Penulis')
+                <!-- Media Dropdown -->
+                <div class="relative">
+                    <button id="articleButton"
+                        class="flex items-center space-x-2 text-gray-700 hover:text-red-700 focus:outline-none">
+                        <i
+                            class="fa-solid fa-square-plus text-lg text-gray-500 hover:text-red-700 focus:outline-none"></i>
+                    </button>
+                    <div id="articleDropdown"
+                        class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden">
+                        <a href="{{ route('create-news') }}" class="block px-4 py-2 hover:bg-gray-100">Buat
+                            Berita</a>
+                        <a href="{{ route('create-product') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan
+                            Produk</a>
+                        <a href="{{ route('creation') }}" class="block px-4 py-2 hover:bg-gray-100">Tambahkan
+                            Karya</a>
+                    </div>
                 </div>
-            </div>
-            @endrole
+            @endif
 
             <!-- Profil Dropdown -->
             <div class="relative z-50">
@@ -370,7 +455,7 @@
                             </div>
                         </div>
 
-                        <a onclick="openSettingsModal()"
+                        <a href="{{ route('settings.umum') }}"
                             class="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer">
                             <img src="https://img.icons8.com/ios-filled/24/808080/settings.png" alt="Settings Icon"
                                 class="w-5 h-5 mr-3"> Pengaturan
@@ -387,12 +472,12 @@
                             <a href="{{ route('draft-media') }}"
                                 class="flex items-center px-4 py-2 hover:bg-gray-100">
                                 <img src="https://img.icons8.com/ios-filled/24/808080/edit-property.png"
-                                    class="w-5 h-5 mr-3"> Draft Karya
+                                    class="w-5 h-5 mr-3"> Draf Konten
                             </a>
                             <a href="{{ route('published-media') }}"
                                 class="flex items-center px-4 py-2 hover:bg-gray-100">
                                 <img src="https://img.icons8.com/ios-filled/24/808080/internet.png"
-                                    class="w-5 h-5 mr-3"> Publikasi Karya
+                                    class="w-5 h-5 mr-3"> Publikasi Konten
                             </a>
                         @endif
 
@@ -407,6 +492,8 @@
                         </form>
                     @else
                         <a href="{{ route('login') }}" class="block px-4 py-2 hover:bg-gray-100">Login</a>
+                        <a href="{{ route('settings.umum') }}"
+                            class="block px-4 py-2 hover:bg-gray-100">Pengaturan</a>
                     @endif
                 </div>
             </div>
@@ -416,6 +503,22 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        let lastScrollY = window.scrollY;
+        const header = document.getElementById("site-header");
+
+        window.addEventListener("scroll", function() {
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                // Scroll down, hide header
+                header.style.transform = "translateY(-100%)";
+            } else {
+                // Scroll up, show header
+                header.style.transform = "translateY(0)";
+            }
+
+            lastScrollY = currentScrollY;
+        });
         // Ambil elemen dropdown
         const articleButton = document.getElementById("articleButton");
         const articleDropdown = document.getElementById("articleDropdown");
@@ -424,10 +527,18 @@
         const notifButton = document.getElementById("notifButton");
         const notifDropdown = document.getElementById("notifDropdown");
 
-        // Fungsi untuk menutup semua dropdown
+        // Fungsi untuk menutup semua dropdown, kecuali yang diklik
         function closeAllDropdowns(except = null) {
-            if (articleDropdown && except !== articleDropdown) articleDropdown.classList.add("hidden");
-            if (profileDropdown && except !== profileDropdown) profileDropdown.classList.add("hidden");
+            if (articleDropdown && except !== articleDropdown) {
+                articleDropdown.classList.add("hidden");
+            }
+            if (profileDropdown && except !== profileDropdown) {
+                profileDropdown.classList.add("hidden");
+            }
+            if (notifDropdown && except !== notifDropdown) {
+                notifDropdown.classList.add("hidden", "opacity-0", "scale-95");
+                notifDropdown.classList.remove("opacity-100", "scale-100");
+            }
         }
 
         // Artikel dropdown
@@ -450,10 +561,28 @@
             });
         }
 
-        // Tutup dropdown ketika klik di luar dropdown atau tombolnya
-        document.addEventListener("click", () => closeAllDropdowns());
+        // Notifikasi dropdown
+        if (notifButton && notifDropdown) {
+            notifButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const isHidden = notifDropdown.classList.contains("hidden");
+                closeAllDropdowns(notifDropdown);
+                if (isHidden) {
+                    notifDropdown.classList.remove("hidden", "opacity-0", "scale-95");
+                    notifDropdown.classList.add("opacity-100", "scale-100");
+                } else {
+                    notifDropdown.classList.add("hidden", "opacity-0", "scale-95");
+                    notifDropdown.classList.remove("opacity-100", "scale-100");
+                }
+            });
+        }
 
-        // Sidebar Toggle
+        // Klik di luar dropdown akan menutup semuanya
+        document.addEventListener("click", function() {
+            closeAllDropdowns();
+        });
+
+        // === SIDEBAR TOGGLE ===
         const toggleButton = document.getElementById("toggleSearchNotif");
         const closeButton = document.getElementById("closeSidebar");
         const searchNotifContainer = document.getElementById("searchNotifContainer");
@@ -477,6 +606,19 @@
         if (closeButton) closeButton.addEventListener("click", closeSidebar);
         if (overlay) overlay.addEventListener("click", closeSidebar);
 
+        // === AUTO CLOSE SIDEBAR on LARGE SCREEN ===
+        let wasSmallScreen = window.innerWidth < 1024;
+
+        window.addEventListener('resize', () => {
+            const isNowLargeScreen = window.innerWidth >= 1024;
+
+            if (isNowLargeScreen && wasSmallScreen) {
+                closeSidebar();
+            }
+
+            wasSmallScreen = window.innerWidth < 1024;
+        });
+
         // === SEARCH TOGGLE ===
         const searchButton = document.getElementById("searchButton");
         const searchContainer = document.getElementById("searchContainer");
@@ -491,10 +633,19 @@
         }
 
         function closeSearchFunc() {
+            // Tutup sidebar pencarian
             searchContainer.classList.add("translate-x-full");
             searchContainer.classList.remove("translate-x-0");
+
+            // Sembunyikan overlay
             searchOverlay.classList.add("hidden");
             searchOverlay.classList.remove("opacity-100");
+
+            // Tampilkan kembali sidebar menu hanya di layar kecil (< 1024px)
+            if (window.innerWidth < 1024) {
+                searchNotifContainer.classList.remove("translate-x-full");
+                searchNotifContainer.classList.add("translate-x-0");
+            }
         }
 
         if (searchButton) searchButton.addEventListener("click", openSearch);
@@ -536,6 +687,43 @@
                 }
             }
         });
+
+        const sidebarSearchInput = document.getElementById('sidebarSearchInput');
+        const sidebarSearchButton = document.getElementById('sidebarSearchButton');
+
+        function showSearchSidebar() {
+            // Tutup sidebar menu jika terbuka
+            if (!searchNotifContainer.classList.contains('translate-x-full')) {
+                searchNotifContainer.classList.add('translate-x-full');
+                searchNotifContainer.classList.remove('translate-x-0');
+            }
+
+            // Buka sidebar pencarian
+            searchContainer.classList.remove("translate-x-full");
+            searchContainer.classList.add("translate-x-0");
+
+            // Tampilkan overlay
+            searchOverlay.classList.remove("hidden");
+            searchOverlay.classList.add("opacity-100");
+
+            // Fokus ke input search utama
+            const mainSearchInput = searchContainer.querySelector("input");
+            if (mainSearchInput) mainSearchInput.focus();
+        }
+
+        // Klik icon search di sidebar
+        if (sidebarSearchButton) {
+            sidebarSearchButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSearchSidebar();
+            });
+        }
+
+        // Klik field input langsung
+        if (sidebarSearchInput) {
+            sidebarSearchInput.addEventListener('focus', showSearchSidebar);
+        }
+
     });
 </script>
 

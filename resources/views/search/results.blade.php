@@ -73,16 +73,27 @@
         @if ($produk->count())
             <div class="mb-16">
                 <h3 class="text-xl font-semibold text-gray-800 mb-6">Produk</h3>
-                <ul class="space-y-2">
+                <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-8">
                     @foreach ($produk as $item)
-                        <li>
-                            <a href="{{ url('/produk/' . strtolower($item->kategori) . '/browse?f=' . $item->id) }}"
-                                class="text-black font-semibold hover:text-gray-800 no-underline">
-                                {{ $item->judul }}
+                        <div>
+                            <a href="{{ url('/produk/' . strtolower($item->kategori) . '/browse?f=' . $item->id) }}">
+                                <img src="{{ $item->thumbnail }}" alt="Thumbnail"
+                                    class="w-full h-36 object-cover rounded-lg">
                             </a>
-                        </li>
+                            <div class="mt-3">
+                                <a href="{{ url('/produk/' . strtolower($item->kategori) . '/browse?f=' . $item->id) }}"
+                                    class="block text-black font-semibold text-sm hover:text-gray-800 no-underline">
+                                    {{ $item->judul }}
+                                </a>
+                                @if (!empty($item->deskripsi))
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        {{ \Illuminate\Support\Str::limit(strip_tags($item->deskripsi), 100) }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
                     @endforeach
-                </ul>
+                </div>
                 <div class="mt-6">
                     {{ $produk->appends(['query' => $keyword])->links() }}
                 </div>

@@ -31,41 +31,34 @@ class HomeNewsController extends Controller
 
             $newsList = (new HomeNews)->getBeritaTeratasHariIni();
 
-            $puisiList = Puisi::where('kategori', 'puisi')
-                ->where('visibilitas', 'public')
-                ->orderBy('release_date', 'desc')
-                ->take(6)
+            $sliderNews = HomeNews::where('visibilitas', 'public')
+                ->orderBy('tanggal_diterbitkan', 'desc')
+                ->take(10)
                 ->get();
 
-            $pantunList = Pantun::where('kategori', 'pantun')
-                ->where('visibilitas', 'public')
-                ->orderBy('release_date', 'desc')
-                ->take(6)
-                ->get();
+            $puisiList = Puisi::getTeratasMingguan();
 
-            $syairList = Syair::where('kategori', 'syair')
-                ->where('visibilitas', 'public')
-                ->orderBy('release_date', 'desc')
-                ->take(6)
-                ->get();
+            $pantunList = Pantun::getTeratasMingguan();
 
-            $fotografiList = Fotografi::where('kategori', 'fotografi')
-                ->where('visibilitas', 'public')
-                ->orderBy('release_date', 'desc')
-                ->take(6)
-                ->get();
+            $syairList = Syair::getTeratasMingguan();
 
-            $desainGrafisList = DesainGrafis::where('kategori', 'desain_grafis')
+            $totalFotografiCount = Fotografi::where('kategori', 'fotografi')
                 ->where('visibilitas', 'public')
-                ->orderBy('release_date', 'desc')
-                ->take(6)
-                ->get();
+                ->count();
+
+            $fotografiList = Fotografi::getTeratasMingguan();
+
+            $totalDesainGrafisCount = DesainGrafis::where('kategori', 'desain_grafis')
+                ->where('visibilitas', 'public')
+                ->count();
+
+            $desainGrafisList = DesainGrafis::getTeratasMingguan();
 
             // Ambil data buletin & majalah
             $buletinList = Buletin::getHomeBuletin();
             $majalahList = Majalah::getHomeMajalah();
 
-            return view('home', compact('news', 'newsList', 'buletinList', 'majalahList', 'puisiList', 'pantunList', 'syairList', 'fotografiList', 'desainGrafisList'));
+            return view('home', compact('news', 'newsList', 'sliderNews', 'buletinList', 'majalahList', 'puisiList', 'pantunList', 'syairList', 'totalFotografiCount', 'fotografiList', 'desainGrafisList', 'totalDesainGrafisCount'));
         }
 
         $news = HomeNews::where('kategori', str_replace('-', ' ', $category))
@@ -101,6 +94,7 @@ class HomeNewsController extends Controller
     {
         $newsId = $request->query('a');
         $news = HomeNews::where('id', $newsId)->firstOrFail();
+        $news->increment('view_count');
 
         $likeCount = Reaksi::where('item_id', $news->id)
             ->where('jenis_reaksi', 'Suka')
@@ -121,30 +115,53 @@ class HomeNewsController extends Controller
         $komentarList = Komentar::with(['user', 'replies.user'])
             ->where('komentar_type', 'Berita')
             ->where('item_id', $news->id)
-            ->whereNull('parent_id') // hanya komentar utama
+            ->whereNull('parent_id')
             ->orderBy('tanggal_komentar', 'desc')
             ->get();
 
-        // Berita terkait berdasarkan kategori yang sama
+        // RELATED NEWS: view_count + tanggal terbaru
         $relatedNews = HomeNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
-            ->latest('tanggal_diterbitkan')
+            ->where('visibilitas', 'public')
+            ->orderByDesc('view_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
 
-        // Berita rekomendasi (bisa gunakan kriteria lain)
-        $recommendedNews = HomeNews::where('kategori', $news->kategori)
-            ->where('id', '!=', $news->id)
+        // RECOMMENDED NEWS: suka_count + view_count + tanggal terbaru
+        $recommendedNews = HomeNews::where('id', '!=', $news->id)
+            ->where('kategori', $news->kategori)
+            ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksi as suka_count' => function ($query) {
+                    $query->where('jenis_reaksi', 'Suka');
+                }
+            ])
+            ->orderByDesc('view_count')
+            ->orderByDesc('suka_count')
+            ->orderByDesc('tanggal_diterbitkan')
+            ->take(6)
+            ->get();
+
+        // OTHER TOPICS: kategori acak, lalu view_count + suka_count + tanggal
+        $randomKategori = HomeNews::where('kategori', '!=', $news->kategori)
+            ->where('visibilitas', 'public')
             ->inRandomOrder()
-            ->take(6)
-            ->get();
+            ->value('kategori');
 
-        // Topik lainnya (berita dari kategori berbeda)
-        $otherTopics = HomeNews::where('kategori', '!=', $news->kategori)
-            ->latest('tanggal_diterbitkan')
+        $otherTopics = HomeNews::where('kategori', $randomKategori)
+            ->where('visibilitas', 'public')
+            ->withCount([
+                'reaksi as suka_count' => function ($query) {
+                    $query->where('jenis_reaksi', 'Suka');
+                }
+            ])
+            ->orderByDesc('view_count')
+            ->orderByDesc('suka_count')
+            ->orderByDesc('tanggal_diterbitkan')
             ->take(8)
             ->get();
 
-            return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi', 'komentarList'));
+        return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi', 'komentarList'));
     }
 }

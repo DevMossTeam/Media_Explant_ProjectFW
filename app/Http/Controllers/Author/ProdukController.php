@@ -18,32 +18,35 @@ class ProdukController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required',
             'kategori' => 'required|in:Buletin,Majalah',
-            'media' => 'required|file|mimes:pdf,doc,docx|max:1048576',
+            'media' => 'required|file|mimes:pdf|max:10240',
+            'cover' => 'required|image|mimes:jpg,jpeg,png|max:10240',
             'visibilitas' => 'required|in:public,private',
         ]);
 
-        // Ambil file dan ubah ke binary
-        $file = $request->file('media');
-        $fileContent = file_get_contents($file->getRealPath());
+        // Ambil file dalam bentuk binary
+        $mediaFile = $request->file('media');
+        $mediaContent = file_get_contents($mediaFile->getRealPath());
 
-        // Ambil uid dari cookie
+        $coverFile = $request->file('cover');
+        $coverContent = file_get_contents($coverFile->getRealPath());
+        $coverBase64 = 'data:' . $coverFile->getMimeType() . ';base64,' . base64_encode($coverContent);
+
         $userUid = $request->cookie('user_uid');
 
-        // Simpan ke database menggunakan DB::table untuk debugging lebih mudah
         try {
             DB::table('produk')->insert([
-                'id' => Str::random(12), // Buat ID unik
+                'id' => Str::random(12),
                 'judul' => $request->judul,
                 'deskripsi' => $request->deskripsi,
                 'kategori' => $request->kategori,
                 'user_id' => $userUid,
-                'media' => $fileContent, // Simpan sebagai binary
-                'release_date' => now()->toDateString(), // Set tanggal otomatis
+                'media' => $mediaContent,
+                'cover' => $coverBase64,
+                'release_date' => now(),
                 'visibilitas' => $request->visibilitas,
             ]);
 

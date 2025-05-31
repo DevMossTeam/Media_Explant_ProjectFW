@@ -12,31 +12,49 @@ class SearchController extends Controller
     {
         $keyword = $request->get('query');
 
+        // Produk
         $judulProduk = DB::table('produk')
-            ->where('judul', 'like', "%$keyword%")
+            ->where('visibilitas', 'public')
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            })
             ->orderByDesc('release_date')
             ->limit(5)
             ->pluck('judul')
             ->toArray();
 
+        // Berita
         $judulBerita = DB::table('berita')
-            ->where('judul', 'like', "%$keyword%")
+            ->where('visibilitas', 'public')
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            })
             ->orderByDesc('tanggal_diterbitkan')
             ->limit(5)
             ->pluck('judul')
             ->toArray();
 
+        // Karya
         $judulKarya = DB::table('karya')
-            ->where('judul', 'like', "%$keyword%")
+            ->where('visibilitas', 'public')
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            })
             ->orderByDesc('release_date')
             ->limit(5)
             ->pluck('judul')
             ->toArray();
 
+        // Tags → pastikan hanya berita dengan visibilitas = 'public'
         $namaTags = DB::table('tag')
-            ->where('nama_tag', 'like', "%$keyword%")
+            ->join('berita', 'tag.berita_id', '=', 'berita.id')
+            ->where('berita.visibilitas', 'public')
+            ->where('tag.nama_tag', 'like', "%$keyword%")
             ->limit(5)
-            ->pluck('nama_tag')
+            ->pluck('tag.nama_tag')
             ->toArray();
 
         $allResults = array_unique(array_merge($judulProduk, $judulBerita, $judulKarya, $namaTags));
@@ -50,23 +68,38 @@ class SearchController extends Controller
 
         // Produk
         $produk = DB::table('produk')
-            ->select('id', 'judul', 'kategori', 'release_date')
-            ->where('judul', 'like', "%$keyword%")
+            ->select('id', 'judul', 'cover', 'kategori', 'deskripsi', 'release_date')
+            ->where('visibilitas', 'public')
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            })
             ->orderByDesc('release_date')
             ->paginate(20, ['*'], 'produk_page');
+
+        foreach ($produk as $item) {
+            $item->thumbnail = !empty($item->cover)
+                ? $item->cover
+                : asset('images/default-thumbnail.jpg');
+        }
 
         // Berita dari judul
         $beritaByJudul = DB::table('berita')
             ->select('id', 'judul', 'kategori', 'konten_berita', 'tanggal_diterbitkan')
-            ->where('judul', 'like', "%$keyword%");
+            ->where('visibilitas', 'public')
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            });
 
-        // Berita dari tag.nama_tag
+        // Berita dari tag (dengan filter visibilitas di tabel berita)
         $beritaByTag = DB::table('tag')
             ->join('berita', 'tag.berita_id', '=', 'berita.id')
+            ->where('berita.visibilitas', 'public')
             ->where('tag.nama_tag', 'like', "%$keyword%")
             ->select('berita.id', 'berita.judul', 'berita.kategori', 'berita.konten_berita', 'berita.tanggal_diterbitkan');
 
-        // Gabungkan & urutkan berita
+        // Gabungkan berita
         $mergedBerita = $beritaByJudul->union($beritaByTag)
             ->orderByDesc('tanggal_diterbitkan')
             ->paginate(100, ['*'], 'berita_page');
@@ -78,7 +111,11 @@ class SearchController extends Controller
         // Karya
         $karya = DB::table('karya')
             ->select('id', 'judul', 'kategori', 'media', 'deskripsi', 'release_date')
-            ->where('judul', 'like', "%$keyword%")
+            ->where('visibilitas', 'public')
+            ->where(function ($query) use ($keyword) {
+                $query->where('judul', 'like', "%$keyword%")
+                    ->orWhere('kategori', 'like', "%$keyword%");
+            })
             ->orderByDesc('release_date')
             ->paginate(50, ['*'], 'karya_page');
 
@@ -103,9 +140,7 @@ class SearchController extends Controller
     {
         if (empty($html)) return null;
 
-        // Remove non-breaking space artifacts
         $cleanHtml = str_replace('&nbsp;', ' ', $html);
-
         preg_match('/<img[^>]+src=["\']?([^"\'>]+)["\']?/i', $cleanHtml, $matches);
         return $matches[1] ?? null;
     }
