@@ -4,7 +4,7 @@
     <div class="max-w-[1320px] mx-auto px-4 sm:px-6 py-10">
         <div class="flex justify-between items-center pb-2 border-b border-black mb-4">
             <div>
-                <h1 class="text-2xl font-semibold">Draft Konten</h1>
+                <h1 class="text-2xl font-semibold">Draf Konten</h1>
                 <p class="text-sm text-gray-500 italic">Kumpulan konten yang disimpan oleh penulis</p>
             </div>
 
@@ -58,7 +58,7 @@
                     <img src="{{ $item['thumbnail'] }}" alt="Thumbnail" class="w-28 h-20 object-cover rounded">
                     <div class="flex-1">
                         <p class="text-xs font-semibold">
-                            <span class="text-[#990505]">{{ strtoupper($item['kategori']) }}</span>
+                            <span class="text-[#990505]">{{ strtoupper(str_replace('_', ' ', $item['kategori'])) }}</span>
                             <span class="text-[#990505] mx-1">|</span>
                             <span class="text-[#A8A8A8] font-normal">Dibuat
                                 {{ \Carbon\Carbon::parse($item['tanggal_dibuat'])->translatedFormat('d F Y') }}</span>
@@ -71,8 +71,18 @@
                             class="text-black text-2xl font-bold focus:outline-none">&#8942;</button>
                         <div id="menu-{{ $item['id'] }}"
                             class="absolute right-0 mt-2 w-24 bg-white border border-gray-200 rounded shadow-md hidden z-50">
-                            <a href="{{ route('draft.edit', $item['id']) }}"
-                                class="block px-3 py-2 hover:bg-gray-100 text-sm">Edit</a>
+                            @php
+                                $editUrl = '#';
+                                if ($item['tipe'] === 'berita') {
+                                    $editUrl = route('create-news');
+                                } elseif ($item['tipe'] === 'produk') {
+                                    $editUrl = route('create-product');
+                                } elseif ($item['tipe'] === 'karya') {
+                                    $editUrl = route('creation');
+                                }
+                            @endphp
+
+                            <a href="{{ $editUrl }}" class="block px-3 py-2 hover:bg-gray-100 text-sm">Edit</a>
                             <button
                                 onclick="openModal('{{ route('draft.destroy', [$item['id'], 'tipe' => $item['tipe']]) }}')"
                                 class="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 text-sm">Hapus</button>

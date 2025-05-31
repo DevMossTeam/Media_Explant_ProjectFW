@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-[84rem] mx-auto px-4 sm:px-6 lg:px-8 py-6"">
+    <div class="max-w-[84rem] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <!-- Bagian Kiri: Tambahkan Produk -->
@@ -36,7 +36,7 @@
 
                         <div id="cover-drop-area"
                             class="border-dashed border-2 border-gray-300 p-4 text-center cursor-pointer relative rounded-lg hover:border-blue-500 transition">
-                            <p class="text-gray-500 mb-2">Klik atau seret gambar di sini untuk mengunggah</p>
+                            <p class="text-gray-500 mb-2">Klik di sini untuk mengunggah</p>
                             <input type="file" name="cover" id="coverInput" accept=".jpg,.jpeg,.png" class="hidden"
                                 required>
                             <p id="cover-error" class="text-red-500 text-sm mt-1 hidden"></p>
@@ -60,7 +60,7 @@
                         <label class="block text-gray-700 font-bold mb-1">Unggah File</label>
                         <div id="drop-area"
                             class="border-dashed border-2 border-gray-300 p-6 text-center cursor-pointer relative">
-                            <p class="text-gray-500">Seret dan letakkan file di sini atau klik untuk unggah</p>
+                            <p class="text-gray-500">letakkan file di sini atau klik untuk unggah</p>
                             <input type="file" name="media" required class="hidden" id="fileInput" accept=".pdf">
                             <p id="media-error" class="text-red-500 text-sm mt-1 hidden"></p>
                         </div>
@@ -118,7 +118,7 @@
 
                 <!-- Tombol -->
                 <div class="flex justify-between">
-                    <button type="button"
+                    <button type="button" id="previewBtn"
                         class="bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition flex items-center">
                         <svg class="w-5 h-5 mr-2 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path
@@ -127,13 +127,40 @@
                         </svg>
                         Pratinjau
                     </button>
-                    <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition">
+                    <button type="submit" id="submit-btn"
+                        class="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition">
                         + Publikasikan
                     </button>
                 </div>
             </div>
             </form>
         </div>
+    </div>
+
+    <!-- MODE PRATINJAU -->
+    <div id="previewMode" class="hidden fixed inset-0 bg-white overflow-y-auto z-50 p-6">
+        <div class="max-w-4xl mx-auto">
+
+            <div class="mb-4">
+                <h2 id="previewKategori" class="text-white px-8 py-1 bg-[#9A0605] inline-block font-semibold"
+                    style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)">
+                </h2>
+            </div>
+
+            <h1 id="previewJudul" class="text-3xl font-bold text-gray-800 mb-4"></h1>
+
+            <div class="w-full mb-6" id="previewCoverContainer">
+                <img id="previewCover" src="" class="rounded-lg shadow-md w-full max-h-96 object-cover" />
+            </div>
+
+            <div id="previewDeskripsi" class="prose max-w-none"></div>
+        </div>
+
+        <!-- Tombol Kembali -->
+        <button type="button" id="backToEditor"
+            class="fixed bottom-4 left-4 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition shadow-md">
+            ← Kembali ke Editor
+        </button>
     </div>
 
     <!-- Quill CSS & JS -->
@@ -159,6 +186,90 @@
                     }]
                 ]
             }
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("productForm");
+            const submitBtn = document.getElementById("submit-btn");
+
+            form.addEventListener("submit", function(e) {
+                // Masukkan isi Quill ke hidden input sebelum submit
+                document.getElementById("deskripsi").value = quill.root.innerHTML;
+
+                // Ganti tampilan tombol & nonaktifkan
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<svg class="inline w-4 h-4 mr-2 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg> Mengunggah...`;
+
+                submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const previewBtn = document.getElementById('previewBtn');
+            const backToEditorBtn = document.getElementById('backToEditor');
+            const form = document.querySelector('form');
+            const previewMode = document.getElementById('previewMode');
+            const savedJudul = localStorage.getItem('draftJudul');
+            const savedDeskripsi = localStorage.getItem('draftDeskripsi');
+
+            if (savedJudul) {
+                document.querySelector('input[name="judul"]').value = savedJudul;
+            }
+
+            if (savedDeskripsi) {
+                quill.root.innerHTML = savedDeskripsi;
+            }
+
+            previewBtn.addEventListener('click', function() {
+                const judul = document.querySelector('input[name="judul"]').value;
+                const kategori = document.querySelector('select[name="kategori"]').value;
+
+                // Gunakan innerHTML editor (atau Quill jika pakai)
+                const deskripsiHTML = document.getElementById('editor-container').innerHTML;
+
+                document.getElementById('previewKategori').innerText = kategori;
+                document.getElementById('previewJudul').innerText = judul;
+                document.getElementById('previewDeskripsi').innerHTML = deskripsiHTML;
+
+                const coverImg = document.getElementById('cover-preview-img');
+                if (coverImg && coverImg.src && !coverImg.src.includes('blank')) {
+                    document.getElementById('previewCover').src = coverImg.src;
+                    document.getElementById('previewCoverContainer').style.display = 'block';
+                } else {
+                    document.getElementById('previewCoverContainer').style.display = 'none';
+                }
+
+                // Tampilkan preview full, sembunyikan form
+                form.classList.add('hidden');
+                previewMode.classList.remove('hidden');
+            });
+
+            backToEditorBtn.addEventListener('click', function() {
+                form.classList.remove('hidden');
+                previewMode.classList.add('hidden');
+            });
+        });
+
+        document.getElementById("productForm").addEventListener("submit", function() {
+            document.getElementById("deskripsi").value = quill.root.innerHTML;
+
+            // Hapus draft dari localStorage setelah submit
+            localStorage.removeItem('draftJudul');
+            localStorage.removeItem('draftDeskripsi');
+        });
+
+        // Simpan ke localStorage saat user mengetik judul
+        document.querySelector('input[name="judul"]').addEventListener('input', function() {
+            localStorage.setItem('draftJudul', this.value);
+        });
+
+        // Simpan deskripsi Quill ke localStorage saat berubah
+        quill.on('text-change', function() {
+            const deskripsiContent = quill.root.innerHTML;
+            localStorage.setItem('draftDeskripsi', deskripsiContent);
         });
 
         // Saat submit form, ambil isi Quill ke input hidden
@@ -247,6 +358,7 @@
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
             fileInput.files = dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
 
             previewFile(file);
         });
@@ -325,6 +437,7 @@
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
                 coverInput.files = dataTransfer.files;
+                coverInput.dispatchEvent(new Event('change'));
 
                 const reader = new FileReader();
                 reader.onload = e => {

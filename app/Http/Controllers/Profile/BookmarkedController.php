@@ -22,12 +22,42 @@ class BookmarkedController extends Controller
 
         // Filter pencarian
         if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->whereHas('berita', function ($q1) use ($request) {
-                    $q1->where('judul', 'like', '%' . $request->search . '%');
-                })->orWhereHas('karya', function ($q2) use ($request) {
-                    $q2->where('judul', 'like', '%' . $request->search . '%');
-                });
+            $search = str_replace('_', ' ', strtolower($request->search));
+
+            $query->where(function ($q) use ($search) {
+                // Berita
+                $q->where(function ($q1) use ($search) {
+                    $q1->where('bookmark_type', 'Berita')
+                        ->whereHas('berita', function ($q2) use ($search) {
+                            $q2->whereRaw('LOWER(REPLACE(kategori, "_", " ")) like ?', ["%{$search}%"])
+                                ->orWhereRaw('LOWER(judul) like ?', ["%{$search}%"]);
+                        });
+                })
+                    // Karya
+                    ->orWhere(function ($q3) use ($search) {
+                        $q3->where('bookmark_type', 'Karya')
+                            ->whereHas('karya', function ($q4) use ($search) {
+                                $q4->whereRaw('LOWER(REPLACE(kategori, "_", " ")) like ?', ["%{$search}%"])
+                                    ->orWhereRaw('LOWER(judul) like ?', ["%{$search}%"]);
+                            });
+                    })
+                    // Produk: Buletin & Majalah
+                    ->orWhere(function ($q5) use ($search) {
+                        $buletinIds = Buletin::whereRaw('LOWER(REPLACE(kategori, "_", " ")) like ?', ["%{$search}%"])
+                            ->orWhereRaw('LOWER(judul) like ?', ["%{$search}%"])
+                            ->pluck('id')
+                            ->toArray();
+
+                        $majalahIds = Majalah::whereRaw('LOWER(REPLACE(kategori, "_", " ")) like ?', ["%{$search}%"])
+                            ->orWhereRaw('LOWER(judul) like ?', ["%{$search}%"])
+                            ->pluck('id')
+                            ->toArray();
+
+                        $allIds = array_merge($buletinIds, $majalahIds);
+
+                        $q5->where('bookmark_type', 'Produk')
+                            ->whereIn('item_id', $allIds);
+                    });
             });
         }
 

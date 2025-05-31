@@ -26,7 +26,8 @@ class HomeNews extends Berita
 
     public static function getBeritaTeratasHariIni()
     {
-        $todayJakarta = Carbon::now('Asia/Jakarta')->toDateString();
+        $now = Carbon::now('Asia/Jakarta');
+        $sevenDaysAgo = $now->copy()->subDays(7)->toDateString();
 
         $categories = [
             'Kampus',
@@ -47,33 +48,43 @@ class HomeNews extends Berita
         foreach ($categories as $kategori) {
             $berita = self::where('kategori', $kategori)
                 ->where('visibilitas', 'public')
-                ->whereDate('tanggal_diterbitkan', $todayJakarta)
+                ->whereDate('tanggal_diterbitkan', '>=', $sevenDaysAgo)
                 ->withCount([
                     'reaksi as suka_count' => function ($query) {
                         $query->where('jenis_reaksi', 'Suka');
+                    },
+                    'komentar as komentar_count' => function ($query) {
+                        $query->where('komentar_type', 'Berita');
+                    },
+                    'bookmark as bookmark_count' => function ($query) {
+                        $query->where('bookmark_type', 'Berita');
                     }
                 ])
-                ->orderByDesc('suka_count')
-                ->orderByDesc('view_count')
+                ->select('*')
+                ->selectRaw('
+                (view_count * 1) +
+                ((SELECT COUNT(*) FROM reaksi WHERE item_id = berita.id AND jenis_reaksi = "Suka" AND reaksi_type = "Berita") * 2) +
+                ((SELECT COUNT(*) FROM komentar WHERE item_id = berita.id AND komentar_type = "Berita") * 3) +
+                ((SELECT COUNT(*) FROM bookmark WHERE item_id = berita.id AND bookmark_type = "Berita") * 2)
+                as skor_total
+            ')
+                ->having('skor_total', '>', 0)
+                ->orderByDesc('skor_total')
                 ->orderByDesc('tanggal_diterbitkan')
                 ->first();
 
-            if (!$berita) {
-                $berita = self::where('kategori', $kategori)
-                    ->where('visibilitas', 'public')
-                    ->withCount([
-                        'reaksi as suka_count' => function ($query) {
-                            $query->where('jenis_reaksi', 'Suka');
-                        }
-                    ])
-                    ->orderByDesc('suka_count')
-                    ->orderByDesc('view_count')
-                    ->orderByDesc('tanggal_diterbitkan')
-                    ->first();
-            }
-
             if ($berita) {
                 $results->push($berita);
+            } else {
+                // Jika tidak ada dengan skor > 0, ambil berita terbaru saja dari kategori itu
+                $fallback = self::where('kategori', $kategori)
+                    ->where('visibilitas', 'public')
+                    ->orderByDesc('tanggal_diterbitkan')
+                    ->first();
+
+                if ($fallback) {
+                    $results->push($fallback);
+                }
             }
         }
 
@@ -126,5 +137,17 @@ class HomeNews extends Berita
     {
         return $this->hasMany(\App\Models\UserReact\Reaksi::class, 'item_id', 'id')
             ->where('reaksi_type', 'berita');
+    }
+
+    public function komentar()
+    {
+        return $this->hasMany(\App\Models\UserReact\Komentar::class, 'item_id', 'id')
+            ->where('komentar_type', 'Berita');
+    }
+
+    public function bookmark()
+    {
+        return $this->hasMany(\App\Models\UserReact\Bookmark::class, 'item_id', 'id')
+            ->where('bookmark_type', 'Berita');
     }
 }

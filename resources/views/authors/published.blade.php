@@ -58,7 +58,7 @@
                     <img src="{{ $item['thumbnail'] }}" alt="Thumbnail" class="w-28 h-20 object-cover rounded">
                     <div class="flex-1">
                         <p class="text-xs font-semibold">
-                            <span class="text-[#990505]">{{ strtoupper($item['kategori']) }}</span>
+                            <span class="text-[#990505]">{{ strtoupper(str_replace('_', ' ', $item['kategori'])) }}</span>
                             <span class="text-[#990505] mx-1">|</span>
                             <span class="text-[#A8A8A8] font-normal">Dibuat
                                 {{ \Carbon\Carbon::parse($item['tanggal_dibuat'])->translatedFormat('d F Y') }}</span>
@@ -71,10 +71,10 @@
                             class="text-black text-2xl font-bold focus:outline-none">&#8942;</button>
                         <div id="menu-{{ $item['id'] }}"
                             class="absolute right-0 mt-2 w-24 bg-white border border-gray-200 rounded shadow-md hidden z-50">
-                            <a href="{{ route('published.edit', $item['id']) }}"
-                                class="block px-3 py-2 hover:bg-gray-100 text-sm">Edit</a>
+                            <a href="#" class="block px-3 py-2 hover:bg-gray-100 text-sm edit-button"
+                                data-id="{{ $item['id'] }}" data-type="{{ $item['tipe'] }}">Edit</a>
                             <button
-                                onclick="openModal('{{ route('draft.destroy', [$item['id'], 'tipe' => $item['tipe']]) }}')"
+                                onclick="openModal('{{ route('published.destroy', [$item['id'], 'tipe' => $item['tipe']]) }}')"
                                 class="block w-full text-left px-3 py-2 hover:bg-gray-100 text-red-500 text-sm">Hapus</button>
                         </div>
                     </div>
@@ -121,6 +121,36 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.edit-button');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const type = this.dataset.type;
+
+                    let targetUrl = '';
+
+                    switch (type) {
+                        case 'berita':
+                            targetUrl = '{{ route('create-news') }}';
+                            break;
+                        case 'produk':
+                            targetUrl = '{{ route('create-product') }}';
+                            break;
+                        case 'karya':
+                            targetUrl = '{{ route('creation') }}';
+                            break;
+                        default:
+                            alert('Tipe tidak dikenali.');
+                            return;
+                    }
+
+                    window.location.href = targetUrl;
+                });
+            });
+        });
+
         function toggleDropdown(id) {
             document.querySelectorAll('[id^="menu-"], #sortDropdown').forEach(el => {
                 if (el.id !== id) el.classList.add('hidden');

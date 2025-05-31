@@ -39,7 +39,7 @@
 
     <section class="mt-6 pt-4 px-5">
         <div class="max-w-7xl mx-auto">
-            <h2 class="text-2xl font-semibold mb-2">Berita Teratas Hari Ini</h2>
+            <h2 class="text-2xl font-semibold mb-2">Berita Teratas</h2>
             <p class="text-sm text-gray-600 mb-6">Kumpulan Berita Terbaik</p>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">

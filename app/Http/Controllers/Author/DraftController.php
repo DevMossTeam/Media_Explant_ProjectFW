@@ -19,6 +19,8 @@ class DraftController extends Controller
         Carbon::setLocale('id');
 
         $search = $request->input('search');
+        $searchRaw = $search;
+        $search = str_replace(' ', '_', $searchRaw);
         $sort = $request->input('sort');
 
         // ========== Ambil Berita ==========

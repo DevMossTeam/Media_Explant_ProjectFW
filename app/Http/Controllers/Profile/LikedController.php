@@ -24,29 +24,42 @@ class LikedController extends Controller
 
         // Filter pencarian
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = str_replace('_', ' ', strtolower($request->search));
+
             $query->where(function ($q) use ($search) {
+                // Pencarian Berita
                 $q->where(function ($q1) use ($search) {
                     $q1->where('reaksi_type', 'Berita')
                         ->whereHas('berita', function ($q2) use ($search) {
-                            $q2->where('judul', 'like', '%' . $search . '%');
+                            $q2->whereRaw('LOWER(REPLACE(kategori, "_", " ")) like ?', ["%{$search}%"])
+                                ->orWhereRaw('LOWER(judul) like ?', ["%{$search}%"]);
                         });
-                })->orWhere(function ($q3) use ($search) {
-                    $q3->where('reaksi_type', 'Karya')
-                        ->whereHas('karya', function ($q4) use ($search) {
-                            $q4->where('judul', 'like', '%' . $search . '%');
-                        });
-                })->orWhere(function ($q5) use ($search) {
-                    $q5->where('reaksi_type', 'Produk')
-                        ->where(function ($qProduk) use ($search) {
-                            $ids = collect([
-                                Buletin::where('judul', 'like', "%{$search}%")->pluck('id'),
-                                Majalah::where('judul', 'like', "%{$search}%")->pluck('id'),
-                            ])->flatten();
+                })
+                    // Pencarian Karya
+                    ->orWhere(function ($q3) use ($search) {
+                        $q3->where('reaksi_type', 'Karya')
+                            ->whereHas('karya', function ($q4) use ($search) {
+                                $q4->whereRaw('LOWER(REPLACE(kategori, "_", " ")) like ?', ["%{$search}%"])
+                                    ->orWhereRaw('LOWER(judul) like ?', ["%{$search}%"]);
+                            });
+                    })
+                    // Pencarian Produk (Buletin dan Majalah)
+                    ->orWhere(function ($q5) use ($search) {
+                        $buletinIds = Buletin::whereRaw('LOWER(REPLACE(kategori, "_", " ")) like ?', ["%{$search}%"])
+                            ->orWhereRaw('LOWER(judul) like ?', ["%{$search}%"])
+                            ->pluck('id')
+                            ->toArray();
 
-                            $qProduk->whereIn('item_id', $ids);
-                        });
-                });
+                        $majalahIds = Majalah::whereRaw('LOWER(REPLACE(kategori, "_", " ")) like ?', ["%{$search}%"])
+                            ->orWhereRaw('LOWER(judul) like ?', ["%{$search}%"])
+                            ->pluck('id')
+                            ->toArray();
+
+                        $allIds = array_merge($buletinIds, $majalahIds);
+
+                        $q5->where('reaksi_type', 'Produk')
+                            ->whereIn('item_id', $allIds);
+                    });
             });
         }
 

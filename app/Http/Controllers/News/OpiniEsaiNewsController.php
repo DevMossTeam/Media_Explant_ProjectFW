@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\UserReact\Reaksi;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserReact\Komentar;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class OpiniEsaiNewsController extends Controller
 {
@@ -26,35 +28,109 @@ class OpiniEsaiNewsController extends Controller
             ->take(10)
             ->get();
 
+        $oneWeekAgo = Carbon::now()->subWeek();
+
         $rekomendasi = OpiniEsaiNews::with('user')
             ->whereIn('kategori', ['Opini', 'Esai'])
             ->where('visibilitas', 'public')
-            ->withCount([
-                'reaksiSuka as like_count'
-            ])
-            ->latest('tanggal_diterbitkan')
+            ->select('berita.*', DB::raw("
+        (
+            berita.view_count +
+            (
+                SELECT COUNT(*)
+                FROM reaksi
+                WHERE reaksi.item_id = berita.id
+                  AND reaksi.jenis_reaksi = 'Suka'
+                  AND reaksi.reaksi_type = 'Berita'
+            )
+        ) as total_interaksi
+    "))
+            ->orderByRaw("
+        CASE
+            WHEN tanggal_diterbitkan >= ? THEN 0
+            ELSE 1
+        END, total_interaksi DESC
+    ", [$oneWeekAgo])
             ->take(8)
             ->get();
 
-        $terpopuler_opini = OpiniEsaiNews::with('user')
-            ->where('kategori', 'Opini')
-            ->where('visibilitas', 'public')
-            ->withCount([
-                'reaksiSuka as like_count'
-            ])
-            ->latest('tanggal_diterbitkan')
-            ->take(5)
-            ->get();
+        $oneWeekAgo = Carbon::now()->subWeek()->toDateTimeString();
 
-        $terpopuler_esai = OpiniEsaiNews::with('user')
-            ->where('kategori', 'Esai')
-            ->where('visibilitas', 'public')
-            ->withCount([
-                'reaksiSuka as like_count'
-            ])
-            ->latest('tanggal_diterbitkan')
-            ->take(5)
-            ->get();
+        function getPopularNews($kategori)
+        {
+            global $oneWeekAgo;
+
+            $baseQuery = DB::table('berita')
+                ->leftJoin('user', 'user.uid', '=', 'berita.user_id')
+                ->leftJoin('komentar as km', function ($join) {
+                    $join->on('berita.id', '=', 'km.item_id')
+                        ->where('km.komentar_type', '=', 'Berita');
+                })
+                ->leftJoin('reaksi as rk', function ($join) {
+                    $join->on('berita.id', '=', 'rk.item_id')
+                        ->where('rk.reaksi_type', '=', 'Berita')
+                        ->where('rk.jenis_reaksi', '=', 'Suka');
+                })
+                ->where('berita.kategori', $kategori)
+                ->where('berita.visibilitas', 'public')
+                ->whereRaw("CAST(berita.tanggal_diterbitkan AS DATETIME) >= ?", [$oneWeekAgo])
+                ->groupBy('berita.id')
+                ->select(
+                    'berita.*',
+                    'user.nama_lengkap as user_nama_lengkap',
+                    DB::raw('COUNT(DISTINCT rk.id) as like_count'),
+                    DB::raw('COUNT(DISTINCT km.id) as komentar_count'),
+                    DB::raw('(berita.view_count + COUNT(DISTINCT rk.id) + COUNT(DISTINCT km.id)) as total_score')
+                )
+                ->orderByDesc('total_score')
+                ->take(5);
+
+            $result = $baseQuery->get();
+
+            if ($result->isEmpty()) {
+                $fallbackQuery = DB::table('berita')
+                    ->leftJoin('user', 'user.uid', '=', 'berita.user_id')
+                    ->leftJoin('komentar as km', function ($join) {
+                        $join->on('berita.id', '=', 'km.item_id')
+                            ->where('km.komentar_type', '=', 'Berita');
+                    })
+                    ->leftJoin('reaksi as rk', function ($join) {
+                        $join->on('berita.id', '=', 'rk.item_id')
+                            ->where('rk.reaksi_type', '=', 'Berita')
+                            ->where('rk.jenis_reaksi', '=', 'Suka');
+                    })
+                    ->where('berita.kategori', $kategori)
+                    ->where('berita.visibilitas', 'public')
+                    ->groupBy('berita.id')
+                    ->select(
+                        'berita.*',
+                        'user.nama_lengkap as user_nama_lengkap',
+                        DB::raw('COUNT(DISTINCT rk.id) as like_count'),
+                        DB::raw('COUNT(DISTINCT km.id) as komentar_count'),
+                        DB::raw('(berita.view_count + COUNT(DISTINCT rk.id) + COUNT(DISTINCT km.id)) as total_score')
+                    )
+                    ->orderByDesc('total_score')
+                    ->take(5);
+
+                $result = $fallbackQuery->get();
+            }
+
+            return $result->map(function ($item) {
+                // Extract first image from konten_berita
+                preg_match('/<img[^>]+src="([^">]+)"/i', $item->konten_berita, $matches);
+                $item->first_image = $matches[1] ?? 'https://via.placeholder.com/400x200';
+
+                // Buat properti user sebagai object agar mirip relasi
+                $item->user = (object)[
+                    'nama_lengkap' => $item->user_nama_lengkap ?? '-'
+                ];
+
+                return $item;
+            });
+        }
+
+        $terpopuler_opini = getPopularNews('Opini');
+        $terpopuler_esai = getPopularNews('Esai');
 
         return view('kategori.opini-esai', compact(
             'terbaru',

@@ -36,58 +36,23 @@ class HomeNewsController extends Controller
                 ->take(10)
                 ->get();
 
-            $puisiList = Puisi::withCount('reaksiSuka')
-                ->where('kategori', 'puisi')
-                ->where('visibilitas', 'public')
-                ->orderByDesc('reaksi_suka_count')
-                ->orderByDesc('view_count')
-                ->orderByDesc('release_date')
-                ->take(6)
-                ->get();
+            $puisiList = Puisi::getTeratasMingguan();
 
-            $pantunList = Pantun::withCount('reaksiSuka')
-                ->where('kategori', 'pantun')
-                ->where('visibilitas', 'public')
-                ->orderByDesc('reaksi_suka_count')
-                ->orderByDesc('view_count')
-                ->orderByDesc('release_date')
-                ->take(6)
-                ->get();
+            $pantunList = Pantun::getTeratasMingguan();
 
-            $syairList = Syair::withCount('reaksiSuka')
-                ->where('kategori', 'syair')
-                ->where('visibilitas', 'public')
-                ->orderByDesc('reaksi_suka_count')
-                ->orderByDesc('view_count')
-                ->orderByDesc('release_date')
-                ->take(6)
-                ->get();
+            $syairList = Syair::getTeratasMingguan();
 
             $totalFotografiCount = Fotografi::where('kategori', 'fotografi')
                 ->where('visibilitas', 'public')
                 ->count();
 
-            $fotografiList = Fotografi::withCount('reaksiSuka')
-                ->where('kategori', 'fotografi')
-                ->where('visibilitas', 'public')
-                ->orderByDesc('reaksi_suka_count')
-                ->orderByDesc('view_count')
-                ->orderByDesc('release_date')
-                ->take(9)
-                ->get();
+            $fotografiList = Fotografi::getTeratasMingguan();
 
             $totalDesainGrafisCount = DesainGrafis::where('kategori', 'desain_grafis')
                 ->where('visibilitas', 'public')
                 ->count();
 
-            $desainGrafisList = DesainGrafis::withCount('reaksiSuka')
-                ->where('kategori', 'desain_grafis')
-                ->where('visibilitas', 'public')
-                ->orderByDesc('reaksi_suka_count')
-                ->orderByDesc('view_count')
-                ->orderByDesc('release_date')
-                ->take(9)
-                ->get();
+            $desainGrafisList = DesainGrafis::getTeratasMingguan();
 
             // Ambil data buletin & majalah
             $buletinList = Buletin::getHomeBuletin();
@@ -172,8 +137,8 @@ class HomeNewsController extends Controller
                     $query->where('jenis_reaksi', 'Suka');
                 }
             ])
-            ->orderByDesc('suka_count')
             ->orderByDesc('view_count')
+            ->orderByDesc('suka_count')
             ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
