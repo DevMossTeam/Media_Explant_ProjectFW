@@ -239,7 +239,19 @@
                             {!! $highlight($karya->judul ?? 'N/A') !!}
                         </td>
 
-                        <td class="p-3">{!! $highlight($karya->user?->nama_pengguna ?? 'N/A') !!}</td>
+                        <td class="p-3 h-16 ">
+                            <div class="flex items-center gap-3 h-full">
+                                @php
+                                $base64Image = $karya && $karya->user?->profile_pic
+                                ? 'data:image/jpeg;base64,' . base64_encode($karya->user?->profile_pic )
+                                :
+                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb2F1sRrmj0rFgZyVmC8yBgXxyccFRJf7LPQ&s';
+                                @endphp
+                                <img src="{{ $base64Image }}" alt="Foto Profil"
+                                    class="w-10 h-10 rounded-full object-cover shrink-0 border border-gray-300">
+                                <span class="text-sm">{!! $highlight($karya->user?->nama_pengguna, $searchTerm)!!}</span>
+                            </div>
+                        </td>
                         <td class="p-3">{{ $karya->kategori ?? 'N/A' }}</td>
 
                         <td class="p-3">

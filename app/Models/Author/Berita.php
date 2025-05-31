@@ -35,7 +35,7 @@ class Berita extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
     
-    public function reaksi()
+    public function reaksis()
     {
         return $this->morphMany(Reaksi::class, 'reaksiable', 'reaksi_type', 'item_id');
     }

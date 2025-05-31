@@ -34,8 +34,10 @@ use App\Http\Controllers\Author\PublishedController;
 use App\Http\Controllers\Admin\AdminContentController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\Admin\AnalitikController;
 use App\Http\Controllers\Admin\KotakMasukController;
 use App\Http\Controllers\Admin\TentangKamiController;
+use App\Http\Controllers\Admin\StrukturOrganisasiController;
 use App\Http\Controllers\UserReact\BookmarkController;
 use App\Http\Controllers\UserReact\KomentarController;
 use App\Http\Controllers\Search\SearchController;
@@ -207,12 +209,11 @@ Route::middleware(['guestOrRole'])->group(function () {
     Route::get('/kategori/{category}/read', [HomeNewsController::class, 'show'])->name('kategori.detail');
 
     // Footer menu (halaman informasi)
-    Route::view('/tentang-kami', 'header-footer.footer-menu.tentangKami');
-    Route::view('/explant-contributor', 'header-footer.footer-menu.explantContributor');
-    Route::view('/kode-etik', 'header-footer.footer-menu.kode-etik');
-    Route::view('/struktur-organisasi', 'header-footer.footer-menu.strukturOrganisasi');
     Route::view('/pusat-bantuan', 'header-footer.footer-menu.pusatBantuan');
-
+    Route::get('/tentang-kami', [StrukturOrganisasiController::class, 'tentangKami'])->name('struktur.tentangKami');
+    Route::get('/explant-contributor', [StrukturOrganisasiController::class, 'explantContributor'])->name('struktur.explantContributor');
+    Route::get('/kode-etik', [StrukturOrganisasiController::class, 'kodeEtik'])->name('struktur.kodeEtik');
+    Route::get('/struktur-organisasi', [StrukturOrganisasiController::class, 'strukturOrganisasi'])->name('struktur.organisasi');
 });
 
 Route::middleware(['guestOrRole'])->group(function () {
@@ -292,13 +293,16 @@ Route::middleware(['checkRole:Admin'])->group(function () {
 
     // Halaman daftar user
     Route::get('/dashboard-admin/pengguna', [AdminUserController::class, 'user'])->name('admin.user');
-    // Detail pengguna
-    Route::get('/dashboard-admin/detail-pengguna/{id}', [AdminUserController::class, 'detail'])->name('admin.user.detail');
+    
     // Hapus pengguna
     Route::delete('/dashboard-admin/hapus-pengguna/{uid}', [AdminUserController::class, 'deleteUser'])
     ->name('admin.user.delete');
     Route::put('/dashboard-admin/user/change-role/{uid}', [AdminUserController::class, 'updateRole'])
     ->name('admin.user.change-role');
+    // Detail pengguna
+    Route::get('/dashboard-admin/detail-pengguna/{id}', [AdminUserController::class, 'detail'])->name('admin.user.detail');
+    Route::delete('/dashboard-admin/delete-komentar/{id}/{komentarId}', [AdminUserController::class, 'deleteKomen'])
+    ->name('admin.komentar.delete');
 
     // Berita Routes
     Route::get('/dashboard-admin/berita', [AdminContentController::class, 'berita'])->name('admin.berita');
@@ -320,6 +324,21 @@ Route::middleware(['checkRole:Admin'])->group(function () {
     Route::delete('/dashboard-admin/karya/delete/{id}', [AdminContentController::class, 'deleteKarya'])->name('admin.karya.delete');    
 
     Route::get('/dashboard-admin/settings', [TentangKamiController::class, 'index'])->name('admin.settings');
-    Route::post('/dashboard-admin/settings/update', [TentangKamiController::class, 'update'])->name('admin.settings.update');
+    Route::post('/dashboard-admin/settings/update', [TentangKamiController::class, 'updateOrCreate'])->name('admin.tentangKami.update');
 
+    Route::get('/dashboard-admin/struktur-organisasi', [StrukturOrganisasiController::class, 'index'])->name('admin.organisasi.index');
+    // anggota CRUD
+    Route::post('/dashboard-admin/struktur-organisasi/anggota/tambah', [StrukturOrganisasiController::class, 'createAnggota'])
+    ->name('admin.organisasi.create');
+    Route::put('/dashboard-admin/struktur-organisasi/anggota/update/{id}', [StrukturOrganisasiController::class, 'updateAnggota'])
+    ->name('admin.organisasi.update');
+    Route::delete('/dashboard-admin/struktur-organisasi/anggota/delete/{id}', [StrukturOrganisasiController::class, 'destroyAnggota'])
+    ->name('admin.organisasi.delete');
+    // Divisi CRUD
+    Route::get('/dashboard-admin/struktur-organisasi/divisi/tambah', [StrukturOrganisasiController::class, 'createDivisi'])->name('admin.divisi.create');
+    Route::post('/dashboard-admin/struktur-organisasi/divisi/store', [StrukturOrganisasiController::class, 'storeDivisi'])->name('admin.divisi.store');
+    Route::delete('/dashboard-admin/struktur-organisasi/divisi/delete/{id}', [StrukturOrganisasiController::class, 'destroyDivisi'])->name('admin.divisi.delete');
+
+    Route::get('/dashboard-admin/analitik/konten', [AnalitikController::class, 'analitikKonten'])->name('admin.analitik.konten');
+    Route::get('/dashboard-admin/analitik/pengunjung', [AnalitikController::class, 'analitikPengunjung'])->name('admin.analitik.pengunjung');
 });    

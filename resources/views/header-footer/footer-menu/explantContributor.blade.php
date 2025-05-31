@@ -11,18 +11,51 @@
         <section class="mb-6 max-w-2xl mx-auto text-justify">
             <h2 class="italic text-gray-800 mb-2">Penjelasan Singkat</h2>
             <p class="border-b border-gray-400 mb-4"></p>
-            <p class="text-gray-700 leading-relaxed mt-2">
-                Di balik setiap karya, berita, dan visual yang terbit di MediaExplant, ada tangan-tangan mahasiswa yang bekerja
-                dengan semangat kolektif dan idealisme. Kami menyebut mereka Explant Contributor yakni para kontributor yang
-                percaya bahwa menulis, memotret, merancang, dan berkarya adalah bagian dari perjuangan intelektual.
-            </p>
-            <p class="text-gray-700 leading-relaxed mt-2">
-                Explant Contributor tidak hanya menciptakan konten, tetapi juga merawat gagasan, merespons isu, dan membangun
-                ruang kritik yang sehat. Mereka datang dari berbagai latar belakang minat dan keahlian, namun disatukan oleh
-                semangat untuk menyampaikan sesuatu yang lebih dari sekadar informasi: kesadaran.
-            </p>
+            @php
+            $cleanHtml = $explantContributorDeskripsi;
+        
+            // Hapus class ql-indent-1 supaya bullet dan numbering muncul normal
+            $cleanHtml = str_replace('class="ql-indent-1"', '', $cleanHtml);
+        
+            // Hapus h2 kosong
+            $cleanHtml = preg_replace('/<h2>\s*<br\s*\/?>\s*<\/h2>/', '', $cleanHtml);
+        @endphp
+        
+        <div class="space-y-6 text-gray-800">
+            {!! $cleanHtml !!}
+        </div>
+        
+        <style>
+            /* styling list supaya indent dan numbering/bullet jelas */
+            ol {
+                list-style-type: decimal;
+                margin-left: 1.5rem; /* indent */
+                padding-left: 0;
+            }
+            ul {
+                list-style-type: disc;
+                margin-left: 1.5rem; /* indent */
+                padding-left: 0;
+            }
+            ol li, ul li {
+                margin-top: 0.25rem;
+                margin-bottom: 0.25rem;
+            }
+            h2 {
+                font-weight: 700;
+                font-size: 1.5rem;
+                margin-top: 1.5rem;
+                margin-bottom: 1rem;
+                color: #1a202c; /* Tailwind gray-900 */
+            }
+            p {
+                margin-bottom: 1rem;
+                line-height: 1.6;
+            }
+        </style>
+        
         </section>
-
+{{-- 
         <section class="mb-6 max-w-2xl mx-auto text-justify">
             <h2 class="italic text-gray-800 mb-2">Siapa Saja Mereka?</h2>
             <p class="border-b border-gray-400 mb-4"></p>
@@ -68,6 +101,6 @@
                     <span class="text-gray-700">Atau DM kami di Instagram : <b>@ukpmexplant</b></span>
                 </div>
             </div>
-        </section>
+        </section> --}}
     </div>
 @endsection

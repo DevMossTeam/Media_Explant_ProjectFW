@@ -256,7 +256,7 @@
                                 </td>
                                 <td class="p-3 text-sm text-gray-500">{{ $produk->release_date }}</td>
             
-                                <td class="p-3 flex justify-center space-x-2">
+                                <td class="p-3 flex justify-center items-center space-x-2">
                                     <!-- Detail Button -->
                                     <div class="relative group">
                                         <button class="w-9 h-9 flex items-center justify-center rounded-full border border-blue-500 text-blue-500 hover:bg-blue-50 transition"

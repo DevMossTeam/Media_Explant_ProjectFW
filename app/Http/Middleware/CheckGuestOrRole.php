@@ -17,7 +17,7 @@ class CheckGuestOrRole
         }
 
         // Jika user punya role selain Admin, izinkan
-        if (in_array($user->role, ['Penulis', 'Pembaca'])) {
+        if (in_array($user->role, ['Penulis', 'Pembaca', 'Admin'])) {
             return $next($request);
         }
 

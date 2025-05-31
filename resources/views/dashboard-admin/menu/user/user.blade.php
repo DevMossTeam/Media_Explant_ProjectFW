@@ -1,18 +1,19 @@
 @extends('layouts.admin-layouts')
 @section('content')
 <div class="container mx-auto px-1 py-1">
-    <div class="flex items-center justify-between my-5">
-        <h1 class="font-bold text-2xl">Daftar Pengguna</h1>
-        <nav class="text-sm text-gray-500" aria-label="Breadcrumb">
-            <ol class="list-reset flex items-center">
-                <li class="flex items-center group text-gray-600 hover:text-black">
-                    <i class="fa-solid fa-home mr-1 transition"></i>
-                    <a href="/dashboard-admin" class="transition ml-1">Home</a>
-                </li>
-                <li><span class="mx-2 text-gray-500">></span></li>
-                <li class="text-gray-700">User</li>
-            </ol>
+    <div class="mb-6">
+        <!-- Breadcrumb -->
+        <nav class="flex items-center text-sm text-gray-500 space-x-2" aria-label="Breadcrumb">
+            <a href="/dashboard-admin" class="flex items-center text-gray-600 hover:text-blue-600 transition">
+                <i class="fa-solid fa-house mr-1"></i>
+                <span>Home</span>
+            </a>
+            <span class="text-gray-400">/</span>
+            <span class="text-gray-700 font-medium">Berita</span>
         </nav>
+
+        <!-- Title -->
+        <h1 class="mt-3 text-2xl font-bold text-gray-800">Daftar Akun</h1>
     </div>
 
     <div class="p-6 bg-white shadow rounded-lg">
@@ -120,155 +121,157 @@
                                 <p class="text-sm font-semibold mb-2">Tanggal Dibuat</p>
                                 <div class="flex items-center gap-2">
                                     <input type="date" name="tanggal_dari" value="{{ request('tanggal_dari') }}"
-                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:ring-blue-500 focus:border-blue-500">
-                                    <i class="fa-solid fa-arrow-right text-gray-500 text-sm"></i>
-                                    <input type="date" name="tanggal_sampai" value="{{ request('tanggal_sampai') }}"
-                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:ring-blue-500 focus:border-blue-500">
-                                </div>
-                            </div> --}}
-
-                            <!-- Buttons -->
-                            <div class="flex pt-2">
-                                <div class="ml-auto">
-                                    <button type="button"
-                                        onclick="window.location.href='{{ route('admin.user') }}?perPage={{ $perPage }}'"
-                                        class="bg-yellow-400 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm">Kembalikan</button>
-                                </div>
-                                <div class="ml-2">
-                                    <button type="submit"
-                                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Terapkan</button>
-                                </div>
-                            </div>
+                            class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:ring-blue-500
+                            focus:border-blue-500">
+                            <i class="fa-solid fa-arrow-right text-gray-500 text-sm"></i>
+                            <input type="date" name="tanggal_sampai" value="{{ request('tanggal_sampai') }}"
+                                class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:ring-blue-500 focus:border-blue-500">
                         </div>
-                    </form>
+                </div> --}}
+
+                <!-- Buttons -->
+                <div class="flex pt-2">
+                    <div class="ml-auto">
+                        <button type="button"
+                            onclick="window.location.href='{{ route('admin.user') }}?perPage={{ $perPage }}'"
+                            class="bg-yellow-400 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm">Kembalikan</button>
+                    </div>
+                    <div class="ml-2">
+                        <button type="submit"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Terapkan</button>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- User Table -->
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-700">
-                <thead class="bg-gray-50 text-xs font-semibold text-gray-600">
-                    <tr>
-                        <th class="p-3">UID</th>
-                        <th class="p-3">Nama Pengguna</th>
-                        <th class="p-3">Nama Lengkap</th>
-                        <th class="p-3">Email</th>
-                        <th class="p-3">Role</th>
-                        <th class="p-3 text-center w-32">Action</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y">
-                    @php
-                    $highlight = function($text, $searchTerm) {
-                    if (!$searchTerm) return e($text);
-                    return preg_replace('/(' . preg_quote($searchTerm, '/') . ')/i', '<mark
-                        class="bg-yellow-200 px-1 rounded">$1</mark>', e($text));
-                    };
-                    @endphp
-                    @foreach ($users as $user)
-                    <tr class="hover:bg-gray-50">
-                        <td class="p-3 font-medium">{!! $highlight($user->uid, $searchTerm) !!}</td>
-                        <td class="p-3 flex items-center gap-3">
-                            @php
-                            $base64Image = $user && $user->profile_pic 
-                                ? 'data:image/jpeg;base64,' . base64_encode($user->profile_pic) 
-                                : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb2F1sRrmj0rFgZyVmC8yBgXxyccFRJf7LPQ&s';
-                            @endphp
-
-                            <img src="{{ $base64Image }}" alt="Foto Profil" class="w-10 h-10 rounded-full object-cover shrink-0 border border-gray-300">
-                            <span>{!! $highlight($user->nama_pengguna, $searchTerm) !!}</span>
-                        </td>
-                        <td class="p-3">{!! $highlight($user->nama_lengkap, $searchTerm) !!}</td>
-                        <td class="p-3">{!! $highlight($user->email, $searchTerm) !!}</td>
-                        <td class="p-3 capitalize">{{ $user->role }}</td>
-                        <td class="p-3 flex justify-center space-x-2">
-                            <div class="relative group">
-                                <button
-                                    class="w-9 h-9 flex items-center justify-center rounded-full border border-blue-500 text-blue-500 hover:bg-blue-50 transition">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                                <div
-                                    class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                                    Lihat Detail
-                                </div>
-                            </div>
-                            <div class="relative group">
-                                <button
-                                    class="w-9 h-9 flex items-center justify-center rounded-full border border-yellow-500 text-yellow-500 hover:bg-yellow-50 transition"
-                                    onclick="showChangeRoleModal('{{ $user->uid }}')"
-                                    >
-                                    <i class="fa fa-pencil"></i>
-                                </button>
-                                <div
-                                    class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
-                                    Update
-                                </div>
-                            </div>
-                            <div class="relative group">
-                                <form id="delete-form-{{ $user->uid }}"
-                                    action="{{ route('admin.user.delete', ['uid' => $user->uid]) }}" method="POST"
-                                    style="display: none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-
-                                <button type="button"
-                                    class="delete-btn w-9 h-9 flex items-center justify-center rounded-full border border-red-500 text-red-500 hover:bg-red-50 transition"
-                                    data-id="{{ $user->uid }}">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                                <div
-                                    class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition">
-                                    Hapus
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pagination -->
-        <div class="mt-4">
-            <div class="flex items-center justify-between mt-4 text-sm text-gray-600">
-                <div>
-                    Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} entries
-                </div>
-                <div class="flex space-x-1">
-                    @if ($users->onFirstPage())
-                    <button class="px-3 py-1 border rounded text-gray-600 cursor-not-allowed">Previous</button>
-                    @else
-                    <button class="px-3 py-1 border rounded text-gray-600 hover:bg-gray-100"
-                        onclick="window.location.href='{{ $users->previousPageUrl() }}'">
-                        Previous
-                    </button>
-                    @endif
-
-                    @for ($i = 1; $i <= $users->lastPage(); $i++)
-                        @if ($i == $users->currentPage())
-                        <button class="px-3 py-1 border rounded bg-blue-500 text-white">{{ $i }}</button>
-                        @else
-                        <button class="px-3 py-1 border rounded text-gray-600 hover:bg-blue-100"
-                            onclick="window.location.href='{{ $users->url($i) }}'">
-                            {{ $i }}
-                        </button>
-                        @endif
-                        @endfor
-
-                        @if ($users->hasMorePages())
-                        <button class="px-3 py-1 border rounded text-gray-600 hover:bg-gray-100"
-                            onclick="window.location.href='{{ $users->nextPageUrl() }}'">
-                            Next
-                        </button>
-                        @else
-                        <button class="px-3 py-1 border rounded text-gray-600 cursor-not-allowed">Next</button>
-                        @endif
-                </div>
-            </div>
+            </form>
         </div>
     </div>
+</div>
+
+<!-- User Table -->
+<div class="overflow-x-auto">
+    <table class="w-full text-sm text-left text-gray-700">
+        <thead class="bg-gray-50 text-xs font-semibold text-gray-600">
+            <tr>
+                <th class="p-3">UID</th>
+                <th class="p-3">Nama Pengguna</th>
+                <th class="p-3">Nama Lengkap</th>
+                <th class="p-3">Email</th>
+                <th class="p-3">Role</th>
+                <th class="p-3 text-center w-32">Action</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y">
+            @php
+            $highlight = function($text, $searchTerm) {
+            if (!$searchTerm) return e($text);
+            return preg_replace('/(' . preg_quote($searchTerm, '/') . ')/i', '<mark
+                class="bg-yellow-200 px-1 rounded">$1</mark>', e($text));
+            };
+            @endphp
+            @foreach ($users as $user)
+            <tr class="hover:bg-gray-50">
+                <td class="p-3 font-medium">{!! $highlight($user->uid, $searchTerm) !!}</td>
+                <td class="p-3 flex items-center gap-3">
+                    @php
+                    $base64Image = $user && $user->profile_pic
+                    ? 'data:image/jpeg;base64,' . base64_encode($user->profile_pic)
+                    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb2F1sRrmj0rFgZyVmC8yBgXxyccFRJf7LPQ&s';
+                    @endphp
+
+                    <img src="{{ $base64Image }}" alt="Foto Profil"
+                        class="w-10 h-10 rounded-full object-cover shrink-0 border border-gray-300">
+                    <span>{!! $highlight($user->nama_pengguna, $searchTerm) !!}</span>
+                </td>
+                <td class="p-3">{!! $highlight($user->nama_lengkap, $searchTerm) !!}</td>
+                <td class="p-3">{!! $highlight($user->email, $searchTerm) !!}</td>
+                <td class="p-3 capitalize">{{ $user->role }}</td>
+                <td class="p-3 flex justify-center space-x-2">
+                    <div class="relative group">
+                        <button onclick="window.location='{{ route('admin.user.detail', ['id' => $user->uid]) }}'"
+                            class="w-9 h-9 flex items-center justify-center rounded-full border border-blue-500 text-blue-500 hover:bg-blue-50 transition"
+                            type="button">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <div
+                            class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                            Lihat Detail
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <button
+                            class="w-9 h-9 flex items-center justify-center rounded-full border border-yellow-500 text-yellow-500 hover:bg-yellow-50 transition"
+                            onclick="showChangeRoleModal('{{ $user->uid }}')">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                        <div
+                            class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition whitespace-nowrap">
+                            Update
+                        </div>
+                    </div>
+                    <div class="relative group">
+                        <form id="delete-form-{{ $user->uid }}"
+                            action="{{ route('admin.user.delete', ['uid' => $user->uid]) }}" method="POST"
+                            style="display: none;">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+
+                        <button type="button"
+                            class="delete-btn w-9 h-9 flex items-center justify-center rounded-full border border-red-500 text-red-500 hover:bg-red-50 transition"
+                            data-id="{{ $user->uid }}">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                        <div
+                            class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition">
+                            Hapus
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="mt-4">
+    <div class="flex items-center justify-between mt-4 text-sm text-gray-600">
+        <div>
+            Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} entries
+        </div>
+        <div class="flex space-x-1">
+            @if ($users->onFirstPage())
+            <button class="px-3 py-1 border rounded text-gray-600 cursor-not-allowed">Previous</button>
+            @else
+            <button class="px-3 py-1 border rounded text-gray-600 hover:bg-gray-100"
+                onclick="window.location.href='{{ $users->previousPageUrl() }}'">
+                Previous
+            </button>
+            @endif
+
+            @for ($i = 1; $i <= $users->lastPage(); $i++)
+                @if ($i == $users->currentPage())
+                <button class="px-3 py-1 border rounded bg-blue-500 text-white">{{ $i }}</button>
+                @else
+                <button class="px-3 py-1 border rounded text-gray-600 hover:bg-blue-100"
+                    onclick="window.location.href='{{ $users->url($i) }}'">
+                    {{ $i }}
+                </button>
+                @endif
+                @endfor
+
+                @if ($users->hasMorePages())
+                <button class="px-3 py-1 border rounded text-gray-600 hover:bg-gray-100"
+                    onclick="window.location.href='{{ $users->nextPageUrl() }}'">
+                    Next
+                </button>
+                @else
+                <button class="px-3 py-1 border rounded text-gray-600 cursor-not-allowed">Next</button>
+                @endif
+        </div>
+    </div>
+</div>
+</div>
 </div>
 
 <script>
@@ -316,7 +319,7 @@
                 });
             });
         });
-    });   
+    });
 
     function showChangeRoleModal(uid) {
         Swal.fire({
@@ -356,27 +359,30 @@
                         return;
                     }
 
-                    fetch("{{ route('admin.user.change-role', ['uid' => '__UID__']) }}".replace('__UID__', uid), {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify({ role })
-                    })
-                    .then(response => {
-                        if (!response.ok) throw new Error('Gagal mengupdate role');
-                        return response.json();
-                    })
-                    .then(data => {
-                        Swal.fire('Berhasil!', 'Role pengguna telah diubah.', 'success')
-                            .then(() => window.location.reload());
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire('Error!', 'Gagal mengupdate role pengguna.', 'error');
-                    });
+                    fetch("{{ route('admin.user.change-role', ['uid' => '__UID__']) }}".replace(
+                            '__UID__', uid), {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify({
+                                role
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Gagal mengupdate role');
+                            return response.json();
+                        })
+                        .then(data => {
+                            Swal.fire('Berhasil!', 'Role pengguna telah diubah.', 'success')
+                                .then(() => window.location.reload());
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire('Error!', 'Gagal mengupdate role pengguna.', 'error');
+                        });
 
                     Swal.close();
                 });
@@ -387,5 +393,6 @@
             }
         });
     }
+
 </script>
 @endsection

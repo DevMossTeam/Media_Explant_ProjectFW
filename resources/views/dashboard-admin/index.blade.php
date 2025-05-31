@@ -5,51 +5,217 @@
 
 <div class="container mx-auto px-1 py-1">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <!-- Card Container -->
-        <div class="relative flex items-center justify-between rounded-lg bg-white h-28 shadow-md p-4">
+        <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
+            <!-- Icon on the left -->
+            <i class="fa-solid fa-user text-3xl text-blue-500 bg-blue-100 p-3 rounded-lg shadow-sm mr-4"></i>
+
+            <!-- Text Content to the right of the icon -->
             <div>
                 <p class="text-sm text-gray-500">Total Pengguna</p>
-                <p class="text-2xl font-bold counter-number-animation" data-target="25"></p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="25">0</p>
             </div>
-            <i
-                class="fa-solid fa-user absolute top-2 right-2 text-xl text-gray-500 bg-gray-100 p-2 rounded-lg shadow-sm"></i>
         </div>
-        <div class="relative flex items-center justify-between rounded-lg bg-white h-28 shadow-md p-4">
+        <!-- Total Berita -->
+        <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
+            <i class="fa-solid fa-newspaper text-3xl text-green-500 bg-green-100 p-3 rounded-lg shadow-sm mr-4"></i>
             <div>
                 <p class="text-sm text-gray-500">Total Berita</p>
                 <p class="text-2xl font-bold counter-number-animation" data-target="100">0</p>
             </div>
-            <i
-                class="fa-solid fa-newspaper absolute top-2 right-2 text-xl text-gray-500 bg-gray-100 p-2 rounded-lg shadow-sm"></i>
         </div>
-        <div class="relative flex items-center justify-between rounded-lg bg-white h-28 shadow-md p-4">
+
+        <!-- Total Produk -->
+        <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
+            <i class="fa-solid fa-cube text-3xl text-yellow-500 bg-yellow-100 p-3 rounded-lg shadow-sm mr-4"></i>
             <div>
                 <p class="text-sm text-gray-500">Total Produk</p>
                 <p class="text-2xl font-bold counter-number-animation" data-target="1000">0</p>
             </div>
-            <i
-                class="fa-solid fa-cube absolute top-2 right-2 text-xl text-gray-500 bg-gray-100 p-2 rounded-lg shadow-sm"></i>
         </div>
-        <div class="relative flex items-center justify-between rounded-lg bg-white h-28 shadow-md p-4">
+
+        <!-- Total Karya -->
+        <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
+            <i class="fa-solid fa-book text-3xl text-red-500 bg-red-100 p-3 rounded-lg shadow-sm mr-4"></i>
             <div>
                 <p class="text-sm text-gray-500">Total Karya</p>
                 <p class="text-2xl font-bold counter-number-animation" data-target="75">0</p>
             </div>
-            <i
-                class="fa-solid fa-book absolute top-2 right-2 text-xl text-gray-500 bg-gray-100 p-2 rounded-lg shadow-sm"></i>
         </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <!-- Left Side: KOTAK PESAN -->
+        <div class="md:col-span-2">
+            <div class="bg-white rounded-lg shadow-md p-4 h-96 flex flex-col justify-between">
+                <!-- Header -->
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-xl font-bold text-gray-700">Pesan Terbaru</h2>
+                    <!-- Icon (if present) -->
+                    <i class="fas fa-info-circle text-gray-500 ml-2"></i> <!-- Example icon -->
+                </div>
+                {{-- <h3 class="text-sm font-bold text-gray-700">Pesan Terbaru Hari ini: 100</h3>                --}}
+
+                <!-- Tab Navigation -->
+                <ul
+                    class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 mt-5">
+                    <li class="me-2">
+                        <a href="#" aria-current="page"
+                            class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active">Selengkapnya</a>
+                    </li>
+                    <li class="me-2">
+                        <a href="#"
+                            class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50">Masukan</a>
+                    </li>
+                    <li class="me-2">
+                        <a href="#"
+                            class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50">Laporan</a>
+                    </li>
+                </ul>
+
+                <!-- Scrollable Message Container -->
+                <div class="mt-4 flex-1 overflow-y-auto pr-2">
+                    <!-- Message List -->
+                    <div class="space-y-1">
+                        <!-- Message Card Template (Duplicate 10 times) -->
+                        <div
+                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="font-medium text-gray-800 truncate">Search Console</span>
+                                <span class="text-sm text-gray-500 truncate max-w-xs">Lorem ipsum dolor sit amet,
+                                    consectetur adipiscing elit...</span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span
+                                    class="text-xs bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full">Terbaru</span>
+                                <span
+                                    class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Masukan</span>
+                                <span class="text-sm text-gray-400">Apr, 24</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- Duplicate Messages -->
+                        <div
+                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="font-medium text-gray-800 truncate">Webmaster Tools</span>
+                                <span class="text-sm text-gray-500 truncate max-w-xs">Pellentesque habitant morbi
+                                    tristique senectus et netus...</span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Laporan</span>
+                                <span class="text-sm text-gray-400">Apr, 23</span>
+                            </div>
+                        </div>
+                        <hr>        
+                        <!-- Message Card Template (Duplicate 10 times) -->
+                        <div
+                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
+                            <div class="flex items-center gap-3 min-w-0">
+                               
+                                <span class="font-medium text-gray-800 truncate">Search Console</span>
+                                <span class="text-sm text-gray-500 truncate max-w-xs">Lorem ipsum dolor sit amet,
+                                    consectetur adipiscing elit...</span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span
+                                    class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Masukan</span>
+                                <span class="text-sm text-gray-400">Apr, 24</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- Duplicate Messages -->
+                        <div
+                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="font-medium text-gray-800 truncate">Webmaster Tools</span>
+                                <span class="text-sm text-gray-500 truncate max-w-xs">Pellentesque habitant morbi
+                                    tristique senectus et netus...</span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Laporan</span>
+                                <span class="text-sm text-gray-400">Apr, 23</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- Message Card Template (Duplicate 10 times) -->
+                        <div
+                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
+                            <div class="flex items-center gap-3 min-w-0">
+                               
+                                <span class="font-medium text-gray-800 truncate">Search Console</span>
+                                <span class="text-sm text-gray-500 truncate max-w-xs">Lorem ipsum dolor sit amet,
+                                    consectetur adipiscing elit...</span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span
+                                    class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Masukan</span>
+                                <span class="text-sm text-gray-400">Apr, 24</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <!-- Duplicate Messages -->
+                        <div
+                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="font-medium text-gray-800 truncate">Webmaster Tools</span>
+                                <span class="text-sm text-gray-500 truncate max-w-xs">Pellentesque habitant morbi
+                                    tristique senectus et netus...</span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Laporan</span>
+                                <span class="text-sm text-gray-400">Apr, 23</span>
+                            </div>
+                        </div>
+                        <hr>                
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Right Side -->
+        <div class="grid grid-rows-2 gap-4">
+            <!-- Card 1: Analitik Pengunjung -->
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
+              <div>
+                <h3 class="text-xl font-bold text-gray-700">Analitik Pengunjung</h3>
+                <p class="mt-2 text-gray-600 text-md">
+                  Lihat statistik jumlah pengunjung website, asal trafik, perangkat yang digunakan, dan durasi kunjungan untuk membantu memahami perilaku audiens Anda.
+                </p>
+              </div>
+              <a href="/dashboard-admin/analitik/pengunjung" class="text-sm text-blue-600 mt-4 hover:underline">Lihat Selengkapnya</a>
+            </div>
+          
+            <!-- Card 2: Analitik Konten -->
+            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
+              <div>
+                <h3 class="text-xl font-bold text-gray-700">Analitik Konten</h3>
+                <p class="mt-2 text-gray-600 text-md">
+                  Telusuri performa konten berdasarkan jumlah tayangan, interaksi pengguna, waktu baca rata-rata, dan konten yang paling populer di situs Anda.
+                </p>
+              </div>
+              <a href="/dashboard-admin/analitik/konten" class="text-sm text-blue-600 mt-4 hover:underline">Lihat Selengkapnya</a>
+            </div>
+          </div>
     </div>
     <!-- Total Pengungjung  -->
     <div class="rounded-lg shadow-md flex flex-col h-[500px] mb-4 rounded-sm bg-white overflow-hidden w-full">
         <!-- Header: Title and Date Select -->
         <div class="flex justify-between items-center px-4 py-2">
-            <h2 class="text-xl font-bold text-gray-700">Total Pengunjung</h2>
-            <select class="border rounded px-3 py-1 text-gray-600">
-                <option>Dec 31 – Jan 31</option>
-                <option>Feb 1 – Feb 28</option>
-                <option>Mar 1 – Mar 31</option>
+            <!-- Left Side: Title -->
+            <div class="flex items-center space-x-2">
+                <h2 class="text-xl font-bold text-gray-700">Total Pengunjung</h2>
+                <!-- Icon (if present) -->
+                <i class="fas fa-info-circle text-gray-500 ml-2"></i> <!-- Example icon -->
+            </div>
+
+            <!-- Right Side: Select Dropdown -->
+            <select class="border rounded-xl pr-10 py-1 text-gray-600">
+                <option>7 hari ini</option>
+                <option>Bulan ini</option>
+                <option>Tahun ini</option>
             </select>
         </div>
+        {{-- <div class="flex justify-between items-center px-4 py-2">
+            <h2 class="text-sm font-bold text-gray-700">Total Pengunjung</h2>
+        </div> --}}
         <!-- Chart Container -->
         <div class="flex-grow relative">
             <canvas id="chart1-area" class="w-full max-h-80 max-w-full px-10 mt-10"></canvas>
@@ -73,7 +239,7 @@
         </div>
     </div> --}}
     <!-- Content Terpopular -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 ">
+    {{-- <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 ">
         <div class="flex flex-col h-96 rounded-lg shadow-md bg-white p-4">
             <div class="text-xl font-semibold mb-4">Berita Terpopular</div>
             <div class="overflow-auto flex-1">
@@ -226,8 +392,9 @@
                 <!-- Tambahkan lebih banyak konten di sini -->
             </div>
         </div>
-    </div>
-{{-- 
+    </div> --}}
+    
+    {{-- 
     <!-- Third grid: 2 columns (responsive: 1 column on small, 2 columns on md and up) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28">
@@ -337,15 +504,15 @@
                 scales: {
                     x: {
                         grid: {
-                            display: false,
-                            drawBorder: true
+                            // display: false,
+                            // drawBorder: true
                         }
                     },
                     y: {
-                        display: false,
-                        grid: {
-                            display: false
-                        }
+                        // display: false,
+                        // grid: {
+                        //     display: false
+                        // }
                     }
                 }
             }

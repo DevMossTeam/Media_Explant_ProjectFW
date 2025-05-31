@@ -73,7 +73,7 @@ class AdminContentController extends Controller
 
     public function detailBerita($id)
     {
-        $beritas = Berita::with(['user', 'tags', 'reaksi'])->findOrFail($id);
+        $beritas = Berita::with(['user', 'tags', 'reaksis'])->findOrFail($id);
         $tags = Tag::all();
         $users = User::all();
     
@@ -165,7 +165,7 @@ class AdminContentController extends Controller
 
     public function detailProduk(Request $request, $id)
     {
-        $produk = Produk::with(['user'])->findOrFail($id);
+        $produk = Produk::with(['user', 'reaksis', 'tags'])->findOrFail($id);
         $users = User::all();
         $tags = Tag::all(); 
 
@@ -299,7 +299,7 @@ class AdminContentController extends Controller
 
     public function detailKarya($id)
     {
-        $karya = Karya::with(['user', 'tags'])->findOrFail($id);
+        $karya = Karya::with(['user', 'tags', 'reaksis'])->findOrFail($id);
         $users = User::all();
         $tags = Tag::all(); 
 

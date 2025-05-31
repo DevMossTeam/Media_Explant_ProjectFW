@@ -119,7 +119,6 @@
             <div class="flex flex-col space-y-4 mt-10">
                 <a href="{{ route('home') }}" class="text-gray-700 hover:text-[#990505] font-semibold">Beranda</a>
 
-<<<<<<< Updated upstream
                 @if (session('user') && session('user')->role === 'Penulis')
                     <!-- Media Dropdown -->
                     <div class="group">
@@ -136,24 +135,6 @@
                         </ul>
                     </div>
                 @endif
-=======
-                <!-- Media Dropdown -->
-                @role('Penulis')
-                <div class="group">
-                    <button class="text-gray-700 hover:text-[#990505] font-semibold w-full text-left">
-                        Buat <i class="fa-solid fa-chevron-down float-right"></i>
-                    </button>
-                    <ul class="hidden group-hover:block mt-2 pl-4 space-y-2">
-                        <li><a href="{{ route('create-news') }}" class="text-gray-600 hover:text-[#990505]">Buat
-                                Berita</a></li>
-                        <li><a href="{{ route('create-product') }}"
-                                class="text-gray-600 hover:text-[#990505]">Tambahkan Produk</a></li>
-                        <li><a href="{{ route('creation') }}" class="text-gray-600 hover:text-[#990505]">Tambahkan
-                                Karya</a></li>
-                    </ul>
-                </div>
-                @endrole
->>>>>>> Stashed changes
 
                 <!-- Profil Dropdown -->
                 <div class="group">

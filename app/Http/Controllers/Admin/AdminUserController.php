@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\API\Bookmark;
+use App\Models\API\Reaksi;
+use App\Models\API\Komentar;
+use Illuminate\Support\Facades\DB;
 
 class AdminUserController extends Controller
 {
@@ -53,14 +57,45 @@ class AdminUserController extends Controller
             'tanggal_sampai' => $request->input('tanggal_sampai'),
         ]);
 
-        return view('dashboard-admin.menu.menu_user', compact('users', 'perPage', 'searchTerm'));
+        return view('dashboard-admin.menu.user.user', compact('users', 'perPage', 'searchTerm'));
     }
 
     public function detail(Request $request, $id)
     {
-        // Use findOrFail() to throw 404 if user not found
-        $user = User::findOrFail($id);
-        return view('dashboard-admin.menu.menu_user_detail', compact('user'));
+        // Fetch user with relationships to avoid N+1 queries
+        $user = User::with(['bookmarks', 'reaksi', 'komentar'])->findOrFail($id);
+
+        return view('dashboard-admin.menu.user.detail', compact('user'));
+    }
+
+    public function deleteKomen(Request $request, $id, $komentarId)
+    {
+        // Start recursive deletion
+        $this->deleteCommentAndChildren($komentarId);
+
+        return redirect()
+            ->route('admin.user.detail', $id)
+            ->with('success', 'Komentar berhasil dihapus');
+    }
+
+    /**
+     * Recursively delete a comment and all its children.
+     */
+    private function deleteCommentAndChildren(string $commentId)
+    {
+        // 1. Find all direct children of this comment
+        $children = DB::table('komentar')
+            ->where('parent_id', $commentId)
+            ->pluck('id')
+            ->toArray();
+
+        // 2. Recursively delete all children
+        foreach ($children as $childId) {
+            $this->deleteCommentAndChildren($childId);
+        }
+
+        // 3. Delete the current comment
+        DB::table('komentar')->where('id', $commentId)->delete();
     }
 
     public function deleteUser(Request $request, $uid)

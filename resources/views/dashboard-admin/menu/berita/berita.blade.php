@@ -12,7 +12,7 @@
             <span class="text-gray-400">/</span>
             <span class="text-gray-700 font-medium">Berita</span>
         </nav>
-    
+
         <!-- Title -->
         <h1 class="mt-3 text-2xl font-bold text-gray-800">Daftar Berita</h1>
     </div>
@@ -191,7 +191,6 @@
                                         <i class="fas fa-check mr-2"></i> Terapkan
                                     </button>
                                 </div>
-
                             </div>
                         </div>
                     </form>
@@ -238,7 +237,7 @@
                             @php
                             preg_match('/<img[^>]+src=["\'](.*?)["\']/i', $berita->konten_berita, $matches);
                                 $imageUrl = $matches[1] ?? 'https://via.placeholder.com/48x48';
-                            @endphp
+                                @endphp
                                 <img src="{{ $imageUrl }}" alt="Cover" class="w-12 h-12 object-cover rounded">
                         </td>
                         @php
@@ -250,8 +249,20 @@
                         @endphp
                         <td class="p-3 font-medium max-w-[150px] whitespace-normal break-words">
                             {!! $highlight($berita->judul ?? 'N/A') !!}
-                        </td>                        
-                        <td class="p-3">{!! $highlight($berita->user?->nama_pengguna ?? 'N/A') !!}</td>
+                        </td>
+                        <td class="p-3 h-16 ">
+                            <div class="flex items-center gap-3 h-full">
+                                @php
+                                $base64Image = $berita && $berita->user?->profile_pic
+                                ? 'data:image/jpeg;base64,' . base64_encode($berita->user?->profile_pic )
+                                :
+                                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb2F1sRrmj0rFgZyVmC8yBgXxyccFRJf7LPQ&s';
+                                @endphp
+                                <img src="{{ $base64Image }}" alt="Foto Profil"
+                                    class="w-10 h-10 rounded-full object-cover shrink-0 border border-gray-300">
+                                <span class="text-sm">{!! $highlight($berita->user?->nama_pengguna, $searchTerm)!!}</span>
+                            </div>
+                        </td>
                         <td class="p-3">{{ $berita->kategori ?? 'N/A' }}</td>
                         <td class="p-3">
                             <span
@@ -390,29 +401,6 @@
         });
     });
 
-    // document.getElementById('exportButton').addEventListener('click', function () {
-    //     Swal.fire({
-    //         title: 'Menyiapkan file...',
-    //         html: 'Silakan tunggu, file sedang diproses.',
-    //         allowOutsideClick: false,
-    //         didOpen: () => {
-    //             Swal.showLoading();
-    //         }
-    //     });
-
-    //     setTimeout(() => {
-    //         Swal.fire({
-    //             icon: 'success',
-    //             title: 'Berhasil!',
-    //             text: 'File berhasil disiapkan. Unduhan dimulai.',
-    //             timer: 2000,
-    //             showConfirmButton: false
-    //         });
-
-    //         // Unduh file di tab baru
-    //         window.open('/path/to/exported-file.xlsx', '_blank');
-    //     }, 2000);
-    // });
 </script>
 @if (session('success'))
 <script>
@@ -420,7 +408,8 @@
         Swal.fire({
             icon: 'success',
             title: 'Berhasil!',
-            text: '{{ session('success') }}',
+            text: '{{ session('
+            success ') }}',
             timer: 3000, // auto close 3 detik
             showConfirmButton: true,
             confirmButtonText: 'OK',
@@ -431,7 +420,7 @@
             }
         });
     });
+
 </script>
 @endif
 @endsection
-
