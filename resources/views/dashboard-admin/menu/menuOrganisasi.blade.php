@@ -49,8 +49,24 @@
                     <i class="fa fa-search absolute left-3 top-2.5 text-gray-400 text-sm"></i>
                 </form>
 
+                <!-- Tambah Anggota Button -->
+                <div class="">
+                    <button id="DivisiPopUp" class="px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-700 transition"
+                        onclick="showDivisionTable()">
+                        Divisi
+                    </button>
+                </div>
+                
+                <div class="ml-2">
+                    <button id="tambahAnggotaBtn"
+                        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                        onclick="showTambahAnggotaModal()">
+                        Tambah Anggota
+                    </button>
+                </div>
+
                 <!-- Filter Dropdown -->
-                <div class="relative group mr-2 inline-block">
+                <div class="relative group mr-2 inline-block ml-2">
                     <form method="GET" class="relative group mr-2 inline-block">
                         <!-- Preserve perPage and search -->
                         <input type="hidden" name="perPage" value="{{ $perPage }}">
@@ -114,13 +130,7 @@
                     </form>
                 </div>
             </div>
-            <!-- Tambah Anggota Button -->
-            <div class="">
-                <button id="DivisiPopUp" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-                    onclick="showDivisionTable()">
-                    Divisi
-                </button>
-            </div>
+            
 
             <script>
                 function showDivisionTable() {
@@ -143,10 +153,8 @@
                             <table class="min-w-full bg-white border border-gray-200">
                                 <thead class="bg-gray-100">
                                     <tr>
-                                        <th class="p-1">No.</th>                                        
-                                        <th class="p-1">Nama Divisi</th>
                                         <th class="p-1">Baris</th>
-                                        <th class="p-1">Kolum</th>
+                                        <th class="p-1">Nama Divisi</th>
                                         <th class="p-1">Jumlah Anggota</th>
                                         <th class="p-1">Aksi</th>
                                     </tr>
@@ -154,11 +162,9 @@
                                 <tbody>
                                     @forelse ($divisiTable as $index => $divisi)
                                         <tr class="hover:bg-gray-50">
-                                            <td class="py-3 px-4 border-b text-center">{{ $loop->iteration }}</td>
-                                            <td class="py-3 px-4 border-b text-left">{{ $divisi->nama_divisi }}</td>
                                             <td class="py-3 px-4 border-b text-center">{{ $divisi->row }}</td>
-                                            <td class="py-3 px-4 border-b text-center">{{ $divisi->column }}</td>
-                                            <td class="py-3 px-4 border-b text-center">{{ $divisi->anggotas_count ?? 0 }}</td>
+                                            <td class="py-3 px-4 border-b text-left">{{ $divisi->nama_divisi }}</td>
+                                            <td class="py-3 px-4 border-b text-center">{{ $divisi->total_anggota ?? 0 }}</td>
                                             <td class="py-3 px-4 border-b text-center space-x-2">
 
                                                  <!-- Delete form -->
@@ -180,7 +186,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6">
+                                            <td colspan="4">
                                                 <div class="bg-blue-50 text-blue-700 text-sm text-center py-4">
                                                     Belum ada data yang tersedia.
                                                 </div>
@@ -278,15 +284,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Kolom -->
-                                <div class="grid grid-cols-3 items-center gap-4">
-                                    <label for="column" class="text-sm font-medium text-gray-900">Kolom</label>
-                                    <div class="col-span-2">
-                                        <input type="number" id="column" name="column" required min="1"
-                                            placeholder="Masukkan Jumlah Kolom"
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
-                                    </div>
-                                </div>
+                                <!-- Kolom -->                              
                             </form>
                         `,
                             showCancelButton: true,
@@ -362,13 +360,7 @@
 
             </script>
 
-            <div class="ml-2">
-                <button id="tambahAnggotaBtn"
-                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-                    onclick="showTambahAnggotaModal()">
-                    Tambah Anggota
-                </button>
-            </div>
+           
         </div>
 
         <!-- Member Table -->
@@ -377,7 +369,7 @@
                 <thead class="bg-gray-100 text-xs font-semibold text-gray-600">
                     <tr>
                         <th class="p-1">No.</th>
-                        <th class="p-3">Nama Pengguna</th>
+                        <th class="p-3">Nama Anggota</th>
                         <th class="p-3">Jabatan</th>
                         <th class="p-3">Divisi</th>
                         <th class="p-3 text-center w-32">Action</th>

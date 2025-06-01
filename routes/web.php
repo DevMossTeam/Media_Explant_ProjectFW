@@ -295,9 +295,10 @@ Route::middleware(['checkRole:Admin'])->group(function () {
     Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('admin.dashboard');
 
     Route::prefix('dashboard-admin/kotak-masuk')->name('kotak-masuk.')->group(function () {
-        Route::get('/', [KotakMasukController::class, 'index'])->name('index');
-        Route::get('/{id}', [KotakMasukController::class, 'show'])->name('show');
-        Route::delete('/{id}', [KotakMasukController::class, 'destroy'])->name('destroy');
+        Route::resource('/', KotakMasukController::class);
+        Route::delete('/destroy', [KotakMasukController::class, 'destroy'])->name('bulk-delete');
+        Route::get('/toggle-star/{id}', [KotakMasukController::class, 'toggleStar'])->name('kotak-masuk.toggle-star');
+        Route::get('/{id}', [KotakMasukController::class, 'show'])->name('kotak-masuk.show');
     });
 
     // Halaman daftar user

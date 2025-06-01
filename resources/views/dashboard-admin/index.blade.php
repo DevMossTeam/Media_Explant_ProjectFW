@@ -4,15 +4,35 @@
 {{-- @if(auth()->check() && auth()->user()->role == 'Admin') --}}
 
 <div class="container mx-auto px-1 py-1">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
             <!-- Icon on the left -->
             <i class="fa-solid fa-user text-3xl text-blue-500 bg-blue-100 p-3 rounded-lg shadow-sm mr-4"></i>
 
             <!-- Text Content to the right of the icon -->
             <div>
-                <p class="text-sm text-gray-500">Total Pengguna</p>
-                <p class="text-2xl font-bold counter-number-animation" data-target="25">0</p>
+                <p class="text-sm text-gray-500">Total Pembaca</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{$usersCount ?? 0}}">{{$usersCount ?? 0}}</p>
+            </div>
+        </div>
+        <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
+            <!-- Icon on the left -->
+            <i class="fa-solid fa-pencil text-3xl text-pink-500 bg-pink-100 p-3 rounded-lg shadow-sm mr-4"></i>
+
+            <!-- Text Content to the right of the icon -->
+            <div>
+                <p class="text-sm text-gray-500">Total Penulis</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{$usersCount ?? 0}}">{{$usersCount ?? 0}}</p>
+            </div>
+        </div>
+        <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
+            <!-- Icon on the left -->
+            <i class="fa-solid fa-user-tie text-3xl text-purple-500 bg-purple-100 p-3 rounded-lg shadow-sm mr-4"></i>
+
+            <!-- Text Content to the right of the icon -->
+            <div>
+                <p class="text-sm text-gray-500">Total Anggota Organisasi</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{$usersCount ?? 0}}">{{$usersCount ?? 0}}</p>
             </div>
         </div>
         <!-- Total Berita -->
@@ -20,7 +40,7 @@
             <i class="fa-solid fa-newspaper text-3xl text-green-500 bg-green-100 p-3 rounded-lg shadow-sm mr-4"></i>
             <div>
                 <p class="text-sm text-gray-500">Total Berita</p>
-                <p class="text-2xl font-bold counter-number-animation" data-target="100">0</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{$beritaCount ?? 0}}">{{$beritaCount ?? 0}}</p>
             </div>
         </div>
 
@@ -29,7 +49,7 @@
             <i class="fa-solid fa-cube text-3xl text-yellow-500 bg-yellow-100 p-3 rounded-lg shadow-sm mr-4"></i>
             <div>
                 <p class="text-sm text-gray-500">Total Produk</p>
-                <p class="text-2xl font-bold counter-number-animation" data-target="1000">0</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{$produkCount ?? 0}}">{{$produkCount ?? 0}}</p>
             </div>
         </div>
 
@@ -38,7 +58,7 @@
             <i class="fa-solid fa-book text-3xl text-red-500 bg-red-100 p-3 rounded-lg shadow-sm mr-4"></i>
             <div>
                 <p class="text-sm text-gray-500">Total Karya</p>
-                <p class="text-2xl font-bold counter-number-animation" data-target="75">0</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{$KaryaCount ?? 0}}">{{$KaryaCount ?? 0}}</p>
             </div>
         </div>
     </div>
@@ -50,7 +70,7 @@
                 <div class="flex items-center space-x-2">
                     <h2 class="text-xl font-bold text-gray-700">Pesan Terbaru</h2>
                     <!-- Icon (if present) -->
-                    <i class="fas fa-info-circle text-gray-500 ml-2"></i> <!-- Example icon -->
+                    {{-- <i class="fas fa-info-circle text-gray-500 ml-2"></i> <!-- Example icon --> --}}
                 </div>
                 {{-- <h3 class="text-sm font-bold text-gray-700">Pesan Terbaru Hari ini: 100</h3>                --}}
 
@@ -105,12 +125,12 @@
                                 <span class="text-sm text-gray-400">Apr, 23</span>
                             </div>
                         </div>
-                        <hr>        
+                        <hr>
                         <!-- Message Card Template (Duplicate 10 times) -->
                         <div
                             class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
                             <div class="flex items-center gap-3 min-w-0">
-                               
+
                                 <span class="font-medium text-gray-800 truncate">Search Console</span>
                                 <span class="text-sm text-gray-500 truncate max-w-xs">Lorem ipsum dolor sit amet,
                                     consectetur adipiscing elit...</span>
@@ -140,7 +160,7 @@
                         <div
                             class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
                             <div class="flex items-center gap-3 min-w-0">
-                               
+
                                 <span class="font-medium text-gray-800 truncate">Search Console</span>
                                 <span class="text-sm text-gray-500 truncate max-w-xs">Lorem ipsum dolor sit amet,
                                     consectetur adipiscing elit...</span>
@@ -165,7 +185,7 @@
                                 <span class="text-sm text-gray-400">Apr, 23</span>
                             </div>
                         </div>
-                        <hr>                
+                        <hr>
                     </div>
                 </div>
             </div>
@@ -173,35 +193,77 @@
         <!-- Right Side -->
         <div class="grid grid-rows-2 gap-4">
             <!-- Card 1: Analitik Pengunjung -->
-            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
-              <div>
-                <h3 class="text-xl font-bold text-gray-700">Analitik Pengunjung</h3>
-                <p class="mt-2 text-gray-600 text-md">
-                  Lihat statistik jumlah pengunjung website, asal trafik, perangkat yang digunakan, dan durasi kunjungan untuk membantu memahami perilaku audiens Anda.
-                </p>
-              </div>
-              <a href="/dashboard-admin/analitik/pengunjung" class="text-sm text-blue-600 mt-4 hover:underline">Lihat Selengkapnya</a>
+            <div class="bg-gray-500 rounded-lg shadow-md p-4 flex flex-col justify-center items-center">
+                <div>
+                    <!-- Live Clock -->
+                    <div id="liveClock" class="text-center text-white">
+                        <div id="clockTime" class="text-5xl font-bold"></div>
+                        <div id="clockDate" class="mt-2 text-xl font-medium"></div>
+                    </div>
+                </div>
             </div>
-          
+
+            <!-- Add this script at the bottom of your Blade file or in a separate JS file -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const clockTime = document.getElementById('clockTime');
+                    const clockDate = document.getElementById('clockDate');
+
+                    // Function to update the clock
+                    function updateClock() {
+                        const now = new Date();
+
+                        // Format time (e.g., 4:00:28 PM)
+                        const optionsTime = {
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            second: 'numeric',
+                            hour12: true
+                        };
+                        const formattedTime = now.toLocaleTimeString(undefined, optionsTime);
+
+                        // Format date (e.g., June 1, 2025)
+                        const optionsDate = {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        };
+                        const formattedDate = now.toLocaleDateString(undefined, optionsDate);
+
+                        // Update the DOM
+                        clockTime.textContent = formattedTime;
+                        clockDate.textContent = formattedDate;
+                    }
+
+                    // Update the clock every second
+                    setInterval(updateClock, 1000);
+
+                    // Initial update
+                    updateClock();
+                });
+            </script>
+
             <!-- Card 2: Analitik Konten -->
             <div class="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
-              <div>
-                <h3 class="text-xl font-bold text-gray-700">Analitik Konten</h3>
-                <p class="mt-2 text-gray-600 text-md">
-                  Telusuri performa konten berdasarkan jumlah tayangan, interaksi pengguna, waktu baca rata-rata, dan konten yang paling populer di situs Anda.
-                </p>
-              </div>
-              <a href="/dashboard-admin/analitik/konten" class="text-sm text-blue-600 mt-4 hover:underline">Lihat Selengkapnya</a>
+                <div>
+                    <h3 class="text-xl font-bold text-gray-700">Analitik Grafik</h3>
+                    <p class="mt-2 text-gray-600 text-md">
+                        Telusuri performa konten berdasarkan jumlah tayangan, interaksi pengguna, waktu baca rata-rata,
+                        dan konten yang paling populer di situs Anda.
+                    </p>
+                </div>
+                <a href="/dashboard-admin/analitik/konten" class="text-sm text-blue-600 mt-4 hover:underline">Lihat
+                    Selengkapnya</a>
             </div>
-          </div>
+        </div>
     </div>
     <!-- Total Pengungjung  -->
-    <div class="rounded-lg shadow-md flex flex-col h-[500px] mb-4 rounded-sm bg-white overflow-hidden w-full">
+    {{-- <div class="rounded-lg shadow-md flex flex-col h-[500px] mb-4 rounded-sm bg-white overflow-hidden w-full">
         <!-- Header: Title and Date Select -->
         <div class="flex justify-between items-center px-4 py-2">
             <!-- Left Side: Title -->
             <div class="flex items-center space-x-2">
-                <h2 class="text-xl font-bold text-gray-700">Total Pengunjung</h2>
+                <h2 class="text-xl font-bold text-gray-700">Total Akun Login 7 hari ini</h2>
                 <!-- Icon (if present) -->
                 <i class="fas fa-info-circle text-gray-500 ml-2"></i> <!-- Example icon -->
             </div>
@@ -213,14 +275,14 @@
                 <option>Tahun ini</option>
             </select>
         </div>
-        {{-- <div class="flex justify-between items-center px-4 py-2">
+        <div class="flex justify-between items-center px-4 py-2">
             <h2 class="text-sm font-bold text-gray-700">Total Pengunjung</h2>
-        </div> --}}
+        </div>
         <!-- Chart Container -->
         <div class="flex-grow relative">
             <canvas id="chart1-area" class="w-full max-h-80 max-w-full px-10 mt-10"></canvas>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Most Search  -->
     {{-- <div class="rounded-lg shadow-md flex flex-col h-[500px] mb-4 rounded-sm bg-white overflow-hidden w-full">
@@ -393,7 +455,7 @@
             </div>
         </div>
     </div> --}}
-    
+
     {{-- 
     <!-- Third grid: 2 columns (responsive: 1 column on small, 2 columns on md and up) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -451,9 +513,9 @@
         gradientOrange.addColorStop(0, 'rgba(255, 159, 64, 0.6)');
         gradientOrange.addColorStop(1, 'rgba(255, 159, 64, 0.1)');
         // Sample Data
-        const labels = ['Mar 1', 'Mar 2', 'Mar 3', 'Mar 4', 'Mar 5', 'Mar 6', 'Mar 7'];
-        const dataBlue = [50, 60, 45, 70, 55, 80, 90];
-        const dataOrange = [45, 50, 60, 55, 65, 60, 85];
+        const labels = ['Mei 26', 'Mei 27', 'Mei 28', 'Mei 29', 'Mei 30', 'Mei 31', 'Juni 1'];
+        const dataBlue = [10, 5, 7, 7, 13, 18, 22];
+        const dataOrange = [10, 6, 9, 5, 15, 20, 20];
 
         new Chart(ctx, {
             type: 'line',
@@ -471,7 +533,7 @@
                         pointBackgroundColor: 'rgba(54, 162, 235, 1)'
                     },
                     {
-                        label: 'Pengunjung (previous period)',
+                        label: 'Pengunjung (periode sebelumnya)',
                         data: dataOrange,
                         tension: 0.4,
                         fill: true,

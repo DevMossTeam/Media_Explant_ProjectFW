@@ -22,8 +22,10 @@ class Pesan extends Model
         'detail_pesan',
         'pesan_type',
         'item_id',
-        'nama',
+        'nama',        
         'email',
+        'media',
+        'star',
     ];
     public function user()
     {

@@ -391,24 +391,7 @@
                 });
             });
         });
-    });
-
-
-    // Filter dropdown
-    document.getElementById('filterDropdownBtn').addEventListener('click', function (e) {
-        e.preventDefault();
-        const dropdown = document.getElementById('filterDropdown');
-        dropdown.classList.toggle('hidden');
-    });
-
-    // Close dropdown on outside click
-    document.addEventListener('click', function (e) {
-        const dropdown = document.getElementById('filterDropdown');
-        const btn = document.getElementById('filterDropdownBtn');
-        if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.add('hidden');
-        }
-    });
+    });    
 
 </script>
 

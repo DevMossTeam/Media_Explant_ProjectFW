@@ -22,7 +22,7 @@
         @endphp
         
         <div class="space-y-6 text-gray-800">
-            {!! $cleanHtml !!}
+            {!! $cleanHtml ?? '' !!}
         </div>
         
         <style>

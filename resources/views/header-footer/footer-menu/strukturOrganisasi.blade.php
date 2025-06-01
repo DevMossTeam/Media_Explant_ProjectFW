@@ -28,8 +28,13 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 place-items-center mb-20">
                 @foreach($divisi->anggotas as $anggota)
                 <div class="text-center">
-                    <img class="w-16 h-16 rounded-full mx-auto"
-                        src="https://www.techtarget.com/rms/onlineimages/anime_girl-h_half_column_mobile.png"
+                    @php
+                    $base64Image = $anggota->user && $anggota->user->profile_pic
+                    ? 'data:image/jpeg;base64,' . base64_encode($anggota->user->profile_pic)
+                    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb2F1sRrmj0rFgZyVmC8yBgXxyccFRJf7LPQ&s';
+                    @endphp
+                    <img class="w-24 h-24 rounded-full mx-auto"
+                        src="{{$base64Image}}"
                         alt="Avatar">
 
                     @if($anggota->title_perangkat)

@@ -26,9 +26,9 @@
             <!-- Profile Image -->
             <div class="w-20 h-20 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                 @php
-                    $base64Image = $user && $user->profile_pic
-                        ? 'data:image/jpeg;base64,' . base64_encode($user->profile_pic)
-                        : 'https://encrypted-tbn0.gstatic.com/images?q=tbn :ANd9GcSb2F1sRrmj0rFgZyVmC8yBgXxyccFRJf7LPQ&s';
+                $base64Image = $user && $user->profile_pic
+                ? 'data:image/jpeg;base64,' . base64_encode($user->profile_pic)
+                : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb2F1sRrmj0rFgZyVmC8yBgXxyccFRJf7LPQ&s';
                 @endphp
                 <img src="{{ $base64Image }}" alt="Profile Picture" class="w-full h-full object-cover">
             </div>

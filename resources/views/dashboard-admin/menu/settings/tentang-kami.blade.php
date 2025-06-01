@@ -2,20 +2,24 @@
 
 @section('content')
 <div class="container mx-auto px-1 py-1">
-    <div class="flex items-center justify-between my-5">
-        <h1 class="font-bold text-2xl">Settings</h1>
-        <nav class="text-sm text-gray-500" aria-label="Breadcrumb">
-            <ol class="list-reset flex">
-                <li><a href="#" class="">Home</a></li>
-                <li><span class="mx-2">></span></li>
-                <li class="text-gray-700">Setting</li>
-            </ol>
+    <div class="mb-6">
+        <!-- Breadcrumb -->
+        <nav class="flex items-center text-sm text-gray-500 space-x-2" aria-label="Breadcrumb">
+            <a href="/dashboard-admin" class="flex items-center text-gray-600 hover:text-blue-600 transition">
+                <i class="fa-solid fa-house mr-1"></i>
+                <span>Home</span>
+            </a>
+            <span class="text-gray-400">/</span>
+            <span class="text-gray-700 font-medium">Setting</span>
         </nav>
+        <!-- Title -->
+        <h1 class="mt-3 text-2xl font-bold text-gray-800">Setting</h1>
     </div>
+
     <div class="container mx-auto px-4 py-6">
-        <div class="grid grid-cols-12 gap-4">
+        <div class="item-center">
             <!-- Sidebar -->
-            <div class="col-span-3">
+            {{-- <div class="col-span-3">
                 <div class="bg-white rounded-lg shadow p-4">
                     <ul class="space-y-2">
                         <li>
@@ -34,7 +38,7 @@
                         </li>
                     </ul>
                 </div>
-            </div>
+            </div> --}}
             <!-- Main Content -->
             <div class="col-span-9 bg-white rounded-lg shadow p-6">
                 <h1 class="text-2xl font-bold mb-6 text-gray-700">Informasi Website</h1>

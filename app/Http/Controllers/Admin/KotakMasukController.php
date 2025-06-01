@@ -5,41 +5,78 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\API\Pesan;
-
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class KotakMasukController extends Controller
 {
-    // Tampilkan semua pesan
     public function index(Request $request)
     {
-        $perPage = $request->input('perPage', 10);
-        $pesans = Pesan::paginate($perPage);
-
-        return view('dashboard-admin.menu.kotak_masuk', compact('pesans', 'perPage'));
+        $query = Pesan::with('user');
+    
+        if ($request->has('filter')) {
+            $filter = $request->input('filter');
+            if ($filter === 'masukan') {
+                $query->where('status', 'masukan');
+            } elseif ($filter === 'laporan') {
+                $query->where('status', 'laporan');
+            } elseif ($filter === 'showAll') {
+                $query = Pesan::with('user');
+            } elseif ($filter === 'starred') {
+                $query->where('star', 'iya');
+            } elseif ($filter === 'terbaru') {
+                $query->whereDate('created_at', now());
+            }
+        }
+    
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('pesan', 'like', "%$search%")
+                  ->orWhereHas('user', function ($user) use ($search) {
+                      $user->where('name', 'like', "%$search%");
+                  });
+            });
+        }
+    
+        $perPage = $request->input('perPage', 150);
+        $pesans = $query->paginate($perPage);
+    
+        return view('dashboard-admin.menu.kotak_masuk', compact('pesans'));
     }
 
-    // Tampilkan detail satu pesan
+    // Detail pesan
     public function show($id)
     {
-        $pesan = Pesan::find($id);
-
-        if (!$pesan) {
-            return redirect()->back()->with('error', 'Pesan tidak ditemukan.');
-        }
+        $pesan = Pesan::with('user')->find($id);
+        if (!$pesan) abort(404);
 
         return view('dashboard-admin.menu.detail_kotak_masuk', compact('pesan'));
     }
 
-    // Hapus pesan
-    public function destroy($id)
+    // Hapus pesan secara bulk
+    public function destroy(Request $request)
     {
-        $pesan = Pesan::find($id);
+        // Get the message IDs directly as an array
+        $ids = $request->input('message_ids');
 
-        if (!$pesan) {
-            return redirect()->back()->with('error', 'Pesan tidak ditemukan.');
+        if (!is_array($ids) || empty($ids)) {
+            return back()->with('error', 'Tidak ada pesan yang dipilih.');
         }
 
-        $pesan->delete();
+        // Delete selected messages
+        Pesan::whereIn('id', $ids)->delete();
 
-        return redirect()->route('kotak-masuk.index')->with('success', 'Pesan berhasil dihapus.');
+        return back()->with('success', 'Pesan berhasil dihapus.');
+    }
+
+    // Toggle bintang
+    public function toggleStar($id)
+    {
+        $pesan = Pesan::find($id);
+        if ($pesan) {
+            $pesan->star = $pesan->star === 'iya' ? 'tidak' : 'iya';
+            $pesan->save();
+        }
+        return response()->json(['status' => 'success']);
     }
 }

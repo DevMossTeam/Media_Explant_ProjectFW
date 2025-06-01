@@ -35,7 +35,7 @@ class StrukturOrganisasiController extends Controller
                     WHERE organisasi_anggota.id_divisi = organisasi_divisi.id
                 ) as total_anggota')
             )
-            ->orderBy('organisasi_divisi.id')
+            ->orderBy('organisasi_divisi.row')
             ->get();
 
         // Build query with relationships
@@ -216,6 +216,4 @@ class StrukturOrganisasiController extends Controller
         ->route('admin.organisasi.index') // Ganti dengan nama rute sebenarnya
         ->with('success', 'Anggota berhasil dihapus!');
     }
-
-    
 }

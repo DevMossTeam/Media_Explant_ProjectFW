@@ -24,6 +24,11 @@ class Karya extends Model
         return $this->belongsTo(User::class,'user_id', 'uid');
     }
 
+    public function tags()
+    {
+        return $this->hasMany(Tag::class, 'berita_id');
+    }
+
     public function bookmarks()
     {
         return $this->morphMany(Bookmark::class, 'bookmarkable','bookmark_type','item_id');
