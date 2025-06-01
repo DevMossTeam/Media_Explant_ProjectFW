@@ -15,6 +15,8 @@ use App\Models\Karya\DesainGrafis;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserReact\Reaksi;
 use App\Models\UserReact\Komentar;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class HomeNewsController extends Controller
 {
@@ -123,22 +125,46 @@ class HomeNewsController extends Controller
         $relatedNews = HomeNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->where('visibilitas', 'public')
-            ->orderByDesc('view_count')
             ->orderByDesc('tanggal_diterbitkan')
+            ->orderByDesc('view_count')
             ->take(6)
             ->get();
 
         // RECOMMENDED NEWS: suka_count + view_count + tanggal terbaru
-        $recommendedNews = HomeNews::where('id', '!=', $news->id)
-            ->where('kategori', $news->kategori)
+        $recommendedNews = HomeNews::where('kategori', $news->kategori)
+            ->where('id', '!=', $news->id)
             ->where('visibilitas', 'public')
-            ->withCount([
-                'reaksi as suka_count' => function ($query) {
-                    $query->where('jenis_reaksi', 'Suka');
-                }
-            ])
-            ->orderByDesc('view_count')
-            ->orderByDesc('suka_count')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS like_count
+         FROM reaksi
+         WHERE jenis_reaksi = 'Suka' AND reaksi_type = 'Berita'
+         GROUP BY item_id) as r
+    "), 'berita.id', '=', 'r.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS komentar_count
+         FROM komentar
+         WHERE komentar_type = 'Berita'
+         GROUP BY item_id) as k
+    "), 'berita.id', '=', 'k.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS bookmark_count
+         FROM bookmark
+         WHERE bookmark_type = 'Berita'
+         GROUP BY item_id) as b
+    "), 'berita.id', '=', 'b.item_id')
+            ->select(
+                'berita.*',
+                DB::raw('COALESCE(r.like_count, 0) as like_count'),
+                DB::raw('COALESCE(k.komentar_count, 0) as komentar_count'),
+                DB::raw('COALESCE(b.bookmark_count, 0) as bookmark_count'),
+                DB::raw('
+            (view_count * 1) +
+            (COALESCE(r.like_count, 0) * 2) +
+            (COALESCE(k.komentar_count, 0) * 3) +
+            (COALESCE(b.bookmark_count, 0) * 2) as score
+        ')
+            )
+            ->orderByDesc('score')
             ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
@@ -149,18 +175,40 @@ class HomeNewsController extends Controller
             ->inRandomOrder()
             ->value('kategori');
 
+        $oneWeekAgo = Carbon::now()->subWeek(); // 7 hari lalu
+
+        // 2. Coba ambil berita dari kategori itu dalam 7 hari terakhir
         $otherTopics = HomeNews::where('kategori', $randomKategori)
             ->where('visibilitas', 'public')
+            ->where('tanggal_diterbitkan', '>=', $oneWeekAgo)
             ->withCount([
-                'reaksi as suka_count' => function ($query) {
-                    $query->where('jenis_reaksi', 'Suka');
-                }
+                'reaksiSuka as suka_count'
             ])
             ->orderByDesc('view_count')
             ->orderByDesc('suka_count')
             ->orderByDesc('tanggal_diterbitkan')
             ->take(8)
             ->get();
+
+        // 3. Jika hasilnya kurang dari 8, ambil tambahan berita dari kategori tersebut (di luar 7 hari)
+        if ($otherTopics->count() < 8) {
+            $sisa = 8 - $otherTopics->count();
+            $idYangSudahDiambil = $otherTopics->pluck('id')->toArray();
+
+            $tambahan = HomeNews::where('kategori', $randomKategori)
+                ->where('visibilitas', 'public')
+                ->whereNotIn('id', $idYangSudahDiambil)
+                ->withCount([
+                    'reaksiSuka as suka_count'
+                ])
+                ->orderByDesc('view_count')
+                ->orderByDesc('suka_count')
+                ->orderByDesc('tanggal_diterbitkan')
+                ->take($sisa)
+                ->get();
+
+            $otherTopics = $otherTopics->concat($tambahan);
+        }
 
         return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi', 'komentarList'));
     }
