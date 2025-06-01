@@ -293,7 +293,9 @@ Route::middleware('web')->group(function () {
 Route::middleware(['checkRole:Admin'])->group(function () {
     // Dashboard admin utama
     Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('admin.dashboard');
+
     Route::get('/dashboard-admin/analitik/konten', [AdminController::class, 'performaKonten'])->name('admin.analitik.konten');
+    Route::get('/dashboard-admin/analitik/konten/download', [AdminController::class, 'downloadLaporan'])->name('admin.laporan.download');
 
     Route::prefix('dashboard-admin/kotak-masuk')->name('kotak-masuk.')->group(function () {
         Route::resource('/', KotakMasukController::class);
