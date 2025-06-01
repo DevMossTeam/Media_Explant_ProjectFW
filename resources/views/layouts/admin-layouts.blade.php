@@ -107,6 +107,15 @@
                             </a>
                         </li>
                         <li>
+                            <a href="/dashboard-admin/analitik/konten"
+                                class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                                <i class="ableIcon fa-solid fa-chart-bar text-xl text-gray-500 w-8 text-center"></i>
+                                <span class="sidebar-text ml-3 text-base font-medium">
+                                    Analitik Konten
+                                </span>
+                            </a>
+                        </li>
+                        {{-- <li>
                             <!-- Toggle for Submenu -->
                             <div
                                 class="tableToggle flex items-center justify-between px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md cursor-pointer transition-colors duration-300">
@@ -130,7 +139,7 @@
                                 <li><a href="#" class="block py-2 text-gray-600 hover:text-gray-800">Analitik Pengunjung</a></li>
                                 
                             </ul>
-                        </li>
+                        </li> --}}
                         <li>
                             <!-- Toggle for Submenu -->
                             <div
@@ -303,7 +312,7 @@
 
                 <!-- Right side: Notifications and Profile -->
                 <div class="flex items-center space-x-4">
-                    <details class="relative">
+                    {{-- <details class="relative">
                         <summary
                             class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-full text-gray-600 hover:text-gray-800 cursor-pointer focus:outline-none">
                             <i class="fas fa-bell"></i>
@@ -320,7 +329,7 @@
                                 </ul>
                             </div>
                         </div>
-                    </details>
+                    </details> --}}
 
                     <div class="relative">
                         @php
@@ -346,8 +355,8 @@
                         <div id="profileDropdown"
                             class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden">
                             <!-- Dropdown content here -->
-                            <a href="/dashboard-admin/user_profile"
-                                class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+                            {{-- <a href="/dashboard-admin/user_profile"
+                                class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a> --}}
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit"

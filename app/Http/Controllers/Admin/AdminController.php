@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\StrukturAnggota;
 use App\Models\API\Berita;
 use App\Models\API\Karya;
 use App\Models\API\Komentar;
@@ -17,13 +18,27 @@ use Illuminate\Support\Facades\App;
 class AdminController extends Controller
 {  
     function index() {
-        $usersCount = User::count();
+        $pembacaCount = User::where('role', 'Pembaca')->count();
+        $penulisCount = User::where('role', 'Penulis')->count();
         $produkCount = Produk::count();
         $KaryaCount = Karya::count();
         $beritaCount = Berita::count();
-        $query = Pesan::with('user');
+        $anggotaCount = StrukturAnggota::count();
 
-        return view('dashboard-admin.index', compact('usersCount', 'produkCount','KaryaCount', 'beritaCount'));
+        $pesans = Pesan::with('user')
+        ->orderByDesc('created_at') // Order by most recent
+        ->take(10) // Limit to 10 latest messages
+        ->get();
+
+        return view('dashboard-admin.index', compact(
+            'pembacaCount',
+            'penulisCount',
+            'produkCount',
+            'KaryaCount',
+            'beritaCount',
+            'anggotaCount',
+            'pesans'
+        ));
     }   
      
     public function performaKonten(Request $request)

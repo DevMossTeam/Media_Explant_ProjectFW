@@ -11,7 +11,7 @@
             <!-- Text Content to the right of the icon -->
             <div>
                 <p class="text-sm text-gray-500">Total Pembaca</p>
-                <p class="text-2xl font-bold counter-number-animation" data-target="{{$usersCount ?? 0}}">{{$usersCount ?? 0}}</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{$pembacaCount ?? 0}}">{{$pembacaCount ?? 0}}</p>
             </div>
         </div>
         <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
@@ -21,7 +21,7 @@
             <!-- Text Content to the right of the icon -->
             <div>
                 <p class="text-sm text-gray-500">Total Penulis</p>
-                <p class="text-2xl font-bold counter-number-animation" data-target="{{$usersCount ?? 0}}">{{$usersCount ?? 0}}</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{$penulisCount ?? 0}}">{{$penulisCount ?? 0}}</p>
             </div>
         </div>
         <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
@@ -31,7 +31,7 @@
             <!-- Text Content to the right of the icon -->
             <div>
                 <p class="text-sm text-gray-500">Total Anggota Organisasi</p>
-                <p class="text-2xl font-bold counter-number-animation" data-target="{{$usersCount ?? 0}}">{{$usersCount ?? 0}}</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{$anggotaCount ?? 0}}">{{$anggotaCount ?? 0}}</p>
             </div>
         </div>
         <!-- Total Berita -->
@@ -68,127 +68,102 @@
                 <!-- Header -->
                 <div class="flex items-center space-x-2">
                     <h2 class="text-xl font-bold text-gray-700">Pesan Terbaru</h2>
-                    <!-- Icon (if present) -->
-                    {{-- <i class="fas fa-info-circle text-gray-500 ml-2"></i> <!-- Example icon --> --}}
                 </div>
-                {{-- <h3 class="text-sm font-bold text-gray-700">Pesan Terbaru Hari ini: 100</h3>                --}}
-
+        
                 <!-- Tab Navigation -->
-                <ul
-                    class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 mt-5">
+                <ul id="messageTabs" class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 mt-5">
                     <li class="me-2">
-                        <a href="#" aria-current="page"
-                            class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active">Selengkapnya</a>
+                        <a href="#" data-filter="all" class="inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active">Selengkapnya</a>
+                    </li>
+                    {{-- <li class="me-2">
+                        <a href="#" data-filter="masukan" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50">Masukan</a>
                     </li>
                     <li class="me-2">
-                        <a href="#"
-                            class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50">Masukan</a>
-                    </li>
-                    <li class="me-2">
-                        <a href="#"
-                            class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50">Laporan</a>
-                    </li>
+                        <a href="#" data-filter="laporan" class="inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50">Laporan</a>
+                    </li> --}}
                 </ul>
-
+        
                 <!-- Scrollable Message Container -->
                 <div class="mt-4 flex-1 overflow-y-auto pr-2">
                     <!-- Message List -->
-                    <div class="space-y-1">
-                        <!-- Message Card Template (Duplicate 10 times) -->
-                        <div
-                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <span class="font-medium text-gray-800 truncate">Search Console</span>
-                                <span class="text-sm text-gray-500 truncate max-w-xs">Lorem ipsum dolor sit amet,
-                                    consectetur adipiscing elit...</span>
+                    <div id="messagesContainer" class="space-y-1">
+                        @foreach ($pesans as $pesan)
+                            <div class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <span class="font-medium text-gray-800 truncate">
+                                        @if ($pesan->user)
+                                            {{ $pesan->user->nama_pengguna }}
+                                        @else
+                                            {{ $pesan->nama }}
+                                        @endif
+                                    </span>
+                                    <span class="text-sm text-gray-500 truncate max-w-xs">
+                                        @if ($pesan->pesan)
+                                            {{ Str::limit($pesan->pesan, 100) }}
+                                        @else
+                                            {{ Str::limit($pesan->detail_pesan, 100) }}
+                                        @endif
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    @if (\Carbon\Carbon::parse($pesan->created_at)->diffInHours(now()) < 24)
+                                        <span class="text-xs bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full">Terbaru</span>
+                                    @endif
+        
+                                    @if ($pesan->status === 'laporan')
+                                        <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Laporan</span>
+                                    @elseif ($pesan->status === 'masukan')
+                                        <span class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Masukan</span>
+                                    @endif
+        
+                                    <span class="text-sm text-gray-400">{{ date('M j, Y', strtotime($pesan->created_at)) }}</span>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <span
-                                    class="text-xs bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full">Terbaru</span>
-                                <span
-                                    class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Masukan</span>
-                                <span class="text-sm text-gray-400">Apr, 24</span>
-                            </div>
-                        </div>
-                        <hr>
-                        <!-- Duplicate Messages -->
-                        <div
-                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <span class="font-medium text-gray-800 truncate">Webmaster Tools</span>
-                                <span class="text-sm text-gray-500 truncate max-w-xs">Pellentesque habitant morbi
-                                    tristique senectus et netus...</span>
-                            </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Laporan</span>
-                                <span class="text-sm text-gray-400">Apr, 23</span>
-                            </div>
-                        </div>
-                        <hr>
-                        <!-- Message Card Template (Duplicate 10 times) -->
-                        <div
-                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
-                            <div class="flex items-center gap-3 min-w-0">
-
-                                <span class="font-medium text-gray-800 truncate">Search Console</span>
-                                <span class="text-sm text-gray-500 truncate max-w-xs">Lorem ipsum dolor sit amet,
-                                    consectetur adipiscing elit...</span>
-                            </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <span
-                                    class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Masukan</span>
-                                <span class="text-sm text-gray-400">Apr, 24</span>
-                            </div>
-                        </div>
-                        <hr>
-                        <!-- Duplicate Messages -->
-                        <div
-                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <span class="font-medium text-gray-800 truncate">Webmaster Tools</span>
-                                <span class="text-sm text-gray-500 truncate max-w-xs">Pellentesque habitant morbi
-                                    tristique senectus et netus...</span>
-                            </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Laporan</span>
-                                <span class="text-sm text-gray-400">Apr, 23</span>
-                            </div>
-                        </div>
-                        <hr>
-                        <!-- Message Card Template (Duplicate 10 times) -->
-                        <div
-                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
-                            <div class="flex items-center gap-3 min-w-0">
-
-                                <span class="font-medium text-gray-800 truncate">Search Console</span>
-                                <span class="text-sm text-gray-500 truncate max-w-xs">Lorem ipsum dolor sit amet,
-                                    consectetur adipiscing elit...</span>
-                            </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <span
-                                    class="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Masukan</span>
-                                <span class="text-sm text-gray-400">Apr, 24</span>
-                            </div>
-                        </div>
-                        <hr>
-                        <!-- Duplicate Messages -->
-                        <div
-                            class="flex items-center justify-between py-3 hover:bg-gray-50 rounded-lg px-2 transition-colors">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <span class="font-medium text-gray-800 truncate">Webmaster Tools</span>
-                                <span class="text-sm text-gray-500 truncate max-w-xs">Pellentesque habitant morbi
-                                    tristique senectus et netus...</span>
-                            </div>
-                            <div class="flex items-center gap-2 shrink-0">
-                                <span class="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">Laporan</span>
-                                <span class="text-sm text-gray-400">Apr, 23</span>
-                            </div>
-                        </div>
-                        <hr>
+                            <hr>
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
+        
+        <!-- Scripts -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+        <script>
+            $(document).ready(function () {
+                // Initial state
+                var currentFilter = 'all';
+        
+                // Handle tab click
+                $('#messageTabs a').on('click', function (e) {
+                    e.preventDefault();
+        
+                    // Get the filter value from data attribute
+                    var filter = $(this).data('filter');
+        
+                    // Update current filter
+                    currentFilter = filter;
+        
+                    // Remove active class from all tabs
+                    $('#messageTabs a').removeClass('active');
+        
+                    // Add active class to the clicked tab
+                    $(this).addClass('active');
+        
+                    // Fetch filtered messages using AJAX
+                    $.ajax({
+                        url: '/dashboard-admin/index?filter=' + filter,
+                        type: 'GET',
+                        success: function (response) {
+                            // Update message container with new data
+                            $('#messagesContainer').html(response);
+                        },
+                        error: function () {
+                            alert('Failed to load messages.');
+                        }
+                    });
+                });
+            });
+        </script>
         <!-- Right Side -->
         <div class="grid grid-rows-2 gap-4">
             <!-- Card 1: Analitik Pengunjung -->
