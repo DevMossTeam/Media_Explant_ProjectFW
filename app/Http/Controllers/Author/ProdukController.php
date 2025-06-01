@@ -36,31 +36,29 @@ class ProdukController extends Controller
             'visibilitas' => 'required|in:public,private',
         ]);
 
+        // 2. Validasi deskripsi tidak kosong setelah strip HTML
         $plainDesc = trim(strip_tags($request->deskripsi));
         if ($plainDesc === '' || $request->deskripsi === '<p><br></p>') {
             return redirect()->back()->withInput()->with('error', 'Deskripsi tidak boleh kosong.');
         }
 
-        // 2. Ambil file media (PDF) sebagai binary
+        // 3. Ambil file media (PDF) sebagai binary
         $mediaFile    = $request->file('media');
         $mediaContent = file_get_contents($mediaFile->getRealPath());
 
-        // 3. Ambil file cover (image) dan ubah ke base64 (untuk thumbnail/previews)
-        $coverFile   = $request->file('cover');
+        // 4. Ambil file cover (image) dan ubah ke base64 (untuk thumbnail/previews)
+        $coverFile    = $request->file('cover');
         $coverContent = file_get_contents($coverFile->getRealPath());
-        $coverBase64 = 'data:' . $coverFile->getMimeType() . ';base64,' . base64_encode($coverContent);
+        $coverBase64  = 'data:' . $coverFile->getMimeType() . ';base64,' . base64_encode($coverContent);
 
-        // 4. Ambil UID user dari cookie
+        // 5. Ambil UID user dari cookie
         $userUid = $request->cookie('user_uid');
 
-        // 5. Generate ID acak untuk produk
+        // 6. Generate ID acak untuk produk
         $produkId = Str::random(12);
 
-        // 6. Persiapkan hasil notifikasi
-        $notificationResult = [];
-
+        // 7. Simpan data produk ke tabel 'produk'
         try {
-            // 7. Simpan data produk ke tabel 'produk'
             DB::table('produk')->insert([
                 'id'           => $produkId,
                 'judul'        => $request->judul,
@@ -72,42 +70,65 @@ class ProdukController extends Controller
                 'release_date' => now(),
                 'visibilitas'  => $request->visibilitas,
             ]);
-
-            // 8. Kirim notifikasi ke semua device token
-            // – Judul notifikasi: sama dengan judul produk
-            $notifTitle = $request->judul;
-
-            // – Body notifikasi: potong deskripsi hingga 50 karakter (strip HTML jika ada)
-            $plainDesc  = strip_tags($request->deskripsi);
-            $notifBody  = Str::limit($plainDesc, 50);
-
-            // – Payload data: sertakan ID produk agar aplikasi bisa menavigasi ke detail
-            $payloadData = [
-                'produk_id' => (string) $produkId,
-            ];
-
-            // – Panggil service untuk mengirim notifikasi (mirip persis Berita/Karya)
-            $notificationResult = $this->notifier->send($notifTitle, $notifBody, $payloadData);
-
-            // 9. Redirect sukses, sertakan hasil notifikasi
-            return redirect()
-                ->back()
-                ->with('success', 'Produk berhasil disimpan.')
-                ->with('notificationResult', $notificationResult);
         } catch (\Throwable $e) {
-            // Jika penyimpanan atau notifikasi gagal, cek apakah error terjadi di pengiriman notifikasi
-            // Atau error query DB—menangkap semuanya di sini
-            Log::error('Gagal menyimpan atau mengirim notifikasi Produk', [
+            Log::error('Gagal menyimpan produk', [
                 'error'     => $e->getMessage(),
                 'produk_id' => $produkId,
             ]);
-
-            // Kalau memang error karena notifikasi, kita tetap menganggap produk sudah tersimpan.
-            // Namun jika error di query DB, produk belum masuk ke database.
-            // Untuk sederhana, langsung redirect dengan pesan error:
             return redirect()
                 ->back()
-                ->with('error', 'Gagal menyimpan atau mengirim notifikasi: ' . $e->getMessage());
+                ->with('error', 'Gagal menyimpan produk: ' . $e->getMessage());
         }
+
+        // 8. Persiapkan hasil notifikasi
+        $notificationResult = [];
+
+        // 9. Kirim notifikasi hanya jika visibilitas adalah 'public'
+        if ($request->visibilitas === 'public') {
+            try {
+                // Judul notifikasi: sama dengan judul produk
+                $notifTitle = $request->judul;
+
+                // Body notifikasi: potong deskripsi hingga 50 karakter (strip HTML)
+                $plainDescNotif = strip_tags($request->deskripsi);
+                $notifBody      = Str::limit($plainDescNotif, 50);
+
+                // Payload data: sertakan ID produk agar aplikasi bisa menavigasi ke detail
+                $payloadData = [
+                    'produk_id' => (string) $produkId,
+                ];
+
+                // Panggil service untuk mengirim notifikasi
+                $notificationResult = $this->notifier->send($notifTitle, $notifBody, $payloadData);
+            } catch (\Throwable $e) {
+                // Jika ada error di pengiriman notifikasi, log agar developer tahu penyebabnya
+                Log::error('Gagal mengirim notifikasi Produk', [
+                    'error'     => $e->getMessage(),
+                    'produk_id' => $produkId,
+                ]);
+
+                // Tetap lanjutkan — kembalikan array success=false
+                $notificationResult = [
+                    [
+                        'success' => false,
+                        'error'   => $e->getMessage(),
+                    ]
+                ];
+            }
+        } else {
+            // Jika visibilitas = private, lewati pengiriman notifikasi
+            $notificationResult = [
+                [
+                    'success' => false,
+                    'info'    => 'Visibilitas private, notifikasi tidak dikirim.'
+                ]
+            ];
+        }
+
+        // 10. Redirect kembali dengan pesan sukses, sertakan hasil notifikasi
+        return redirect()
+            ->back()
+            ->with('success', 'Produk berhasil disimpan.')
+            ->with('notificationResult', $notificationResult);
     }
 }
