@@ -13,18 +13,18 @@
             <p class="border-b border-gray-400 mb-4"></p>
             @php
             $cleanHtml = $explantContributorDeskripsi;
-        
+
             // Hapus class ql-indent-1 supaya bullet dan numbering muncul normal
             $cleanHtml = str_replace('class="ql-indent-1"', '', $cleanHtml);
-        
+
             // Hapus h2 kosong
             $cleanHtml = preg_replace('/<h2>\s*<br\s*\/?>\s*<\/h2>/', '', $cleanHtml);
         @endphp
-        
+
         <div class="space-y-6 text-gray-800">
             {!! $cleanHtml !!}
         </div>
-        
+
         <style>
             /* styling list supaya indent dan numbering/bullet jelas */
             ol {
@@ -53,9 +53,9 @@
                 line-height: 1.6;
             }
         </style>
-        
+
         </section>
-{{-- 
+{{--
         <section class="mb-6 max-w-2xl mx-auto text-justify">
             <h2 class="italic text-gray-800 mb-2">Siapa Saja Mereka?</h2>
             <p class="border-b border-gray-400 mb-4"></p>

@@ -16,6 +16,13 @@
                         </div>
                     @endif
 
+                    <!-- Notifikasi Error -->
+                    @if (session('error'))
+                        <div class="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <!-- Form -->
                     <form id="karyaForm" action="{{ route('karya.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf

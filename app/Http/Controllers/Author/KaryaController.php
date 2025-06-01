@@ -21,7 +21,7 @@ class KaryaController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validasi Input (mirip persis dengan BeritaController, hanya sesuaikan rule-nya)
+        // Validasi Input (mirip persis dengan BeritaController, hanya sesuaikan rule-nya)
         $request->validate([
             'penulis'     => 'required|string|max:100',
             'judul'       => 'required|string|max:150',
@@ -32,7 +32,21 @@ class KaryaController extends Controller
             'visibilitas' => 'required|in:public,private',
         ]);
 
-        // 2. Konversi file gambar menjadi base64 (jika ada)
+        // Validasi deskripsi secara manual (tidak boleh kosong setelah strip HTML)
+        $plainDesc = trim(strip_tags($request->deskripsi));
+        if ($plainDesc === '' || $request->deskripsi === '<p><br></p>') {
+            return redirect()->back()->withInput()->with('error', 'Deskripsi tidak boleh kosong.');
+        }
+
+        // Validasi konten wajib jika kategori adalah puisi, pantun, atau syair
+        $kategoriTeks = ['puisi', 'pantun', 'syair'];
+        if (in_array($request->kategori, $kategoriTeks)) {
+            if (trim($request->konten) === '') {
+                return redirect()->back()->withInput()->with('error', 'Konten tidak boleh kosong untuk kategori teks.');
+            }
+        }
+
+        // Konversi file gambar menjadi base64 (jika ada)
         $fileBase64 = null;
         if ($request->hasFile('media')) {
             $fileBase64 = base64_encode(
@@ -40,13 +54,13 @@ class KaryaController extends Controller
             );
         }
 
-        // 3. Ambil uid pengguna dari cookie (sama seperti BeritaController)
+        // Ambil uid pengguna dari cookie (sama seperti BeritaController)
         $userUid = $request->cookie('user_uid');
 
-        // 4. Generate ID acak untuk Karya
+        // Generate ID acak untuk Karya
         $karyaId = Str::random(12);
 
-        // 5. Simpan ke Database
+        // Simpan ke Database
         $karya = Karya::create([
             'id'           => $karyaId,
             'creator'      => $request->penulis,
@@ -60,7 +74,7 @@ class KaryaController extends Controller
             'visibilitas'  => $request->visibilitas,
         ]);
 
-        // 6. Kirim notifikasi ke semua device token pembaca
+        // Kirim notifikasi ke semua device token pembaca
         $notificationResult = [];
         try {
             // – Judul notifikasi: ambil dari judul karya
@@ -78,7 +92,6 @@ class KaryaController extends Controller
 
             // – Panggil service untuk mengirim notifikasi (harus sama persis)
             $notificationResult = $this->notifier->send($notifTitle, $notifBody, $payloadData);
-
         } catch (\Throwable $e) {
             // Jika ada error, log ke file agar developer tahu penyebabnya
             Log::error('Gagal mengirim notifikasi Karya', [
@@ -95,7 +108,7 @@ class KaryaController extends Controller
             ];
         }
 
-        // 7. Redirect kembali dengan pesan sukses, sertakan hasil notifikasi (sama persis)
+        // Redirect kembali dengan pesan sukses, sertakan hasil notifikasi (sama persis)
         return redirect()
             ->back()
             ->with('success', 'Karya berhasil dipublikasikan!')

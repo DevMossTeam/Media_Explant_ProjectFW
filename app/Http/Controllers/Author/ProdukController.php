@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Providers\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
+use App\Models\API\DeviceToken;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -34,6 +35,11 @@ class ProdukController extends Controller
             'cover'       => 'required|image|mimes:jpg,jpeg,png|max:10240',
             'visibilitas' => 'required|in:public,private',
         ]);
+
+        $plainDesc = trim(strip_tags($request->deskripsi));
+        if ($plainDesc === '' || $request->deskripsi === '<p><br></p>') {
+            return redirect()->back()->withInput()->with('error', 'Deskripsi tidak boleh kosong.');
+        }
 
         // 2. Ambil file media (PDF) sebagai binary
         $mediaFile    = $request->file('media');
@@ -88,7 +94,6 @@ class ProdukController extends Controller
                 ->back()
                 ->with('success', 'Produk berhasil disimpan.')
                 ->with('notificationResult', $notificationResult);
-
         } catch (\Throwable $e) {
             // Jika penyimpanan atau notifikasi gagal, cek apakah error terjadi di pengiriman notifikasi
             // Atau error query DB—menangkap semuanya di sini

@@ -30,6 +30,12 @@ class BeritaController extends Controller
             'visibilitas' => 'required|in:public,private',
         ]);
 
+        // Validasi tambahan: pastikan konten bukan hanya kosong atau <p><br></p>
+        $konten = trim(strip_tags($request->konten_berita));
+        if ($konten === '' || $request->konten_berita === '<p><br></p>') {
+            return redirect()->back()->withInput()->with('error', 'Konten berita tidak boleh kosong.');
+        }
+
         // Ambil uid dari cookie
         $userUid = $request->cookie('user_uid');
 
@@ -57,7 +63,7 @@ class BeritaController extends Controller
             }
         }
 
-         $notificationResult = [];
+        $notificationResult = [];
         try {
             // Judul notifikasi
             $notifTitle = 'Berita Baru: ' . $article->judul;
@@ -69,7 +75,6 @@ class BeritaController extends Controller
             ];
 
             $notificationResult = $this->notifier->send($notifTitle, $notifBody, $payloadData);
-
         } catch (\Throwable $e) {
             // Log error agar kita tahu mengapa notifikasi gagal
             Log::error('Gagal mengirim notifikasi berita', [
