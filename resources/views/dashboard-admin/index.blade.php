@@ -8,7 +8,6 @@
         <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
             <!-- Icon on the left -->
             <i class="fa-solid fa-user text-3xl text-blue-500 bg-blue-100 p-3 rounded-lg shadow-sm mr-4"></i>
-
             <!-- Text Content to the right of the icon -->
             <div>
                 <p class="text-sm text-gray-500">Total Pembaca</p>

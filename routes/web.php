@@ -293,6 +293,7 @@ Route::middleware('web')->group(function () {
 Route::middleware(['checkRole:Admin'])->group(function () {
     // Dashboard admin utama
     Route::get('/dashboard-admin', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard-admin/analitik/konten', [AdminController::class, 'performaKonten'])->name('admin.analitik.konten');
 
     Route::prefix('dashboard-admin/kotak-masuk')->name('kotak-masuk.')->group(function () {
         Route::resource('/', KotakMasukController::class);
@@ -349,6 +350,5 @@ Route::middleware(['checkRole:Admin'])->group(function () {
     Route::post('/dashboard-admin/struktur-organisasi/divisi/store', [StrukturOrganisasiController::class, 'storeDivisi'])->name('admin.divisi.store');
     Route::delete('/dashboard-admin/struktur-organisasi/divisi/delete/{id}', [StrukturOrganisasiController::class, 'destroyDivisi'])->name('admin.divisi.delete');
 
-    Route::get('/dashboard-admin/analitik/konten', [AnalitikController::class, 'analitikKonten'])->name('admin.analitik.konten');
-    Route::get('/dashboard-admin/analitik/pengunjung', [AnalitikController::class, 'analitikPengunjung'])->name('admin.analitik.pengunjung');
+    // Route::get('/dashboard-admin/analitik/pengunjung', [AnalitikController::class, 'analitikPengunjung'])->name('admin.analitik.pengunjung');
 });    

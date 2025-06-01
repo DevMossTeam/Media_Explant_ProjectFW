@@ -1,19 +1,18 @@
 @extends('layouts.admin-layouts')
 
 @section('content')
-<div class="container mx-auto px-4 py-6">    
+<div class="container mx-auto px-4 py-6">
+    <!-- Breadcrumb & Header -->
     <div class="mb-6">
-        <!-- Breadcrumb -->
         <nav class="flex items-center text-sm text-gray-500 space-x-2" aria-label="Breadcrumb">
             <a href="/dashboard-admin" class="flex items-center text-gray-600 hover:text-blue-600 transition">
                 <i class="fa-solid fa-house mr-1"></i>
                 <span>Home</span>
             </a>
             <span class="text-gray-400">/</span>
-            <span class="text-gray-700 font-medium">Analitk Konten</span>
+            <span class="text-gray-700 font-medium">Analitik Konten</span>
         </nav>
 
-        <!-- Title and Button in the same line -->
         <div class="flex justify-between items-center mt-3">
             <h1 class="text-2xl font-bold text-gray-800">Analitik Konten</h1>
             <button type="button"
@@ -22,301 +21,188 @@
             </button>
         </div>
     </div>
-    <div class="rounded-lg shadow-md flex flex-col h-[400px] mb-4 rounded-sm bg-white overflow-hidden w-full">
-        <!-- Header: Title and Date Select -->
-        <div class="flex justify-between items-center px-4 py-2">
-            <!-- Left Side: Title -->
-            <div class="flex items-center space-x-2">
-                <h2 class="text-xl font-bold text-gray-700">Grafik</h2>
-                <!-- Icon (if present) -->
-                {{-- <i class="fas fa-info-circle text-gray-500 ml-2"></i> <!-- Example icon --> --}}
-            </div>
 
-            <!-- Right Side: Select Dropdown -->
-            {{-- <select class="border rounded-xl pr-10 py-1 text-gray-600">
-                <option>7 hari ini</option>
-                <option>Bulan ini</option>
-                <option>Tahun ini</option>
-            </select> --}}
-        </div>
-        <div class="flex-grow relative">
-            <canvas id="chart1-area" class="w-full max-h-80 max-w-full px-10 mt-10"></canvas>
-        </div>
+    <!-- Time Filter Dropdown -->
+    <div class="text-right my-5">
+        <select id="timeFilter" class="border rounded-xl pr-10 py-1 text-gray-600">
+            <option value="7_hari" {{ $period == '7_hari' ? 'selected' : '' }}>7 hari ini</option>
+            <option value="bulan" {{ $period == 'bulan' ? 'selected' : '' }}>Bulan ini</option>
+            <option value="tahun" {{ $period == 'tahun' ? 'selected' : '' }}>Tahun ini</option>
+        </select>
     </div>
+
+    <!-- Counter Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <!-- Left Side: KOTAK PESAN -->
-        <div class="md:col-span-2">
-            <div class="bg-white rounded-lg shadow-md p-4 h-96 flex flex-col justify-between">
-                <!-- Header -->
-                <div class="flex items-center space-x-2">
-                    <h2 class="text-xl font-bold text-gray-700">Tingkat keterlibatan Konten Per Click </h2>
-                    <!-- Icon (if present) -->
-                    <i class="fas fa-info-circle text-gray-500 ml-2"></i> <!-- Example icon -->
-                </div>
-
+        <!-- Like Counter -->
+        <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
+            <i class="fa-solid fa-thumbs-up text-3xl text-blue-500 bg-blue-100 p-3 rounded-lg shadow-sm mr-4"></i>
+            <div>
+                <p class="text-sm text-gray-500">Total Like</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{ $totalLike }}">
+                    {{ $totalLike }}
+                </p>
             </div>
         </div>
-        <!-- Right Side -->
-        <div class="grid grid-rows-2 gap-4">
-            <!-- Card 1: Analitik Pengunjung -->
-            <div class="bg-gray-500  rounded-lg shadow-md p-4 flex flex-col justify-between">
 
-
+        <!-- Dislike Counter -->
+        <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
+            <i class="fa-solid fa-thumbs-down text-3xl text-red-500 bg-red-100 p-3 rounded-lg shadow-sm mr-4"></i>
+            <div>
+                <p class="text-sm text-gray-500">Total Dislike</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{ $totalDislike }}">
+                    {{ $totalDislike }}
+                </p>
             </div>
+        </div>
 
-            <!-- Card 2: Analitik Konten -->
-            <div class="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
+        <!-- Comment Counter -->
+        <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
+            <i class="fa-solid fa-comments text-3xl text-yellow-500 bg-yellow-100 p-3 rounded-lg shadow-sm mr-4"></i>
+            <div>
+                <p class="text-sm text-gray-500">Total Komentar</p>
+                <p class="text-2xl font-bold counter-number-animation" data-target="{{ $totalKomentar }}">
+                    {{ $totalKomentar }}
+                </p>
             </div>
         </div>
     </div>
-    <!-- Most Search  -->
-    {{-- <div class="rounded-lg shadow-md flex flex-col h-full mb-4 rounded-sm bg-white overflow-hidden w-full">
-        <!-- Header: Title and Date Select -->
+
+    <!-- Content Charts -->
+    @foreach(['Berita', 'Karya', 'Produk'] as $chartType)
+    <div class="rounded-lg shadow-md flex flex-col h-[400px] mb-4 bg-white overflow-hidden w-full">
         <div class="flex justify-between items-center px-4 py-2">
-            <h2 class="text-xl font-bold text-gray-700 my-5">Konten dengan performa terbaik</h2>
-            <select class="border rounded-xl pr-10 py-1 text-gray-600">
-                <option>7 hari ini</option>
-                <option>Bulan ini</option>
-                <option>Tahun ini</option>
-            </select>
+            <h2 class="text-xl font-bold text-gray-700">Grafik {{ $chartType }}</h2>
         </div>
-        <!-- Chart Container -->
         <div class="flex-grow relative">
-            <h2 class="text-xl font-bold text-gray-700 my-5">Berita</h2>
-            <div class="flex items-start space-x-4">
-                <img src="https://www.persma.id/wp-content/uploads/2024/09/1-696x557.jpg" alt=""
-                    class="w-24 h-auto rounded-sm object-cover" />
-                <p class="text-2xl cursor-pointer text-gray-500 hover:text-gray-800">
-                    Memahami Payung Hukum dan
-                    Perlindungan Pers Mahasiswa.
-                </p>
-            </div>
-            <h2 class="text-xl font-bold text-gray-700 my-5">Produk</h2>
-            <div class="flex items-start space-x-4">
-                <img src="https://ebooks.gramedia.com/ebook-covers/50298/image_highres/ID_AW2020MTH01AW.jpg" alt=""
-                    class="w-24 h-auto rounded-sm object-cover" />
-                <p class="text-2xl cursor-pointer text-gray-500 hover:text-gray-800">
-                    Memahami Payung Hukum dan
-                    Perlindungan Pers Mahasiswa.
-                </p>
-            </div>
-            <h2 class="text-xl font-bold text-gray-700 my-5">Karya</h2>
-            <div class="flex items-start space-x-4">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTflVfITKyWM-oRurgCWuo8IKuC__b-D462Ig&s"
-                    alt="" class="w-24 h-auto rounded-sm object-cover" />
-                <p class="text-2xl cursor-pointer text-gray-500 hover:text-gray-800">
-                    Memahami Payung Hukum dan
-                    Perlindungan Pers Mahasiswa.
-                </p>
-            </div>
-        </div>
-    </div> --}}
-    <!-- Content Terpopular -->
-    <h2 class="text-xl font-bold text-gray-700 my-5">Konten dengan performa terbaik</h2>
-    <style>
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-    </style>
-    <!-- Etalase Terpopular -->
-    {{-- <div class="bg-white rounded-lg shadow-md p-4 mb-4">
-        <div class="text-xl font-semibold mb-4">Etalase Terpopular</div>
-        <div class="overflow-x-auto whitespace-nowrap space-x-4 pb-2">
-            @foreach ($etalases as $etalase)
-            <div class="inline-block w-64 align-top bg-white rounded shadow-sm p-2 hover:shadow">
-                <img src="{{ $etalase->image }}" alt="{{ $etalase->title }}"
-                    class="w-full h-32 object-cover rounded-sm mb-2">
-                <p class="text-lg text-gray-700 hover:text-gray-900 cursor-pointer line-clamp-2">
-                    {{ $etalase->title }}
-                </p>
-            </div>
-            @endforeach
-        </div>
-    </div> --}}
-
-    <!-- Karya Terpopular -->
-    {{-- <div class="bg-white rounded-lg shadow-md p-4 mb-4">
-        <div class="text-xl font-semibold mb-4">Karya Terpopular</div>
-        <div class="overflow-x-auto whitespace-nowrap space-x-4 pb-2">
-            @foreach ($karyas as $karya)
-            <div class="inline-block w-64 align-top bg-white rounded shadow-sm p-2 hover:shadow">
-                <img src="{{ $karya->cover }}" alt="{{ $karya->title }}"
-                    class="w-full h-32 object-cover rounded-sm mb-2">
-                <p class="text-lg text-gray-700 hover:text-gray-900 cursor-pointer line-clamp-2">
-                    {{ $karya->title }}
-                </p>
-            </div>
-            @endforeach
-        </div>
-    </div> --}}
-    {{-- <!-- Third grid: 2 columns (responsive: 1 column on small, 2 columns on md and up) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28">
-            <p class="text-2xl text-gray-400">+</p>
-        </div>
-        <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28">
-            <p class="text-2xl text-gray-400">+</p>
-        </div>
-        <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28">
-            <p class="text-2xl text-gray-400">+</p>
-        </div>
-        <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28">
-            <p class="text-2xl text-gray-400">+</p>
+            <canvas id="chart{{ $chartType }}" class="w-full max-h-80 px-10 mt-10"></canvas>
         </div>
     </div>
+    @endforeach
 
-    <!-- Fourth section: Full-width block remains as is -->
-    <div class="flex items-center justify-center h-48 mb-4 rounded-sm bg-gray-50">
-        <p class="text-2xl text-gray-400">+</p>
+    <!-- Engagement Chart -->
+    <div class="rounded-lg shadow-md flex flex-col h-[400px] mb-4 bg-white overflow-hidden w-full">
+        <div class="flex justify-between items-center px-4 py-2">
+            <h2 class="text-xl font-bold text-gray-700">Engagement</h2>
+        </div>
+        <div class="flex-grow relative">
+            <canvas id="engagementChart" class="w-full max-h-80 px-10 mt-10"></canvas>
+        </div>
     </div>
-
-    <!-- Fifth grid: 2 columns (responsive: 1 column on small, 2 columns on md and up) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28">
-            <p class="text-2xl text-gray-400">1</p>
-        </div>
-        <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28">
-            <p class="text-2xl text-gray-400">2</p>
-        </div>
-        <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28">
-            <p class="text-2xl text-gray-400">3</p>
-        </div>
-        <div class="flex items-center justify-center rounded-sm bg-gray-50 h-28">
-            <p class="text-2xl text-gray-400">4</p>
-        </div>
-    </div> --}}
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const canvas = document.getElementById('chart1-area');
-        const ctx = canvas.getContext('2d');
+// Dropdown functionality
+document.getElementById('timeFilter').addEventListener('change', function() {
+    const selectedPeriod = this.value;
+    window.location.href = '/dashboard-admin/analitik/konten?period=' + selectedPeriod;
+});
 
-        // Gradients
-        const gradientBlue = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradientBlue.addColorStop(0, 'rgba(54, 162, 235, 0.6)');
-        gradientBlue.addColorStop(1, 'rgba(54, 162, 235, 0.1)');
+// Chart.js Configuration
+document.addEventListener('DOMContentLoaded', function () {
+    // Engagement Chart
+    const engagementCtx = document.getElementById('engagementChart').getContext('2d');
+    
+    const labels = @json(collect($likePerTanggal)->pluck('tanggal'));
+    const likes = @json(collect($likePerTanggal)->pluck('total'));
+    const dislikes = @json(collect($dislikePerTanggal)->pluck('total'));
 
-        const gradientOrange = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradientOrange.addColorStop(0, 'rgba(255, 159, 64, 0.6)');
-        gradientOrange.addColorStop(1, 'rgba(255, 159, 64, 0.1)');
-        // Sample Data
-        const labels = ['Mei 26', 'Mei 27', 'Mei 28', 'Mei 29', 'Mei 30', 'Mei 31', 'Juni 1'];
-        const dataBlue = [10, 5, 7, 7, 13, 18, 22];
-        const dataOrange = [10, 6, 9, 5, 15, 20, 20];
+    new Chart(engagementCtx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Likes (Suka)',
+                data: likes,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+            }, {
+                label: 'Dislikes (Tidak Suka)',
+                data: dislikes,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: 'rgba(255, 99, 132, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            },
+            scales: {
+                x: { grid: { display: false } },
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Content Charts
+    const chartData = {
+        Berita: @json($beritaPerTanggal),
+        Karya: @json($karyaPerTanggal),
+        Produk: @json($produkPerTanggal),
+    };
+
+    Object.entries(chartData).forEach(([chartName, data]) => {
+        const ctx = document.getElementById(`chart${chartName}`).getContext('2d');
+        const labels = data.map(item => item.tanggal);
+        const values = data.map(item => item.total);
 
         new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
-                        label: 'Pengunjung',
-                        data: dataBlue,
-                        tension: 0.4,
-                        fill: true,
-                        backgroundColor: gradientBlue,
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 2,
-                        pointRadius: 4,
-                        pointBackgroundColor: 'rgba(54, 162, 235, 1)'
-                    },
-                    {
-                        label: 'Pengunjung (periode sebelumnya)',
-                        data: dataOrange,
-                        tension: 0.4,
-                        fill: true,
-                        backgroundColor: gradientOrange,
-                        borderColor: 'rgba(255, 159, 64, 1)',
-                        borderWidth: 2,
-                        pointRadius: 4,
-                        pointBackgroundColor: 'rgba(255, 159, 64, 1)'
-                    }
-                ]
+                    label: `${chartName} Terbit`,
+                    data: values,
+                    borderColor: 'rgb(46, 164, 79)',
+                    backgroundColor: 'rgba(46, 164, 79, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: 'rgb(46, 164, 79)'
+                }]
             },
             options: {
                 responsive: true,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true
-                        }
-                    },
-                    tooltip: {
-                        intersect: false
-                    }
-                },
-                interaction: {
-                    mode: 'index',
-                    intersect: false
-                },
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
                 scales: {
-                    x: {
-                        grid: {
-                            // display: false,
-                            // drawBorder: true
-                        }
-                    },
-                    y: {
-                        // display: false,
-                        // grid: {
-                        //     display: false
-                        // }
-                    }
+                    x: { grid: { display: false } },
+                    y: { beginAtZero: true }
                 }
             }
         });
     });
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const counters = document.querySelectorAll('.counter-number-animation');
+    // Counter Animation
+    const counters = document.querySelectorAll('.counter-number-animation');
+    counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        let count = 0;
+        const speed = Math.max(1, Math.ceil(target / 100));
 
-        counters.forEach(counter => {
-            const target = +counter.getAttribute('data-target');
-            let count = 0;
-            const speed = 100; // Semakin kecil, semakin cepat
-
-            const updateCount = () => {
-                const increment = Math.ceil(target / speed);
-                count += increment;
-
-                if (count < target) {
-                    counter.textContent = count.toLocaleString();
-                    requestAnimationFrame(updateCount);
-                } else {
-                    counter.textContent = target.toLocaleString();
-                }
-            };
-
-            updateCount();
-        });
-    });
-
-</script>
-@if (session('success'))
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '{{ session('
-            success ') }}',
-            timer: 3000, // auto close 3 detik
-            showConfirmButton: true,
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#3b82f6', // warna biru Tailwind 'blue-500'
-            buttonsStyling: false,
-            customClass: {
-                confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded'
+        const updateCount = () => {
+            count += speed;
+            if (count < target) {
+                counter.textContent = count.toLocaleString();
+                requestAnimationFrame(updateCount);
+            } else {
+                counter.textContent = target.toLocaleString();
             }
-        });
-    });
+        };
 
+        updateCount();
+    });
+});
 </script>
-@endif
 @endsection
