@@ -21,7 +21,7 @@ class KaryaController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi Input (mirip persis dengan BeritaController, hanya sesuaikan rule-nya)
+        // 1. Validasi Input (mirip persis dengan BeritaController, hanya sesuaikan rule-nya)
         $request->validate([
             'penulis'     => 'required|string|max:100',
             'judul'       => 'required|string|max:150',
@@ -32,21 +32,25 @@ class KaryaController extends Controller
             'visibilitas' => 'required|in:public,private',
         ]);
 
-        // Validasi deskripsi secara manual (tidak boleh kosong setelah strip HTML)
+        // 2. Validasi deskripsi secara manual (tidak boleh kosong setelah strip HTML)
         $plainDesc = trim(strip_tags($request->deskripsi));
         if ($plainDesc === '' || $request->deskripsi === '<p><br></p>') {
-            return redirect()->back()->withInput()->with('error', 'Deskripsi tidak boleh kosong.');
+            return redirect()->back()
+                             ->withInput()
+                             ->with('error', 'Deskripsi tidak boleh kosong.');
         }
 
-        // Validasi konten wajib jika kategori adalah puisi, pantun, atau syair
+        // 3. Validasi konten wajib jika kategori adalah puisi, pantun, atau syair
         $kategoriTeks = ['puisi', 'pantun', 'syair'];
         if (in_array($request->kategori, $kategoriTeks)) {
             if (trim($request->konten) === '') {
-                return redirect()->back()->withInput()->with('error', 'Konten tidak boleh kosong untuk kategori teks.');
+                return redirect()->back()
+                                 ->withInput()
+                                 ->with('error', 'Konten tidak boleh kosong untuk kategori teks.');
             }
         }
 
-        // Konversi file gambar menjadi base64 (jika ada)
+        // 4. Konversi file gambar menjadi base64 (jika ada)
         $fileBase64 = null;
         if ($request->hasFile('media')) {
             $fileBase64 = base64_encode(
@@ -54,13 +58,13 @@ class KaryaController extends Controller
             );
         }
 
-        // Ambil uid pengguna dari cookie (sama seperti BeritaController)
+        // 5. Ambil uid pengguna dari cookie (sama seperti BeritaController)
         $userUid = $request->cookie('user_uid');
 
-        // Generate ID acak untuk Karya
+        // 6. Generate ID acak untuk Karya
         $karyaId = Str::random(12);
 
-        // Simpan ke Database
+        // 7. Simpan ke Database
         $karya = Karya::create([
             'id'           => $karyaId,
             'creator'      => $request->penulis,
@@ -74,41 +78,50 @@ class KaryaController extends Controller
             'visibilitas'  => $request->visibilitas,
         ]);
 
-        // Kirim notifikasi ke semua device token pembaca
+        // 8. Kirim notifikasi hanya jika visibilitas adalah 'public'
         $notificationResult = [];
-        try {
-            // – Judul notifikasi: ambil dari judul karya
-            $notifTitle = $karya->judul;
+        if ($karya->visibilitas === 'public') {
+            try {
+                // Judul notifikasi: ambil dari judul karya
+                $notifTitle = $karya->judul;
 
-            // – Body notifikasi: potong deskripsi sampai 50 karakter
-            //   (sama persis seperti di BeritaController: strip_tags dan Str::limit)
-            $plainDesc  = strip_tags($karya->deskripsi);
-            $notifBody  = Str::limit($plainDesc, 50);
+                // Body notifikasi: potong deskripsi sampai 50 karakter
+                $plainDescNotif = strip_tags($karya->deskripsi);
+                $notifBody      = Str::limit($plainDescNotif, 50);
 
-            // – Payload data: sertakan ID karya agar aplikasi bisa membuka detailnya
-            $payloadData = [
-                'karya_id' => (string) $karya->id,
-            ];
+                // Payload data: sertakan ID karya agar aplikasi bisa membuka detailnya
+                $payloadData = [
+                    'karya_id' => (string) $karya->id,
+                ];
 
-            // – Panggil service untuk mengirim notifikasi (harus sama persis)
-            $notificationResult = $this->notifier->send($notifTitle, $notifBody, $payloadData);
-        } catch (\Throwable $e) {
-            // Jika ada error, log ke file agar developer tahu penyebabnya
-            Log::error('Gagal mengirim notifikasi Karya', [
-                'error'    => $e->getMessage(),
-                'karya_id' => $karya->id,
-            ]);
+                // Panggil service untuk mengirim notifikasi
+                $notificationResult = $this->notifier->send($notifTitle, $notifBody, $payloadData);
+            } catch (\Throwable $e) {
+                // Jika ada error, log agar developer tahu penyebabnya
+                Log::error('Gagal mengirim notifikasi Karya', [
+                    'error'    => $e->getMessage(),
+                    'karya_id' => $karya->id,
+                ]);
 
-            // Buat hasil notifikasi berupa array dengan success=false
+                // Buat hasil notifikasi berupa array dengan success=false
+                $notificationResult = [
+                    [
+                        'success' => false,
+                        'error'   => $e->getMessage(),
+                    ]
+                ];
+            }
+        } else {
+            // Jika private, lewati pengiriman notifikasi
             $notificationResult = [
                 [
                     'success' => false,
-                    'error'   => $e->getMessage(),
+                    'info'    => 'Visibilitas private, notifikasi tidak dikirim.'
                 ]
             ];
         }
 
-        // Redirect kembali dengan pesan sukses, sertakan hasil notifikasi (sama persis)
+        // 9. Redirect kembali dengan pesan sukses, sertakan hasil notifikasi
         return redirect()
             ->back()
             ->with('success', 'Karya berhasil dipublikasikan!')
