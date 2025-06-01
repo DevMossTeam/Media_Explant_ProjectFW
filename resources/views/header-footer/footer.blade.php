@@ -62,14 +62,14 @@
             <h4 class="font-semibold mt-6 text-[#C63232]">Ikuti Kami</h4>
             <div class="w-16 border-t-2 border-[#C63232] my-3"></div>
             <div class="flex space-x-4 text-[#C63232] text-xl">
-                <a href="{{ $footerData->facebook ?? 'https://www.facebook.com/ukmexplant/'}}"><i class="fa-brands fa-facebook"></i></a>
-                <a href="{{ $footerData->instagram ?? 'https://www.instagram.com/ukpmexplant/' }}"><i class="fa-brands fa-instagram"></i></a>
-                <a href="{{ $footerData->youtube ?? 'https://www.youtube.com/channel/UC-vKIVeYs5vzocMFmrbe7ew/'}}"><i class="fa-brands fa-youtube"></i></a>
-                <a href="{{ $footerData->linkedin ?? 'https://id.linkedin.com/company/ukpmexplantpolije' }}"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.facebook.com/ukmexplant/"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://www.instagram.com/ukpmexplant/"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.youtube.com/channel/UC-vKIVeYs5vzocMFmrbe7ew/"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://id.linkedin.com/company/ukpmexplantpolije"><i class="fab fa-linkedin"></i></a>
             </div>
             <div class="mt-4 text-sm space-y-2">
-                <p><i class="fa-solid fa-phone"></i> +62 {{ $footerData->nomorHp ?? '81213772947' }}</p>
-                <p><i class="fa-solid fa-envelope"></i> {{ $footerData->email ?? 'ukpmexplant@journalist.com' }}</p>
+                <p><i class="fa-solid fa-phone"></i> +6221 350 0584, +6221 351 1086</p>
+                <p><i class="fa-solid fa-envelope"></i> ukpmexplant@journalist.com</p>
             </div>
         </div>
 
@@ -83,7 +83,7 @@
             </p>
             <div class="mt-4">
                 <iframe class="w-full h-40 md:h-52 rounded-lg"
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15797.68071524069!2d113.724858!3d-8.160352!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd695b625d4f5bd%3A0xd1500f0198d82891!2sOmah%20Explant!5e0!3m2!1sid!2sid!4v1747902929021!5m2!1sid!2sid"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3949.4197290716543!2d113.7236985!3d-8.1603975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd695b625d4f5bd%3A0xd1500f0198d82891!2sOmah%20Explant!5e0!3m2!1sid!2sid!4v1742134057064!5m2!1sid!2sid"
                     allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
             </div>

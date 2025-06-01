@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Response;
 use App\Models\UserReact\Reaksi;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserReact\Komentar;
+use Illuminate\Support\Facades\DB;
 
 class BuletinController extends Controller
 {
@@ -16,10 +17,43 @@ class BuletinController extends Controller
     public function index()
     {
         // 3 buletin terbaru untuk "Produk Kami"
-        $buletins = Buletin::select('id', 'judul', 'cover', 'deskripsi', 'release_date', 'user_id')
-            ->where('kategori', 'Buletin')
-            ->where('visibilitas', 'public')
-            ->orderBy('release_date', 'desc')
+        $buletins = Buletin::from('produk as p')
+            ->where('p.kategori', 'Buletin')
+            ->where('p.visibilitas', 'public')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS like_count
+         FROM reaksi
+         WHERE jenis_reaksi = 'Suka' AND reaksi_type = 'Produk'
+         GROUP BY item_id) as r
+    "), 'p.id', '=', 'r.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS komentar_count
+         FROM komentar
+         WHERE komentar_type = 'Produk'
+         GROUP BY item_id) as k
+    "), 'p.id', '=', 'k.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS bookmark_count
+         FROM bookmark
+         WHERE bookmark_type = 'Produk'
+         GROUP BY item_id) as b
+    "), 'p.id', '=', 'b.item_id')
+            ->select(
+                'p.id',
+                'p.judul',
+                'p.cover',
+                'p.deskripsi',
+                'p.release_date',
+                'p.user_id',
+                DB::raw('
+            (p.view_count * 1) +
+            (COALESCE(r.like_count, 0) * 2) +
+            (COALESCE(k.komentar_count, 0) * 3) +
+            (COALESCE(b.bookmark_count, 0) * 2) as score
+        ')
+            )
+            ->orderByDesc('score')
+            ->orderByDesc('p.release_date')
             ->take(3)
             ->get();
 
@@ -32,10 +66,42 @@ class BuletinController extends Controller
             ->get();
 
         // 12 buletin rekomendasi terbaru
-        $buletinsRekomendasi = Buletin::select('id', 'judul', 'cover', 'release_date', 'user_id')
-            ->where('kategori', 'Buletin')
-            ->where('visibilitas', 'public')
-            ->orderBy('release_date', 'desc')
+        $buletinsRekomendasi = Buletin::from('produk as p')
+            ->where('p.kategori', 'Buletin')
+            ->where('p.visibilitas', 'public')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS like_count
+         FROM reaksi
+         WHERE jenis_reaksi = 'Suka' AND reaksi_type = 'Produk'
+         GROUP BY item_id) as r
+    "), 'p.id', '=', 'r.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS komentar_count
+         FROM komentar
+         WHERE komentar_type = 'Produk'
+         GROUP BY item_id) as k
+    "), 'p.id', '=', 'k.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS bookmark_count
+         FROM bookmark
+         WHERE bookmark_type = 'Produk'
+         GROUP BY item_id) as b
+    "), 'p.id', '=', 'b.item_id')
+            ->select(
+                'p.id',
+                'p.judul',
+                'p.cover',
+                'p.release_date',
+                'p.user_id',
+                DB::raw('
+            (p.view_count * 1) +
+            (COALESCE(r.like_count, 0) * 2) +
+            (COALESCE(k.komentar_count, 0) * 3) +
+            (COALESCE(b.bookmark_count, 0) * 2) as score
+        ')
+            )
+            ->orderByDesc('score')
+            ->orderByDesc('p.release_date')
             ->take(12)
             ->get();
 
@@ -61,11 +127,42 @@ class BuletinController extends Controller
         $buletin->increment('view_count');
 
         // Pagination rekomendasi buletin dengan limit dan tanpa eager loading user (jika user tidak dibutuhkan)
-        $rekomendasiBuletin = Buletin::select('id', 'cover', 'judul', 'release_date')
-            ->where('kategori', 'Buletin')
-            ->where('visibilitas', 'public')
-            ->where('id', '!=', $id)
-            ->orderBy('release_date', 'desc')
+        $rekomendasiBuletin = Buletin::from('produk as p')
+            ->where('p.kategori', 'Buletin')
+            ->where('p.visibilitas', 'public')
+            ->where('p.id', '!=', $id)
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS like_count
+         FROM reaksi
+         WHERE jenis_reaksi = 'Suka' AND reaksi_type = 'Produk'
+         GROUP BY item_id) as r
+    "), 'p.id', '=', 'r.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS komentar_count
+         FROM komentar
+         WHERE komentar_type = 'Produk'
+         GROUP BY item_id) as k
+    "), 'p.id', '=', 'k.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS bookmark_count
+         FROM bookmark
+         WHERE bookmark_type = 'Produk'
+         GROUP BY item_id) as b
+    "), 'p.id', '=', 'b.item_id')
+            ->select(
+                'p.id',
+                'p.judul',
+                'p.cover',
+                'p.release_date',
+                DB::raw('
+            (p.view_count * 1) +
+            (COALESCE(r.like_count, 0) * 2) +
+            (COALESCE(k.komentar_count, 0) * 3) +
+            (COALESCE(b.bookmark_count, 0) * 2) as score
+        ')
+            )
+            ->orderByDesc('score')
+            ->orderByDesc('p.release_date')
             ->paginate(6);
 
         // Ambil komentar utama dan balasan untuk 'Produk' (komentar_type)

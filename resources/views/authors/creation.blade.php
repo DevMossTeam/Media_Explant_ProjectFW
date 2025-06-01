@@ -16,6 +16,13 @@
                         </div>
                     @endif
 
+                    <!-- Notifikasi Error -->
+                    @if (session('error'))
+                        <div class="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <!-- Form -->
                     <form id="karyaForm" action="{{ route('karya.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -81,6 +88,19 @@
                             </div>
                             <input type="hidden" name="deskripsi" id="deskripsi">
                         </div>
+                        <style>
+                            #quill-editor .ql-editor {
+                                word-break: break-word;
+                                overflow-wrap: break-word;
+                                word-wrap: break-word;
+                            }
+
+                            #quill-editor {
+                                width: 100%;
+                                max-width: 100%;
+                                box-sizing: border-box;
+                            }
+                        </style>
                 </div>
 
                 <!-- Bagian Kanan: Pengaturan -->
@@ -152,6 +172,30 @@
         </div>
     </div>
 
+    <!-- Preview Mode -->
+    <div id="previewMode" class="hidden fixed inset-0 bg-white z-50 overflow-auto p-6">
+        <h2 id="previewKategori" class="text-lg font-semibold text-white px-8 py-1 bg-[#9A0605] inline-block mb-4"
+            style="clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%)"></h2>
+
+        <h1 id="previewJudul" class="text-2xl font-bold text-gray-800"></h1>
+
+        <!-- Bagian thumbnail dan konten (sejajar) -->
+        <div class="flex flex-col lg:flex-row gap-4">
+            <div class="flex-shrink-0">
+                <img id="previewThumbnail" class="w-80 rounded-md shadow" />
+                <!-- Deskripsi dibatasi sesuai lebar gambar -->
+                <div id="previewDeskripsi" class="text-gray-600 mt-2 w-80"></div>
+            </div>
+            <div id="previewKonten" class="flex-1 text-gray-700"></div>
+        </div>
+
+        <!-- Tombol Kembali -->
+        <button id="backToEditorBtn"
+            class="fixed bottom-4 left-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+            Kembali ke Editor
+        </button>
+    </div>
+
     <!-- Quill CSS -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <!-- Quill JS -->
@@ -159,6 +203,55 @@
 
     <!-- Script -->
     <script>
+        document.querySelector('button.bg-gray-600').addEventListener('click', function() {
+            // Ambil nilai-nilai dari form
+            const kategori = document.getElementById('kategori').value;
+            const judul = document.getElementById('judul').value;
+            const konten = document.getElementById('konten').value;
+            const deskripsi = document.getElementById('quill-editor').innerHTML;
+
+            const fileInput = document.getElementById('media');
+            const thumbnail = fileInput.files[0];
+
+            // Tampilkan Kategori
+            document.getElementById('previewKategori').textContent = kategori;
+
+            // Tampilkan Judul
+            document.getElementById('previewJudul').textContent = judul;
+
+            // Tampilkan Gambar Thumbnail
+            if (thumbnail) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewThumbnail').src = e.target.result;
+                }
+                reader.readAsDataURL(thumbnail);
+            } else {
+                document.getElementById('previewThumbnail').src = '';
+            }
+
+            // Sesuaikan tampilan preview berdasarkan kategori
+            if (kategori === 'puisi' || kategori === 'pantun' || kategori === 'syair') {
+                document.getElementById('previewKonten').innerText = konten;
+                document.getElementById('previewDeskripsi').innerHTML = deskripsi;
+            } else if (kategori === 'fotografi' || kategori === 'desain_grafis') {
+                document.getElementById('previewKonten').classList.add('hidden');
+                document.getElementById('previewKonten').innerText = '';
+                document.getElementById('previewDeskripsi').innerHTML = deskripsi;
+            }
+
+            // Sembunyikan form dan tampilkan preview
+            document.getElementById('karyaForm').classList.add('hidden');
+            document.getElementById('previewMode').classList.remove('hidden');
+        });
+
+        // Tombol Kembali ke Editor
+        document.getElementById('backToEditorBtn').addEventListener('click', function() {
+            // Sembunyikan preview, tampilkan form lagi
+            document.getElementById('previewMode').classList.add('hidden');
+            document.getElementById('karyaForm').classList.remove('hidden');
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             const dropArea = document.getElementById("drop-area");
             const fileInput = document.getElementById("media");
@@ -317,6 +410,51 @@
 
             updateFieldsByKategori();
             kategoriSelect.addEventListener("change", updateFieldsByKategori);
+
+            // Ambil elemen-elemen input
+            const judulInput = document.getElementById("judul");
+            const penulisInput = document.getElementById("penulis");
+            const deskripsiInput = document.getElementById("deskripsi");
+            const form = document.getElementById("karyaForm");
+            const publishBtn = document.getElementById("publishBtn");
+
+            // Load dari localStorage saat load halaman
+            if (localStorage.getItem("judul")) judulInput.value = localStorage.getItem("judul");
+            if (localStorage.getItem("penulis")) penulisInput.value = localStorage.getItem("penulis");
+            if (localStorage.getItem("deskripsi")) quill.root.innerHTML = localStorage.getItem("deskripsi");
+
+            // Simpan ke localStorage saat mengetik
+            judulInput.addEventListener("input", () => localStorage.setItem("judul", judulInput.value));
+            penulisInput.addEventListener("input", () => localStorage.setItem("penulis", penulisInput.value));
+            quill.on("text-change", () => localStorage.setItem("deskripsi", quill.root.innerHTML));
+
+            // Validasi dan ubah tombol saat submit
+            form.addEventListener("submit", function(e) {
+                const penulis = penulisInput.value;
+                const regex = /^[a-zA-Z\s]+$/;
+
+                if (!regex.test(penulis)) {
+                    e.preventDefault();
+                    document.getElementById("warningModal").classList.remove("hidden");
+                    return;
+                }
+
+                // Set hidden input dari Quill
+                deskripsiInput.value = quill.root.innerHTML;
+
+                // Hapus localStorage saat berhasil submit
+                localStorage.removeItem("judul");
+                localStorage.removeItem("penulis");
+                localStorage.removeItem("deskripsi");
+
+                // Tampilan tombol seperti create-product.blade.php
+                publishBtn.disabled = true;
+                publishBtn.innerHTML = `<svg class="inline w-4 h-4 mr-2 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg> Mengunggah...`;
+                publishBtn.classList.add("opacity-50", "cursor-not-allowed");
+            });
         });
     </script>
 @endsection

@@ -3,6 +3,19 @@
 @section('title', 'Hubungi Kami')
 
 @section('setting-content')
+
+    <style>
+        ::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+        }
+
+        * {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+    </style>
+
     <div class="px-4 py-6 max-w-2xl mx-auto">
         <h2 class="text-lg font-semibold text-gray-800 mb-2">Hubungi Kami</h2>
         <p class="text-sm text-gray-500 mb-6 leading-relaxed">

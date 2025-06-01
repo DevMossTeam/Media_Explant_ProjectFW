@@ -172,19 +172,45 @@ class KampusNewsController extends Controller
         $relatedNews = KampusNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->where('visibilitas', 'public')
-            ->orderByDesc('view_count')
             ->orderByDesc('tanggal_diterbitkan')
+            ->orderByDesc('view_count')
             ->take(6)
             ->get();
 
         $recommendedNews = KampusNews::where('kategori', $news->kategori)
             ->where('id', '!=', $news->id)
             ->where('visibilitas', 'public')
-            ->withCount([
-                'reaksiSuka as suka_count'
-            ])
-            ->orderByDesc('suka_count')
-            ->orderByDesc('view_count')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS like_count
+         FROM reaksi
+         WHERE jenis_reaksi = 'Suka' AND reaksi_type = 'Berita'
+         GROUP BY item_id) as r
+    "), 'berita.id', '=', 'r.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS komentar_count
+         FROM komentar
+         WHERE komentar_type = 'Berita'
+         GROUP BY item_id) as k
+    "), 'berita.id', '=', 'k.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS bookmark_count
+         FROM bookmark
+         WHERE bookmark_type = 'Berita'
+         GROUP BY item_id) as b
+    "), 'berita.id', '=', 'b.item_id')
+            ->select(
+                'berita.*',
+                DB::raw('COALESCE(r.like_count, 0) as like_count'),
+                DB::raw('COALESCE(k.komentar_count, 0) as komentar_count'),
+                DB::raw('COALESCE(b.bookmark_count, 0) as bookmark_count'),
+                DB::raw('
+            (view_count * 1) +
+            (COALESCE(r.like_count, 0) * 2) +
+            (COALESCE(k.komentar_count, 0) * 3) +
+            (COALESCE(b.bookmark_count, 0) * 2) as score
+        ')
+            )
+            ->orderByDesc('score')
             ->orderByDesc('tanggal_diterbitkan')
             ->take(6)
             ->get();
@@ -194,8 +220,12 @@ class KampusNewsController extends Controller
             ->inRandomOrder()
             ->value('kategori');
 
+        $oneWeekAgo = Carbon::now()->subWeek(); // 7 hari lalu
+
+        // 2. Coba ambil berita dari kategori itu dalam 7 hari terakhir
         $otherTopics = KampusNews::where('kategori', $randomKategori)
             ->where('visibilitas', 'public')
+            ->where('tanggal_diterbitkan', '>=', $oneWeekAgo)
             ->withCount([
                 'reaksiSuka as suka_count'
             ])
@@ -204,6 +234,26 @@ class KampusNewsController extends Controller
             ->orderByDesc('tanggal_diterbitkan')
             ->take(8)
             ->get();
+
+        // 3. Jika hasilnya kurang dari 8, ambil tambahan berita dari kategori tersebut (di luar 7 hari)
+        if ($otherTopics->count() < 8) {
+            $sisa = 8 - $otherTopics->count();
+            $idYangSudahDiambil = $otherTopics->pluck('id')->toArray();
+
+            $tambahan = KampusNews::where('kategori', $randomKategori)
+                ->where('visibilitas', 'public')
+                ->whereNotIn('id', $idYangSudahDiambil)
+                ->withCount([
+                    'reaksiSuka as suka_count'
+                ])
+                ->orderByDesc('view_count')
+                ->orderByDesc('suka_count')
+                ->orderByDesc('tanggal_diterbitkan')
+                ->take($sisa)
+                ->get();
+
+            $otherTopics = $otherTopics->concat($tambahan);
+        }
 
         return view('kategori.news-detail', compact('news', 'relatedNews', 'recommendedNews', 'otherTopics', 'likeCount', 'dislikeCount', 'userReaksi', 'komentarList'));
     }

@@ -6,7 +6,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+<<<<<<< HEAD
         "dompdf/dompdf": "^3.1",
+=======
+        "firebase/php-jwt": "^6.11",
+>>>>>>> a5bfde3785d3c17b36c1d530908cfb7d8e18d8d8
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",

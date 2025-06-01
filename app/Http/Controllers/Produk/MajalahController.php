@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserReact\Reaksi;
 use App\Models\UserReact\Komentar;
+use Illuminate\Support\Facades\DB;
 
 class MajalahController extends Controller
 {
@@ -16,10 +17,44 @@ class MajalahController extends Controller
     public function index()
     {
         // Ambil hanya field penting tanpa 'media'
-        $majalahs = Majalah::select('id', 'judul', 'cover', 'kategori', 'deskripsi', 'release_date', 'user_id')
-            ->where('kategori', 'Majalah')
-            ->where('visibilitas', 'public')
-            ->orderBy('release_date', 'desc')
+        $majalahs = Majalah::from('produk as p')
+            ->where('p.kategori', 'Majalah')
+            ->where('p.visibilitas', 'public')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS like_count
+         FROM reaksi
+         WHERE jenis_reaksi = 'Suka' AND reaksi_type = 'Produk'
+         GROUP BY item_id) as r
+    "), 'p.id', '=', 'r.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS komentar_count
+         FROM komentar
+         WHERE komentar_type = 'Produk'
+         GROUP BY item_id) as k
+    "), 'p.id', '=', 'k.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS bookmark_count
+         FROM bookmark
+         WHERE bookmark_type = 'Produk'
+         GROUP BY item_id) as b
+    "), 'p.id', '=', 'b.item_id')
+            ->select(
+                'p.id',
+                'p.judul',
+                'p.cover',
+                'p.kategori',
+                'p.deskripsi',
+                'p.release_date',
+                'p.user_id',
+                DB::raw('
+            (p.view_count * 1) +
+            (COALESCE(r.like_count, 0) * 2) +
+            (COALESCE(k.komentar_count, 0) * 3) +
+            (COALESCE(b.bookmark_count, 0) * 2) as score
+        ')
+            )
+            ->orderByDesc('score')
+            ->orderByDesc('p.release_date')
             ->take(14)
             ->get();
 
@@ -80,11 +115,45 @@ class MajalahController extends Controller
             ->get();
 
         // Rekomendasi Majalah lain tanpa ambil media
-        $rekomendasiMajalah = Majalah::select('id', 'judul', 'cover', 'kategori', 'deskripsi', 'release_date', 'user_id')
-            ->where('kategori', 'Majalah')
-            ->where('visibilitas', 'public')
-            ->where('id', '!=', $id)
-            ->orderBy('release_date', 'desc')
+        $rekomendasiMajalah = Majalah::from('produk as p')
+            ->where('p.kategori', 'Majalah')
+            ->where('p.visibilitas', 'public')
+            ->where('p.id', '!=', $id)
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS like_count
+         FROM reaksi
+         WHERE jenis_reaksi = 'Suka' AND reaksi_type = 'Produk'
+         GROUP BY item_id) as r
+    "), 'p.id', '=', 'r.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS komentar_count
+         FROM komentar
+         WHERE komentar_type = 'Produk'
+         GROUP BY item_id) as k
+    "), 'p.id', '=', 'k.item_id')
+            ->leftJoin(DB::raw("
+        (SELECT item_id, COUNT(*) AS bookmark_count
+         FROM bookmark
+         WHERE bookmark_type = 'Produk'
+         GROUP BY item_id) as b
+    "), 'p.id', '=', 'b.item_id')
+            ->select(
+                'p.id',
+                'p.judul',
+                'p.cover',
+                'p.kategori',
+                'p.deskripsi',
+                'p.release_date',
+                'p.user_id',
+                DB::raw('
+            (p.view_count * 1) +
+            (COALESCE(r.like_count, 0) * 2) +
+            (COALESCE(k.komentar_count, 0) * 3) +
+            (COALESCE(b.bookmark_count, 0) * 2) as score
+        ')
+            )
+            ->orderByDesc('score')
+            ->orderByDesc('p.release_date')
             ->paginate(6);
 
         if ($request->ajax()) {
