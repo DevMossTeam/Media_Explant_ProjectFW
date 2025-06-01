@@ -13,6 +13,37 @@ use Illuminate\Support\Facades\Cookie;
 
 class KomentarController extends Controller
 {
+    public function __construct()
+    {
+        Carbon::setLocale('id');  // Set locale Carbon ke bahasa Indonesia
+        setlocale(LC_TIME, 'id_ID.UTF-8'); // untuk fungsi strftime jika perlu
+    }
+
+    // Fungsi bantu buat format tanggal komentar secara natural (baru saja, menit lalu, jam lalu, dll)
+    private function waktuIndo(Carbon $waktu)
+    {
+        $now = Carbon::now();
+        $diff = $now->diffInSeconds($waktu);
+
+        if ($diff < 60) {
+            return 'baru saja';
+        } elseif ($diff < 3600) {
+            $menit = $now->diffInMinutes($waktu);
+            return $menit . ' menit lalu';
+        } elseif ($diff < 86400) {
+            $jam = $now->diffInHours($waktu);
+            return $jam . ' jam lalu';
+        } elseif ($diff < 604800) {
+            $hari = $now->diffInDays($waktu);
+            return $hari . ' hari lalu';
+        } elseif ($diff < 2419200) {
+            $minggu = floor($now->diffInDays($waktu) / 7);
+            return $minggu . ' minggu lalu';
+        } else {
+            return $waktu->translatedFormat('d F Y');
+        }
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -57,5 +88,23 @@ class KomentarController extends Controller
             ->get();
 
         return response()->json($komentar);
+    }
+
+    public function destroy($id)
+    {
+        $user_uid = Cookie::get('user_uid');
+        if (!$user_uid) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+        }
+
+        $komentar = Komentar::where('id', $id)->where('user_id', $user_uid)->first();
+
+        if (!$komentar) {
+            return response()->json(['success' => false, 'message' => 'Komentar tidak ditemukan atau tidak diizinkan'], 404);
+        }
+
+        $komentar->delete();
+
+        return response()->json(['success' => true]);
     }
 }

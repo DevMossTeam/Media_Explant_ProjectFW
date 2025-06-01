@@ -284,6 +284,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('/komentar/store', [KomentarController::class, 'store'])->name('komentar.store');
     Route::get('/komentar/{item_id}', [KomentarController::class, 'fetch'])->name('komentar.fetch');
     Route::post('/komentar/kirim', [KomentarController::class, 'store'])->name('komentar.kirim');
+    Route::delete('/komentar/{id}', [KomentarController::class, 'destroy'])->name('komentar.hapus');
 });
 
 Route::middleware('web')->group(function () {
@@ -306,16 +307,16 @@ Route::middleware(['checkRole:Admin'])->group(function () {
 
     // Halaman daftar user
     Route::get('/dashboard-admin/pengguna', [AdminUserController::class, 'user'])->name('admin.user');
-    
+
     // Hapus pengguna
     Route::delete('/dashboard-admin/hapus-pengguna/{uid}', [AdminUserController::class, 'deleteUser'])
         ->name('admin.user.delete');
     Route::put('/dashboard-admin/user/change-role/{uid}', [AdminUserController::class, 'updateRole'])
-    ->name('admin.user.change-role');
+        ->name('admin.user.change-role');
     // Detail pengguna
     Route::get('/dashboard-admin/detail-pengguna/{id}', [AdminUserController::class, 'detail'])->name('admin.user.detail');
     Route::delete('/dashboard-admin/delete-komentar/{id}/{komentarId}', [AdminUserController::class, 'deleteKomen'])
-    ->name('admin.komentar.delete');
+        ->name('admin.komentar.delete');
 
     // Berita Routes
     Route::get('/dashboard-admin/berita', [AdminContentController::class, 'berita'])->name('admin.berita');
@@ -342,15 +343,15 @@ Route::middleware(['checkRole:Admin'])->group(function () {
     Route::get('/dashboard-admin/struktur-organisasi', [StrukturOrganisasiController::class, 'index'])->name('admin.organisasi.index');
     // anggota CRUD
     Route::post('/dashboard-admin/struktur-organisasi/anggota/tambah', [StrukturOrganisasiController::class, 'createAnggota'])
-    ->name('admin.organisasi.create');
+        ->name('admin.organisasi.create');
     Route::put('/dashboard-admin/struktur-organisasi/anggota/update/{id}', [StrukturOrganisasiController::class, 'updateAnggota'])
-    ->name('admin.organisasi.update');
+        ->name('admin.organisasi.update');
     Route::delete('/dashboard-admin/struktur-organisasi/anggota/delete/{id}', [StrukturOrganisasiController::class, 'destroyAnggota'])
-    ->name('admin.organisasi.delete');
+        ->name('admin.organisasi.delete');
     // Divisi CRUD
     Route::get('/dashboard-admin/struktur-organisasi/divisi/tambah', [StrukturOrganisasiController::class, 'createDivisi'])->name('admin.divisi.create');
     Route::post('/dashboard-admin/struktur-organisasi/divisi/store', [StrukturOrganisasiController::class, 'storeDivisi'])->name('admin.divisi.store');
     Route::delete('/dashboard-admin/struktur-organisasi/divisi/delete/{id}', [StrukturOrganisasiController::class, 'destroyDivisi'])->name('admin.divisi.delete');
 
     // Route::get('/dashboard-admin/analitik/pengunjung', [AnalitikController::class, 'analitikPengunjung'])->name('admin.analitik.pengunjung');
-});    
+});
