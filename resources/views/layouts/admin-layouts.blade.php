@@ -241,7 +241,15 @@
                                 </span>
                             </a>
                         </li>
-
+                        <li>
+                            <a href="/dashboard-admin/struktur-organisasi"
+                                class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md">
+                                <i class="fa-solid fa-sitemap text-xl text-gray-500 w-8 text-center"></i>
+                                <span class="sidebar-text ml-3 text-base font-medium">
+                                    Struktur Organisasi
+                                </span>
+                            </a>
+                        </li>
                         <li>
                             <a href="/dashboard-admin/kotak-masuk"
                                 class="flex items-center px-3 py-3 text-gray-700 hover:bg-gray-100 rounded-md">

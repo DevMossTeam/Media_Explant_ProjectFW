@@ -15,24 +15,68 @@
 
         <div class="flex justify-between items-center mt-3">
             <h1 class="text-2xl font-bold text-gray-800">Analitik Konten</h1>
-            <button type="button"
+            <button type="button" id="downloadReportBtn"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
                 <i class="fa-solid fa-download mr-2"></i>Download Laporan
             </button>
         </div>
+        
+        <script>
+            document.getElementById('downloadReportBtn').addEventListener('click', function () {
+                Swal.fire({
+                    title: 'Pilih Rentang Waktu',
+                    text: 'Silakan pilih periode laporan yang ingin diunduh.',
+                    icon: 'info',
+                    showCancelButton: false,
+                    confirmButtonText: '',
+                    html: `
+                        <div style="display: flex; flex-direction: column; align-items: stretch; gap: 10px; text-align: center;">
+                            <button class="swal2-confirm swal2-styled btn-period" data-period="7_hari" style="background-color: #3085d6; border: none; padding: 10px; border-radius: 5px; color: white;">7 Hari Terakhir</button>
+                            <button class="swal2-confirm swal2-styled btn-period" data-period="bulan" style="background-color: #4ea7f9; border: none; padding: 10px; border-radius: 5px; color: white;">Bulanan</button>
+                            <button class="swal2-confirm swal2-styled btn-period" data-period="tahunan" style="background-color: #7ac2fb; border: none; padding: 10px; border-radius: 5px; color: white;">Tahunan</button>
+                        </div>
+                    `,
+                    didOpen: () => {
+                        document.querySelectorAll('.btn-period').forEach(btn => {
+                            btn.addEventListener('click', function () {
+                                const period = this.getAttribute('data-period');
+        
+                                // Di sini kamu bisa panggil fungsi download atau redirect
+                                // Contoh: window.location.href = '/download-pdf?periode=' + period;
+                                Swal.fire({
+                                    title: 'Mengunduh...',
+                                    text: 'Mohon tunggu sebentar.',
+                                    timer: 1500,
+                                    showCloseButton: true,
+                                    didOpen: () => {
+                                        Swal.showLoading();
+                                    }
+                                }).then(() => {
+                                    // Simulasi download atau kirim request
+                                    window.location.href = '/dashboard-admin/analitik/konten/download?period=' + period;
+                                });
+                            });
+                        });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                });
+            });
+        </script>
     </div>
 
     <!-- Time Filter Dropdown -->
-    <div class="text-right my-5">
+    <div class="flex justify-between items-center my-5">
+        <h1 class="text-xl font-semibold text-gray-800">Total Reaksi Dari Konten</h1>
         <select id="timeFilter" class="border rounded-xl pr-10 py-1 text-gray-600">
             <option value="7_hari" {{ $period == '7_hari' ? 'selected' : '' }}>7 hari ini</option>
             <option value="bulan" {{ $period == 'bulan' ? 'selected' : '' }}>Bulan ini</option>
             <option value="tahun" {{ $period == 'tahun' ? 'selected' : '' }}>Tahun ini</option>
         </select>
     </div>
-
-    <!-- Counter Cards -->
+    
+    <!-- Counter Cards -->    
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        
         <!-- Like Counter -->
         <div class="relative flex items-center rounded-lg bg-white h-28 shadow-md p-4">
             <i class="fa-solid fa-thumbs-up text-3xl text-blue-500 bg-blue-100 p-3 rounded-lg shadow-sm mr-4"></i>
@@ -66,28 +110,27 @@
             </div>
         </div>
     </div>
-
+    <!-- Engagement Chart -->
+    <div class="rounded-lg shadow-md flex flex-col h-[400px] mb-4 bg-white overflow-hidden w-full">
+        <div class="flex justify-between items-center px-4 py-2">
+            <h2 class="text-xl font-bold text-gray-700">Grafik Reaksi Pengguna</h2>
+        </div>
+        <div class="flex-grow relative">
+            <canvas id="engagementChart" class="w-full max-h-80 px-10 mt-10"></canvas>
+        </div>
+    </div>
+    
     <!-- Content Charts -->
     @foreach(['Berita', 'Karya', 'Produk'] as $chartType)
     <div class="rounded-lg shadow-md flex flex-col h-[400px] mb-4 bg-white overflow-hidden w-full">
         <div class="flex justify-between items-center px-4 py-2">
-            <h2 class="text-xl font-bold text-gray-700">Grafik {{ $chartType }}</h2>
+            <h2 class="text-xl font-bold text-gray-700">Grafik Trend Publikasi {{ $chartType }}</h2>
         </div>
         <div class="flex-grow relative">
             <canvas id="chart{{ $chartType }}" class="w-full max-h-80 px-10 mt-10"></canvas>
         </div>
     </div>
     @endforeach
-
-    <!-- Engagement Chart -->
-    <div class="rounded-lg shadow-md flex flex-col h-[400px] mb-4 bg-white overflow-hidden w-full">
-        <div class="flex justify-between items-center px-4 py-2">
-            <h2 class="text-xl font-bold text-gray-700">Engagement</h2>
-        </div>
-        <div class="flex-grow relative">
-            <canvas id="engagementChart" class="w-full max-h-80 px-10 mt-10"></canvas>
-        </div>
-    </div>
 </div>
 
 <!-- Scripts -->
