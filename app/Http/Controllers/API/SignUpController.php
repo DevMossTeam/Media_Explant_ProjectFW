@@ -12,8 +12,6 @@ use Illuminate\Support\Str;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Ensure PHPMailer is installed via Composer
-
 class SignUpController extends Controller
 {
     /**
@@ -21,10 +19,10 @@ class SignUpController extends Controller
      */
     public function registerStep1(Request $request)
     {
-        // Validasi input
+        // 1. Validasi input dasar
         $validator = Validator::make($request->all(), [
-            'nama_lengkap'  => 'required|max:100',
-            'nama_pengguna' => 'required|max:60',
+            'nama_lengkap'  => 'required|string|max:100',
+            'nama_pengguna' => 'required|string|max:60',
             'email'         => 'required|email|max:100',
         ]);
 
@@ -36,7 +34,7 @@ class SignUpController extends Controller
             ], 422);
         }
 
-        // Cek duplikasi username atau email di tabel User
+        // 2. Cek duplikasi username atau email
         if (User::where('nama_pengguna', $request->nama_pengguna)->exists()) {
             return response()->json([
                 'success' => false,
@@ -50,10 +48,10 @@ class SignUpController extends Controller
             ], 422);
         }
 
-        // Generate OTP (6 digit)
+        // 3. Generate OTP (6 digit)
         $otp = rand(100000, 999999);
 
-        // Simpan data pendaftaran sementara di cache (10 menit)
+        // 4. Simpan data pendaftaran sementara di cache (10 menit)
         $pendingData = [
             'nama_lengkap'  => $request->nama_lengkap,
             'nama_pengguna' => $request->nama_pengguna,
@@ -63,7 +61,7 @@ class SignUpController extends Controller
         ];
         Cache::put('pending_registration_' . $request->email, $pendingData, now()->addMinutes(10));
 
-        // Kirim OTP via email menggunakan PHPMailer dengan konfigurasi dari .env
+        // 5. Kirim OTP via PHPMailer dengan konfigurasi dari .env
         try {
             $mail = new PHPMailer(true);
             $mail->isSMTP();
@@ -76,11 +74,51 @@ class SignUpController extends Controller
 
             $mail->setFrom(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
             $mail->addAddress($request->email, $request->nama_lengkap);
-            $mail->Subject = 'Kode OTP Anda';
-            $mail->Body    = "Kode OTP untuk pendaftaran adalah: {$otp}";
+            $mail->Subject = 'Kode OTP Pendaftaran Anda';
+
+            // --- Plain Text Version ---
+            $plainText = "Halo {$request->nama_lengkap},\n\n" .
+                         "Kode OTP untuk pendaftaran Anda adalah: {$otp}\n\n" .
+                         "Kode ini hanya berlaku 10 menit.\n\n" .
+                         "Jika bukan Anda yang meminta, abaikan pesan ini.\n\n" .
+                         "Salam,\nTim Dukungan";
+
+            // --- HTML Version ---
+            $htmlBody = <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Pendaftaran</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f4;">
+  <center style="width:100%;padding:20px 0;">
+    <div style="max-width:600px;background:#FFFFFF;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+      <div style="background:#E53935;padding:16px 24px;color:#FFFFFF;text-align:center;font-size:20px;font-weight:bold;">
+        Kode OTP Pendaftaran
+      </div>
+      <div style="padding:24px;color:#333;line-height:1.6;font-size:16px;">
+        <p>Halo <strong>{$request->nama_lengkap}</strong>,</p>
+        <p>Terima kasih telah mendaftar. Berikut <strong>Kode OTP</strong> Anda:</p>
+        <p style="font-size:28px;font-weight:bold;text-align:center;padding:12px 0;color:#E53935;">{$otp}</p>
+        <p>Kode ini hanya berlaku selama <strong>10 menit</strong>. Jika Anda tidak meminta pendaftaran, silakan abaikan email ini.</p>
+        <p>Salam,<br>Tim Dukungan</p>
+      </div>
+    </div>
+  </center>
+</body>
+</html>
+HTML;
+
+            // Atur agar email mengirim HTML + plain text
+            $mail->isHTML(true);
+            $mail->Body    = $htmlBody;
+            $mail->AltBody = $plainText;
+
             $mail->send();
         } catch (Exception $e) {
-            // Jika pengiriman email gagal, hapus data pending dan kembalikan error
+            // Jika pengiriman email gagal, hapus data pending
             Cache::forget('pending_registration_' . $request->email);
             return response()->json([
                 'success' => false,
@@ -99,6 +137,7 @@ class SignUpController extends Controller
      */
     public function verifyOtp(Request $request)
     {
+        // 1. Validasi input
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|max:100',
             'otp'   => 'required|digits:6',
@@ -112,6 +151,7 @@ class SignUpController extends Controller
             ], 422);
         }
 
+        // 2. Ambil data pending dari cache
         $pendingData = Cache::get('pending_registration_' . $request->email);
 
         if (!$pendingData) {
@@ -121,6 +161,7 @@ class SignUpController extends Controller
             ], 404);
         }
 
+        // 3. Cek OTP
         if ($pendingData['otp'] != $request->otp) {
             return response()->json([
                 'success' => false,
@@ -128,7 +169,7 @@ class SignUpController extends Controller
             ], 422);
         }
 
-        // Tandai data pending sebagai terverifikasi
+        // 4. Tandai sudah terverifikasi dan refresh cache
         $pendingData['verified'] = true;
         Cache::put('pending_registration_' . $request->email, $pendingData, now()->addMinutes(10));
 
@@ -139,13 +180,14 @@ class SignUpController extends Controller
     }
 
     /**
-     * Step 3: Selesaikan Pendaftaran (input password) & masukkan ke database
+     * Step 3: Selesaikan Pendaftaran (input password) & masukkan ke database + kembalikan token
      */
     public function registerStep3(Request $request)
     {
+        // 1. Validasi input password
         $validator = Validator::make($request->all(), [
             'email'    => 'required|email|max:100',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
@@ -156,6 +198,7 @@ class SignUpController extends Controller
             ], 422);
         }
 
+        // 2. Ambil data pending dari cache
         $pendingData = Cache::get('pending_registration_' . $request->email);
 
         if (!$pendingData) {
@@ -165,6 +208,7 @@ class SignUpController extends Controller
             ], 404);
         }
 
+        // 3. Cek apakah sudah diverifikasi OTP
         if (!$pendingData['verified']) {
             return response()->json([
                 'success' => false,
@@ -172,13 +216,12 @@ class SignUpController extends Controller
             ], 422);
         }
 
-        // Generate UID dengan format 8-4-4-4-4 (total 28 karakter)
-        // Menggunakan UUID bawaan dan memotong segmen terakhir menjadi 4 karakter
-        $uuid = Str::uuid()->toString();
+        // 4. Generate UID
+        $uuid  = Str::uuid()->toString();
         $parts = explode('-', $uuid);
-        $uid = $parts[0] . '-' . $parts[1] . '-' . $parts[2] . '-' . $parts[3] . '-' . substr($parts[4], 0, 4);
+        $uid   = $parts[0] . '-' . $parts[1] . '-' . $parts[2] . '-' . $parts[3] . '-' . substr($parts[4], 0, 4);
 
-        // Buat user baru
+        // 5. Buat user baru di database
         $user = User::create([
             'uid'           => $uid,
             'nama_pengguna' => $pendingData['nama_pengguna'],
@@ -188,9 +231,13 @@ class SignUpController extends Controller
             'role'          => 'Pembaca',
         ]);
 
-        // Hapus data pendaftaran sementara
+        // 6. Hapus data pending dari cache
         Cache::forget('pending_registration_' . $request->email);
 
+        // 7. Buat token API (Laravel Sanctum)
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // 8. Kembalikan response sukses
         return response()->json([
             'success' => true,
             'message' => 'User berhasil didaftarkan!',
@@ -199,7 +246,8 @@ class SignUpController extends Controller
                 'nama_pengguna' => $user->nama_pengguna,
                 'email'         => $user->email,
                 'role'          => $user->role,
-            ]
+            ],
+            'token'   => $token,
         ], 201);
     }
 }

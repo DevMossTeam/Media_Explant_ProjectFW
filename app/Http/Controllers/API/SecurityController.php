@@ -48,24 +48,51 @@ class SecurityController extends Controller
             'password' => Hash::make($request->new_password),
         ]);
 
-        // Kirim email notifikasi perubahan password
+        // Kirim email notifikasi perubahan password (HTML + Plain Text)
         try {
-            $when = Carbon::now()->format('Y-m-d H:i:s');
+            $when  = Carbon::now()->format('Y-m-d H:i:s');
             $greet = property_exists($user, 'nama_pengguna') ? $user->nama_pengguna : $user->email;
 
-            Mail::raw(<<<TEXT
-Hai {$greet},
+            // Plain Text
+            $plainText = "Halo {$greet},\n\n" .
+                         "Password akun Anda telah berhasil diubah pada {$when}.\n\n" .
+                         "Jika ini bukan Anda, segera hubungi tim dukungan untuk mengamankan akun Anda.\n\n" .
+                         "Salam,\nTim MediaExplant";
 
-Password akun Anda telah berhasil diubah pada {$when}.
+            // HTML Body
+            $htmlBody = <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifikasi Ganti Password</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f4;">
+  <center style="width:100%;padding:20px 0;">
+    <div style="max-width:600px;background:#FFFFFF;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+      <div style="background:#1976D2;padding:16px 24px;color:#FFFFFF;text-align:center;font-size:20px;font-weight:bold;">
+        Password Berhasil Diubah
+      </div>
+      <div style="padding:24px;color:#333;line-height:1.6;font-size:16px;">
+        <p>Halo <strong>{$greet}</strong>,</p>
+        <p>Password akun Anda telah <strong>berhasil diubah</strong> pada <strong>{$when}</strong>.</p>
+        <p>Jika ini bukan Anda, <strong>segera hubungi tim dukungan</strong> untuk mengamankan akun Anda.</p>
+        <p>Salam,<br>Tim MediaExplant</p>
+      </div>
+    </div>
+  </center>
+</body>
+</html>
+HTML;
 
-Jika ini bukan Anda, segera hubungi tim dukungan untuk mengamankan akun Anda.
+            Mail::send([], [], function ($message) use ($user, $plainText, $htmlBody) {
+                $message->to($user->email)
+                        ->subject('Notifikasi: Password Berhasil Diubah');
 
-Salam,
-Tim MediaExplant
-TEXT
-            , function ($msg) use ($user) {
-                $msg->to($user->email)
-                    ->subject('Notifikasi: Password Berhasil Diubah');
+                // ✏️ Ganti setBody/addPart menjadi html() + text()
+                $message->html($htmlBody);
+                $message->text($plainText);
             });
         } catch (Exception $e) {
             Log::warning('Gagal mengirim email notifikasi ubah password: ' . $e->getMessage());
@@ -78,7 +105,7 @@ TEXT
     }
 
     //───────────────────────────────────────────────────
-    // STEP 1: Verifikasi email lama sebelum ganti email
+    // STEP 1: Verifikasi email lama sebelum ganti email
     //───────────────────────────────────────────────────
 
     /**
@@ -88,13 +115,52 @@ TEXT
     public function sendChangeEmailOtp(Request $request)
     {
         $user = $request->user();
-        $otp = random_int(100000, 999999);
+        $otp  = random_int(100000, 999999);
         Cache::put("old_email_otp_{$user->uid}", $otp, now()->addMinutes(15));
 
         try {
-            Mail::raw("Kode OTP verifikasi email lama Anda: {$otp}", function ($msg) use ($user) {
-                $msg->to($user->email)
-                    ->subject('OTP Verifikasi Email Lama');
+            // Plain Text
+            $plainText = "Halo {$user->nama_pengguna},\n\n" .
+                         "Kode OTP verifikasi email lama Anda adalah: {$otp}\n\n" .
+                         "Kode ini berlaku 15 menit.\n\n" .
+                         "Jika Anda tidak meminta, abaikan email ini.\n\n" .
+                         "Salam,\nTim MediaExplant";
+
+            // HTML Body
+            $htmlBody = <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verifikasi Email Lama</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f4;">
+  <center style="width:100%;padding:20px 0;">
+    <div style="max-width:600px;background:#FFFFFF;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+      <div style="background:#0288D1;padding:16px 24px;color:#FFFFFF;text-align:center;font-size:20px;font-weight:bold;">
+        OTP Verifikasi Email Lama
+      </div>
+      <div style="padding:24px;color:#333;line-height:1.6;font-size:16px;">
+        <p>Halo <strong>{$user->nama_pengguna}</strong>,</p>
+        <p>Berikut <strong>Kode OTP</strong> untuk memverifikasi email lama Anda:</p>
+        <p style="font-size:28px;font-weight:bold;text-align:center;padding:12px 0;color:#0288D1;">{$otp}</p>
+        <p>Kode ini <strong>berlaku 15 menit</strong>. Jika Anda tidak meminta, silakan abaikan pesan ini.</p>
+        <p>Salam,<br>Tim MediaExplant</p>
+      </div>
+    </div>
+  </center>
+</body>
+</html>
+HTML;
+
+            Mail::send([], [], function ($message) use ($user, $plainText, $htmlBody) {
+                $message->to($user->email)
+                        ->subject('OTP Verifikasi Email Lama');
+
+                // ✏️ Ganti setBody/addPart menjadi html() + text()
+                $message->html($htmlBody);
+                $message->text($plainText);
             });
 
             return response()->json([
@@ -146,7 +212,7 @@ TEXT
     }
 
     //───────────────────────────────────────────────────
-    // STEP 2: Input & verifikasi email baru
+    // STEP 2: Input & verifikasi email baru
     //───────────────────────────────────────────────────
 
     /**
@@ -169,15 +235,55 @@ TEXT
         }
 
         $newEmail = $request->new_email;
-        $otp = random_int(100000, 999999);
+        $otp      = random_int(100000, 999999);
 
         Cache::put("new_email_pending_{$user->uid}", $newEmail, now()->addMinutes(15));
         Cache::put("new_email_otp_{$user->uid}", $otp, now()->addMinutes(15));
 
         try {
-            Mail::raw("Kode OTP untuk verifikasi email baru Anda: {$otp}", function ($msg) use ($newEmail) {
-                $msg->to($newEmail)
-                    ->subject('OTP Verifikasi Email Baru');
+            // Plain Text
+            $plainText = "Halo {$user->nama_pengguna},\n\n" .
+                         "Kode OTP untuk verifikasi email baru Anda ({$newEmail}) adalah: {$otp}\n\n" .
+                         "Kode ini berlaku 15 menit.\n\n" .
+                         "Jika Anda tidak meminta, abaikan email ini.\n\n" .
+                         "Salam,\nTim MediaExplant";
+
+            // HTML Body
+            $htmlBody = <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Verifikasi Email Baru</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f4;">
+  <center style="width:100%;padding:20px 0;">
+    <div style="max-width:600px;background:#FFFFFF;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+      <div style="background:#00796B;padding:16px 24px;color:#FFFFFF;text-align:center;font-size:20px;font-weight:bold;">
+        OTP Verifikasi Email Baru
+      </div>
+      <div style="padding:24px;color:#333;line-height:1.6;font-size:16px;">
+        <p>Halo <strong>{$user->nama_pengguna}</strong>,</p>
+        <p>Anda ingin mengganti email ke: <strong>{$newEmail}</strong></p>
+        <p>Berikut <strong>Kode OTP</strong> untuk memverifikasi email baru tersebut:</p>
+        <p style="font-size:28px;font-weight:bold;text-align:center;padding:12px 0;color:#00796B;">{$otp}</p>
+        <p>Kode ini <strong>berlaku 15 menit</strong>. Jika Anda tidak meminta perubahan email, silakan abaikan pesan ini.</p>
+        <p>Salam,<br>Tim MediaExplant</p>
+      </div>
+    </div>
+  </center>
+</body>
+</html>
+HTML;
+
+            Mail::send([], [], function ($message) use ($newEmail, $plainText, $htmlBody) {
+                $message->to($newEmail)
+                        ->subject('OTP Verifikasi Email Baru');
+
+                // ✏️ Ganti setBody/addPart menjadi html() + text()
+                $message->html($htmlBody);
+                $message->text($plainText);
             });
 
             return response()->json([
@@ -233,7 +339,7 @@ TEXT
             ], 400);
         }
 
-        // update email & tandai terverifikasi
+        // Update email & tandai terverifikasi
         $user->email = $newEmail;
         // $user->email_verified_at = Carbon::now();
         $user->save();
@@ -270,13 +376,52 @@ TEXT
         }
 
         $user = User::where('email', $request->email)->firstOrFail();
-        $otp = random_int(100000, 999999);
+        $otp  = random_int(100000, 999999);
         Cache::put("reset_password_otp_{$user->uid}", $otp, now()->addMinutes(15));
 
         try {
-            Mail::raw("Kode OTP untuk reset password: {$otp}", function ($msg) use ($user) {
-                $msg->to($user->email)
-                    ->subject('OTP Reset Password');
+            // Plain Text
+            $plainText = "Halo {$user->nama_pengguna},\n\n" .
+                         "Kode OTP untuk reset password Anda adalah: {$otp}\n\n" .
+                         "Kode ini berlaku 15 menit.\n\n" .
+                         "Jika Anda tidak meminta, abaikan email ini.\n\n" .
+                         "Salam,\nTim MediaExplant";
+
+            // HTML Body
+            $htmlBody = <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Reset Password</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f4;">
+  <center style="width:100%;padding:20px 0;">
+    <div style="max-width:600px;background:#FFFFFF;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+      <div style="background:#C62828;padding:16px 24px;color:#FFFFFF;text-align:center;font-size:20px;font-weight:bold;">
+        OTP Reset Password
+      </div>
+      <div style="padding:24px;color:#333;line-height:1.6;font-size:16px;">
+        <p>Halo <strong>{$user->nama_pengguna}</strong>,</p>
+        <p>Berikut <strong>Kode OTP</strong> untuk mereset password Anda:</p>
+        <p style="font-size:28px;font-weight:bold;text-align:center;padding:12px 0;color:#C62828;">{$otp}</p>
+        <p>Kode ini <strong>berlaku 15 menit</strong>. Jika Anda tidak meminta reset password, silakan abaikan pesan ini.</p>
+        <p>Salam,<br>Tim MediaExplant</p>
+      </div>
+    </div>
+  </center>
+</body>
+</html>
+HTML;
+
+            Mail::send([], [], function ($message) use ($user, $plainText, $htmlBody) {
+                $message->to($user->email)
+                        ->subject('OTP Reset Password');
+
+                // ✏️ Ganti setBody/addPart menjadi html() + text()
+                $message->html($htmlBody);
+                $message->text($plainText);
             });
 
             return response()->json([
@@ -311,14 +456,14 @@ TEXT
             ], 422);
         }
 
-        $user = User::where('email', $request->email)->firstOrFail();
-        $cacheKey = "reset_password_otp_{$user->uid}";
+        $user      = User::where('email', $request->email)->firstOrFail();
+        $cacheKey  = "reset_password_otp_{$user->uid}";
         $cachedOtp = Cache::get($cacheKey);
 
         if (! $cachedOtp || $cachedOtp != $request->otp) {
             return response()->json([
                 'success' => false,
-                'message' => 'OTP tidak valid atau kedaluwarsa.'
+                'message' => 'OTP tidak valid atau sudah kedaluwarsa.'
             ], 400);
         }
 
@@ -348,14 +493,14 @@ TEXT
             ], 422);
         }
 
-        $user = User::where('email', $request->email)->firstOrFail();
-        $cacheKey = "reset_password_otp_{$user->uid}";
+        $user      = User::where('email', $request->email)->firstOrFail();
+        $cacheKey  = "reset_password_otp_{$user->uid}";
         $cachedOtp = Cache::get($cacheKey);
 
         if (! $cachedOtp || $cachedOtp != $request->otp) {
             return response()->json([
                 'success' => false,
-                'message' => 'OTP tidak valid atau kedaluwarsa.'
+                'message' => 'OTP tidak valid atau sudah kedaluwarsa.'
             ], 400);
         }
 
@@ -364,24 +509,51 @@ TEXT
         $user->save();
         Cache::forget($cacheKey);
 
-        // Kirim email notifikasi reset password
+        // Kirim email notifikasi reset password (HTML + Plain Text)
         try {
-            $when = Carbon::now()->format('Y-m-d H:i:s');
+            $when  = Carbon::now()->format('Y-m-d H:i:s');
             $greet = property_exists($user, 'nama_pengguna') ? $user->nama_pengguna : $user->email;
 
-            Mail::raw(<<<TEXT
-Hai {$greet},
+            // Plain Text
+            $plainText = "Halo {$greet},\n\n" .
+                         "Password akun Anda telah berhasil direset pada {$when}.\n\n" .
+                         "Jika ini bukan Anda, segera hubungi tim dukungan untuk mengamankan akun Anda.\n\n" .
+                         "Salam,\nTim MediaExplant";
 
-Password akun Anda telah berhasil direset pada {$when}.
+            // HTML Body
+            $htmlBody = <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifikasi Reset Password</title>
+</head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f4;">
+  <center style="width:100%;padding:20px 0;">
+    <div style="max-width:600px;background:#FFFFFF;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+      <div style="background:#D32F2F;padding:16px 24px;color:#FFFFFF;text-align:center;font-size:20px;font-weight:bold;">
+        Password Berhasil Direset
+      </div>
+      <div style="padding:24px;color:#333;line-height:1.6;font-size:16px;">
+        <p>Halo <strong>{$greet}</strong>,</p>
+        <p>Password akun Anda telah <strong>berhasil direset</strong> pada <strong>{$when}</strong>.</p>
+        <p>Jika ini bukan Anda, <strong>segera hubungi tim dukungan</strong> untuk mengamankan akun Anda.</p>
+        <p>Salam,<br>Tim MediaExplant</p>
+      </div>
+    </div>
+  </center>
+</body>
+</html>
+HTML;
 
-Jika ini bukan Anda, segera hubungi tim dukungan untuk mengamankan akun Anda.
+            Mail::send([], [], function ($message) use ($user, $plainText, $htmlBody) {
+                $message->to($user->email)
+                        ->subject('Notifikasi: Password Berhasil Direset');
 
-Salam,
-Tim MediaExplant
-TEXT
-            , function ($msg) use ($user) {
-                $msg->to($user->email)
-                    ->subject('Notifikasi: Password Berhasil Direset');
+                // ✏️ Ganti setBody/addPart menjadi html() + text()
+                $message->html($htmlBody);
+                $message->text($plainText);
             });
         } catch (Exception $e) {
             Log::warning('Gagal mengirim email notifikasi reset password: ' . $e->getMessage());

@@ -130,7 +130,7 @@ class StrukturOrganisasiController extends Controller
         $divisi->delete();
 
         return redirect()
-        ->route('admin.organisasi.index') // Ganti dengan nama rute sebenarnya
+        ->route('admin.organisasi.index') 
         ->with('success', 'Anggota berhasil dihapus!');
     }
 

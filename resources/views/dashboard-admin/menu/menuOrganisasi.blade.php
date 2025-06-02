@@ -180,8 +180,6 @@
                                                     data-id="{{ $divisi->id }}">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
-
-
                                             </td>
                                         </tr>
                                     @empty
@@ -218,16 +216,18 @@
 
                     e.preventDefault();
 
-                    const id = btn.getAttribute('data-id'); // e.g. "8c357148-ac12-4f4a-aa7e-1527807f6cae"
-                    const formId = 'delete-form2-' + id; // must exactly match the form id in Blade
-                    const form = document.getElementById(formId);
+                    const id = btn.getAttribute('data-id');
+                    const formId = 'delete-form2-' + id;
+                    
+                    // Cari form di seluruh DOM
+                    let form = document.getElementById(formId);
 
                     if (!form) {
-                        console.error('Form dengan ID ' + formId + ' tidak ditemukan!');
+                        console.error('Form tidak ditemukan!');
                         return;
                     }
 
-                    // Make sure form is connected to the DOM before submitting
+                    // Tambahkan form ke body jika belum (opsional)
                     if (!document.body.contains(form)) {
                         document.body.appendChild(form);
                     }
@@ -252,7 +252,6 @@
                         }
                     });
                 });
-
 
                 // Fungsi dummy untuk Tambah Divisi
                 function tambahDivisi() {
@@ -357,7 +356,6 @@
                             }
                         });
                 }
-
             </script>
 
            

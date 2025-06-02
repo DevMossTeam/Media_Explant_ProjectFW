@@ -133,26 +133,74 @@
                 <div id="komentarContainer"
                     class="space-y-4 text-sm text-gray-700 max-h-[300px] overflow-y-auto transition-all duration-300">
                     @forelse ($komentarList->where('parent_id', null) as $komentar)
-                        <div class="komentar-item" data-id="{{ $komentar->id }}">
-                            <div>
-                                <span class="font-semibold">{{ $komentar->user->nama_pengguna }}</span> —
-                                <span class="isi-komentar">
-                                    {{ \Illuminate\Support\Str::limit($komentar->isi_komentar, 150) }}
-                                    @if (strlen($komentar->isi_komentar) > 150)
-                                        <button class="text-xs text-blue-600 hover:underline show-full"
-                                            data-full="{{ $komentar->isi_komentar }}"
-                                            data-short="{{ \Illuminate\Support\Str::limit($komentar->isi_komentar, 150) }}">Lihat
-                                            selengkapnya</button>
+                        <div class="komentar-item relative" data-id="{{ $komentar->id }}">
+                            <div class="flex justify-between items-start group nama-pengguna-container"
+                                style="position: relative;">
+                                <div class="flex items-center gap-2">
+                                    @if ($komentar->user && $komentar->user->profile_pic)
+                                        <img src="data:image/jpeg;base64,{{ base64_encode($komentar->user->profile_pic) }}"
+                                            alt="Profil" class="w-6 h-6 rounded-full border-2 border-red-500">
+                                    @else
+                                        <i class="fa-solid fa-user-circle text-xl text-gray-700 hover:text-red-700"></i>
                                     @endif
-                                </span>
+                                    <span class="font-semibold nama-pengguna">{{ $komentar->user->nama_pengguna }}</span>
+                                    <span class="text-xs text-gray-500 ml-2">
+                                        {{ \Carbon\Carbon::parse($komentar->tanggal_komentar)->diffForHumans(null, true, false, 1) === 'now' ? 'baru saja' : \Carbon\Carbon::parse($komentar->tanggal_komentar)->locale('id')->diffForHumans() }}
+                                    </span>
+                                </div>
+                                @if ($komentar->user->uid === Cookie::get('user_uid'))
+                                    <button
+                                        class="more-options absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                        data-id="{{ $komentar->id }}"
+                                        style="font-size: 14px; background: none; border: none; cursor: pointer;">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                @endif
+                            </div>
+                            <div class="isi-komentar flex-1">
+                                {{ \Illuminate\Support\Str::limit($komentar->isi_komentar, 150) }}
+                                @if (strlen($komentar->isi_komentar) > 150)
+                                    <button class="text-xs text-blue-600 hover:underline show-full"
+                                        data-full="{{ $komentar->isi_komentar }}"
+                                        data-short="{{ \Illuminate\Support\Str::limit($komentar->isi_komentar, 150) }}">Lihat
+                                        selengkapnya</button>
+                                @endif
                             </div>
                             <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>
 
                             <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2 hidden">
                                 @foreach ($komentar->replies as $reply)
-                                    <div>
-                                        ↳ <span class="font-semibold">{{ $reply->user->nama_pengguna }}</span> —
-                                        {{ $reply->isi_komentar }}
+                                    <div class="komentar-item relative" data-id="{{ $reply->id }}">
+                                        <div class="flex justify-between items-start group nama-pengguna-container"
+                                            style="position: relative;">
+                                            <div class="flex items-center gap-2">
+                                                @if ($komentar->user && $komentar->user->profile_pic)
+                                                    <img src="data:image/jpeg;base64,{{ base64_encode($komentar->user->profile_pic) }}"
+                                                        alt="Profil"
+                                                        class="w-6 h-6 rounded-full border-2 border-red-500">
+                                                @else
+                                                    <i
+                                                        class="fa-solid fa-user-circle text-xl text-gray-700 hover:text-red-700"></i>
+                                                @endif
+                                                <span
+                                                    class="font-semibold nama-pengguna">{{ $komentar->user->nama_pengguna }}</span>
+                                                <span class="text-xs text-gray-500 ml-2">
+                                                    {{ \Carbon\Carbon::parse($komentar->created_at)->diffForHumans() }}
+                                                </span>
+                                            </div>
+                                            @if ($reply->user->uid === Cookie::get('user_uid'))
+                                                <button
+                                                    class="more-options absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                                    data-id="{{ $reply->id }}"
+                                                    style="font-size: 14px; background: none; border: none; cursor: pointer;">
+                                                    <i class="fas fa-ellipsis-h"></i>
+                                                </button>
+                                            @endif
+                                        </div>
+                                        <div class="isi-komentar mt-1 text-gray-800 text-sm">
+                                            {{ $reply->isi_komentar }}
+                                        </div>
+                                        <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>
                                     </div>
                                 @endforeach
                             </div>
@@ -423,6 +471,64 @@
         </div>
     </div>
 
+    <style>
+        .nama-pengguna-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .more-options {
+            position: absolute;
+            right: -20px;
+            /* sedikit di luar nama_pengguna, sesuaikan */
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .nama-pengguna-container:hover .more-options,
+        .more-options:hover {
+            opacity: 1 !important;
+        }
+
+        @keyframes fade-in-down {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-down {
+            animation: fade-in-down 0.3s ease-out;
+        }
+    </style>
+
+    <!-- Modal Konfirmasi Hapus -->
+    <div id="hapusModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div id="hapusModalContent"
+            class="bg-white p-8 rounded-xl shadow-lg w-96 max-w-full text-center animate-fade-in-down relative">
+            <p class="mb-6 text-gray-700 text-lg font-semibold">Apakah kamu yakin ingin menghapus komentar ini?</p>
+            <div class="flex justify-center gap-5">
+                <button id="batalHapus"
+                    class="px-6 py-2 rounded bg-gray-300 hover:bg-gray-400 text-sm font-medium transition">Batal</button>
+                <button id="konfirmasiHapus"
+                    class="px-6 py-2 rounded bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition">Hapus</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const komentarForm = document.getElementById('komentarForm');
@@ -447,8 +553,8 @@
                         credentials: 'same-origin',
                         body: JSON.stringify({
                             komentar: komentar,
-                            item_id: "{{ $karya->id }}", // Ubah sesuai dengan item_id karya
-                            komentar_type: "Karya", // Komentar untuk karya
+                            item_id: "{{ $karya->id }}",
+                            komentar_type: "Karya",
                             parent_id: parentId
                         })
                     });
@@ -456,7 +562,6 @@
                     const data = await response.json();
 
                     if (data.success) {
-                        // Update komentar di halaman tanpa reload
                         const noCommentText = komentarContainer.querySelector(
                             '.text-center.text-gray-500');
                         if (noCommentText) noCommentText.remove();
@@ -484,24 +589,41 @@
 
                         } else {
                             const div = document.createElement('div');
-                            div.className = "komentar-item animate-fade-in";
+                            div.className = "komentar-item animate-fade-in relative";
                             div.setAttribute('data-id', data.id);
                             div.innerHTML = `
-                    <div>
-                        <span class="font-semibold">${data.nama_pengguna}</span> —
-                        <span class="isi-komentar">${data.isi_komentar}</span>
-                    </div>
-                    <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>
-                    <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2 hidden"></div>
-                    <button class="toggle-replies text-xs text-blue-600 hover:underline mt-1 hidden"></button>
-                `;
+    <div class="flex justify-between items-start group nama-pengguna-container" style="position: relative;">
+        <div class="flex items-center gap-2">
+            ${data.profile_pic ? `
+                        <img src="data:image/jpeg;base64,${data.profile_pic}" alt="Profil" class="w-6 h-6 rounded-full border-2 border-red-500">
+                    ` : `
+                        <i class="fa-solid fa-user-circle text-xl text-gray-700 hover:text-red-700"></i>
+                    `}
+            <span class="font-semibold nama-pengguna">${data.nama_pengguna}</span>
+            <span class="text-xs text-gray-500 ml-2">baru saja</span>
+        </div>
+        ${data.owned_by_user ? `
+                    <button class="more-options absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        data-id="${data.id}" style="font-size: 14px; background: none; border: none; cursor: pointer;">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                ` : ''}
+    </div>
+    <div class="isi-komentar flex-1 mt-1 text-gray-800 text-sm">${data.isi_komentar}</div>
+    <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>
+    <div class="replies ml-4 text-sm text-gray-500 mt-2 space-y-2 hidden"></div>
+    <button class="toggle-replies text-xs text-blue-600 hover:underline mt-1 hidden"></button>
+`;
                             komentarContainer.prepend(div);
                         }
 
                         komentarInput.value = '';
                         komentarInput.removeAttribute('data-reply-to');
                         komentarInput.placeholder = 'Tulis komentarmu disini';
-
+                        if (currentReplyTarget) {
+                            currentReplyTarget.remove();
+                            currentReplyTarget = null;
+                        }
                     } else {
                         alert("Gagal mengirim komentar.");
                     }
@@ -637,6 +759,59 @@
                     }
                 }
             });
+        });
+
+        let komentarIdToDelete = null;
+
+        document.addEventListener('click', function(e) {
+            // TOMBOL TITIK TIGA (opsi hapus)
+            if (e.target.closest('.more-options')) {
+                komentarIdToDelete = e.target.closest('.more-options').dataset.id;
+                document.getElementById('hapusModal').classList.remove('hidden');
+            }
+
+            // BATAL HAPUS
+            if (e.target.id === 'batalHapus') {
+                komentarIdToDelete = null;
+                document.getElementById('hapusModal').classList.add('hidden');
+            }
+
+            // KONFIRMASI HAPUS
+            if (e.target.id === 'konfirmasiHapus') {
+                if (!komentarIdToDelete) return;
+
+                fetch(`/komentar/${komentarIdToDelete}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            const komentarItem = document.querySelector(
+                                `.komentar-item[data-id="${komentarIdToDelete}"]`);
+                            if (komentarItem) komentarItem.remove();
+                        } else {
+                            alert("Gagal menghapus komentar.");
+                        }
+                        document.getElementById('hapusModal').classList.add('hidden');
+                        komentarIdToDelete = null;
+                    }).catch(err => {
+                        console.error(err);
+                        alert("Gagal menghapus komentar.");
+                        document.getElementById('hapusModal').classList.add('hidden');
+                        komentarIdToDelete = null;
+                    });
+            }
+        });
+
+        // Tutup modal saat klik di luar konten modal
+        document.getElementById('hapusModal').addEventListener('click', function(e) {
+            if (e.target.id === 'hapusModal') { // klik tepat di background overlay
+                komentarIdToDelete = null;
+                this.classList.add('hidden');
+            }
         });
 
         document.addEventListener('DOMContentLoaded', function() {
