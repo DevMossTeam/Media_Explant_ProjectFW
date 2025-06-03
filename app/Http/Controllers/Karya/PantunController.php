@@ -76,7 +76,7 @@ class PantunController extends Controller
 
         $karya->increment('view_count');
 
-        $rekomendasi = Pantun::from('Karya as p')
+        $rekomendasi = Pantun::from('karya as p')
             ->with('user')
             ->where('p.id', '!=', $id)
             ->where('p.kategori', 'pantun')

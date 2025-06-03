@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Models\Author\Tag;
 
 class HomeNews extends Berita
 {
@@ -149,5 +150,10 @@ class HomeNews extends Berita
     {
         return $this->hasMany(\App\Models\UserReact\Bookmark::class, 'item_id', 'id')
             ->where('bookmark_type', 'Berita');
+    }
+
+    public function tags()
+    {
+        return $this->hasMany(Tag::class, 'berita_id');
     }
 }

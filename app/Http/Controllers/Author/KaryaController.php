@@ -82,28 +82,22 @@ class KaryaController extends Controller
         $notificationResult = [];
         if ($karya->visibilitas === 'public') {
             try {
-                // Judul notifikasi: ambil dari judul karya
                 $notifTitle = $karya->judul;
 
-                // Body notifikasi: potong deskripsi sampai 50 karakter
                 $plainDescNotif = strip_tags($karya->deskripsi);
                 $notifBody      = Str::limit($plainDescNotif, 50);
 
-                // Payload data: sertakan ID karya agar aplikasi bisa membuka detailnya
                 $payloadData = [
                     'karya_id' => (string) $karya->id,
                 ];
 
-                // Panggil service untuk mengirim notifikasi
                 $notificationResult = $this->notifier->send($notifTitle, $notifBody, $payloadData);
             } catch (\Throwable $e) {
-                // Jika ada error, log agar developer tahu penyebabnya
                 Log::error('Gagal mengirim notifikasi Karya', [
                     'error'    => $e->getMessage(),
                     'karya_id' => $karya->id,
                 ]);
 
-                // Buat hasil notifikasi berupa array dengan success=false
                 $notificationResult = [
                     [
                         'success' => false,
@@ -112,7 +106,6 @@ class KaryaController extends Controller
                 ];
             }
         } else {
-            // Jika private, lewati pengiriman notifikasi
             $notificationResult = [
                 [
                     'success' => false,

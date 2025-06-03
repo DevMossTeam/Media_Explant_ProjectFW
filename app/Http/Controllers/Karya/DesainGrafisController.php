@@ -68,7 +68,7 @@ class DesainGrafisController extends Controller
 
         $karya->increment('view_count');
 
-        $rekomendasi = DesainGrafis::from('Karya as p')
+        $rekomendasi = DesainGrafis::from('karya as p')
             ->with('user')
             ->where('p.kategori', 'desain_grafis')
             ->where('p.visibilitas', 'public')

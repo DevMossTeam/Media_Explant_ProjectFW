@@ -74,9 +74,22 @@ class KesenianHiburanNewsController extends Controller
                 ->where('berita.kategori', $kategori)
                 ->where('berita.visibilitas', 'public')
                 ->whereRaw("CAST(berita.tanggal_diterbitkan AS DATETIME) >= ?", [$oneWeekAgo])
-                ->groupBy('berita.id')
+                ->groupBy(
+                    'berita.id',
+                    'berita.judul',
+                    'berita.kategori',
+                    'berita.konten_berita',
+                    'berita.tanggal_diterbitkan',
+                    'berita.view_count',
+                    'user.nama_lengkap'
+                )
                 ->select(
-                    'berita.*',
+                    'berita.id',
+                    'berita.judul',
+                    'berita.kategori',
+                    'berita.konten_berita',
+                    'berita.tanggal_diterbitkan',
+                    'berita.view_count',
                     'user.nama_lengkap as user_nama_lengkap',
                     DB::raw('COUNT(DISTINCT rk.id) as like_count'),
                     DB::raw('COUNT(DISTINCT km.id) as komentar_count'),
@@ -101,9 +114,22 @@ class KesenianHiburanNewsController extends Controller
                     })
                     ->where('berita.kategori', $kategori)
                     ->where('berita.visibilitas', 'public')
-                    ->groupBy('berita.id')
+                    ->groupBy(
+                        'berita.id',
+                        'berita.judul',
+                        'berita.kategori',
+                        'berita.konten_berita',
+                        'berita.tanggal_diterbitkan',
+                        'berita.view_count',
+                        'user.nama_lengkap'
+                    )
                     ->select(
-                        'berita.*',
+                        'berita.id',
+                        'berita.judul',
+                        'berita.kategori',
+                        'berita.konten_berita',
+                        'berita.tanggal_diterbitkan',
+                        'berita.view_count',
                         'user.nama_lengkap as user_nama_lengkap',
                         DB::raw('COUNT(DISTINCT rk.id) as like_count'),
                         DB::raw('COUNT(DISTINCT km.id) as komentar_count'),

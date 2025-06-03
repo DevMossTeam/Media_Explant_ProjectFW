@@ -35,8 +35,8 @@ class BeritaController extends Controller
         $kontenBersih = trim(strip_tags($request->konten_berita));
         if ($kontenBersih === '' || $request->konten_berita === '<p><br></p>') {
             return redirect()->back()
-                             ->withInput()
-                             ->with('error', 'Konten berita tidak boleh kosong.');
+                ->withInput()
+                ->with('error', 'Konten berita tidak boleh kosong.');
         }
 
         // 3. Ambil user UID dari cookie
@@ -71,26 +71,19 @@ class BeritaController extends Controller
         // 6. Hanya kirim notifikasi jika visibilitas adalah 'public'
         if ($article->visibilitas === 'public') {
             try {
-                // Judul notifikasi
                 $notifTitle = $article->judul;
-
-                // Body notifikasi (ambil potongan konten)
                 $notifBody  = Str::limit(strip_tags($article->konten_berita), 50);
-
-                // Payload data, misal kita kirim berita_id
                 $payloadData = [
                     'berita_id' => (string) $article->id,
                 ];
 
                 $notificationResult = $this->notifier->send($notifTitle, $notifBody, $payloadData);
             } catch (\Throwable $e) {
-                // Log error agar kita tahu mengapa notifikasi gagal
                 Log::error('Gagal mengirim notifikasi berita', [
                     'error'     => $e->getMessage(),
                     'berita_id' => $article->id,
                 ]);
 
-                // Tetap lanjutkan — jangan batalkan proses simpan berita
                 $notificationResult = [
                     [
                         'success' => false,

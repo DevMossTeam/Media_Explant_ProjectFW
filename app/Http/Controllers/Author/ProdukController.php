@@ -88,20 +88,13 @@ class ProdukController extends Controller
             try {
                 // Judul notifikasi: sama dengan judul produk
                 $notifTitle = $request->judul;
-
-                // Body notifikasi: potong deskripsi hingga 50 karakter (strip HTML)
                 $plainDescNotif = strip_tags($request->deskripsi);
                 $notifBody      = Str::limit($plainDescNotif, 50);
-
-                // Payload data: sertakan ID produk agar aplikasi bisa menavigasi ke detail
                 $payloadData = [
                     'produk_id' => (string) $produkId,
                 ];
-
-                // Panggil service untuk mengirim notifikasi
                 $notificationResult = $this->notifier->send($notifTitle, $notifBody, $payloadData);
             } catch (\Throwable $e) {
-                // Jika ada error di pengiriman notifikasi, log agar developer tahu penyebabnya
                 Log::error('Gagal mengirim notifikasi Produk', [
                     'error'     => $e->getMessage(),
                     'produk_id' => $produkId,
@@ -116,7 +109,6 @@ class ProdukController extends Controller
                 ];
             }
         } else {
-            // Jika visibilitas = private, lewati pengiriman notifikasi
             $notificationResult = [
                 [
                     'success' => false,

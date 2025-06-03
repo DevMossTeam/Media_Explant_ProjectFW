@@ -75,7 +75,7 @@ class PuisiController extends Controller
 
         $karya->increment('view_count');
 
-        $rekomendasi = Puisi::from('Karya as p')
+        $rekomendasi = Puisi::from('karya as p')
             ->with('user')
             ->where('p.id', '!=', $id)
             ->where('p.kategori', 'puisi')
