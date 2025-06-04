@@ -28,7 +28,6 @@ class StrukturOrganisasiController extends Controller
                 'organisasi_divisi.id',
                 'organisasi_divisi.nama_divisi',
                 'organisasi_divisi.row',
-                'organisasi_divisi.column',
                 DB::raw('(
                     SELECT COUNT(*) 
                     FROM organisasi_anggota 
@@ -80,7 +79,7 @@ class StrukturOrganisasiController extends Controller
         // Fetch divisions with their members and users
         $DeskripsiOrganisasi = TentangKami::first()?->fokus_utama;
         $divisis = StrukturDivisi::with(['anggotas.user'])
-        ->orderBy('row')->orderBy('column')->get();
+        ->orderBy('row')->get();
     
         return view('header-footer.footer-menu.strukturOrganisasi', compact('divisis', 'DeskripsiOrganisasi'));
     }
@@ -111,7 +110,6 @@ class StrukturOrganisasiController extends Controller
         $validated = $request->validate([
             'nama_divisi' => 'required|max:50',
             'row' => 'required|integer|min:1',
-            'column' => 'required|integer|min:1',
         ]);
     
         $validated['id'] = (string) Str::uuid();

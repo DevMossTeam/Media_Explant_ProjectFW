@@ -10,7 +10,6 @@ class StrukturDivisi extends Model
     protected $fillable = [
         'id',
         'nama_divisi',
-        'column',
         'row'
     ];
 
