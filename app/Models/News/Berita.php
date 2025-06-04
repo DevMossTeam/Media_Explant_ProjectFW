@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Models\UserReact\Reaksi;
 use App\Models\User;
+use App\Models\Author\Tag;
 
 class Berita extends Model
 {
@@ -41,10 +42,15 @@ class Berita extends Model
     }
 
     /**
-    * Relasi ke penulis berita
-    */
+     * Relasi ke penulis berita
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'uid');
+    }
+
+    public function tags()
+    {
+        return $this->hasMany(Tag::class, 'berita_id');
     }
 }

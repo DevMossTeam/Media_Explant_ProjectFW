@@ -106,7 +106,7 @@ class FotografiController extends Controller
 
         $karya->increment('view_count');
 
-        $rekomendasi = Fotografi::from('Karya as p')
+        $rekomendasi = Fotografi::from('karya as p')
             ->with('user')
             ->where('p.id', '!=', $id)
             ->where('p.kategori', 'fotografi')

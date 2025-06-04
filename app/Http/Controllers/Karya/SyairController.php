@@ -75,7 +75,7 @@ class SyairController extends Controller
 
         $karya->increment('view_count');
 
-        $rekomendasi = Syair::from('Karya as p')
+        $rekomendasi = Syair::from('karya as p')
             ->with('user')
             ->where('p.id', '!=', $id)
             ->where('p.kategori', 'syair')

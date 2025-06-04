@@ -99,6 +99,21 @@
                     </div>
                 </div>
 
+                <!-- Label -->
+                @if ($news->tags->isNotEmpty())
+                    <div class="mt-6">
+                        <div class="text-sm font-semibold text-black mb-2">Label:</div>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($news->tags as $tag)
+                                <a href="{{ route('search', ['query' => $tag->nama_tag]) }}"
+                                    class="bg-gray-200 text-sm text-gray-700 px-3 py-1 rounded-full hover:bg-[#9A0605] hover:text-white transition-colors duration-200">
+                                    {{ $tag->nama_tag }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Komentar -->
                 <div class="mt-10">
                     <form id="komentarForm" method="POST">
@@ -840,19 +855,19 @@
     <div class="flex justify-between items-start group nama-pengguna-container" style="position: relative;">
         <div class="flex items-center gap-2">
             ${data.profile_pic ? `
-                        <img src="data:image/jpeg;base64,${data.profile_pic}" alt="Profil" class="w-6 h-6 rounded-full border-2 border-red-500">
-                    ` : `
-                        <i class="fa-solid fa-user-circle text-xl text-gray-700 hover:text-red-700"></i>
-                    `}
+                                <img src="data:image/jpeg;base64,${data.profile_pic}" alt="Profil" class="w-6 h-6 rounded-full border-2 border-red-500">
+                            ` : `
+                                <i class="fa-solid fa-user-circle text-xl text-gray-700 hover:text-red-700"></i>
+                            `}
             <span class="font-semibold nama-pengguna">${data.nama_pengguna}</span>
             <span class="text-xs text-gray-500 ml-2">baru saja</span>
         </div>
         ${data.owned_by_user ? `
-                    <button class="more-options absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                        data-id="${data.id}" style="font-size: 14px; background: none; border: none; cursor: pointer;">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
-                ` : ''}
+                            <button class="more-options absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                data-id="${data.id}" style="font-size: 14px; background: none; border: none; cursor: pointer;">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        ` : ''}
     </div>
     <div class="isi-komentar flex-1 mt-1 text-gray-800 text-sm">${data.isi_komentar}</div>
     <button class="text-xs text-blue-600 hover:underline reply-btn mt-1">Reply</button>

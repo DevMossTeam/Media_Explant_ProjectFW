@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\UserReact\Reaksi;
+use App\Models\Author\Tag;
 
 class OpiniEsaiNews extends Berita
 {
@@ -50,5 +51,10 @@ class OpiniEsaiNews extends Berita
         return $this->hasMany(Reaksi::class, 'item_id', 'id')
             ->where('reaksi_type', 'Berita')
             ->where('jenis_reaksi', 'Suka');
+    }
+
+    public function tags()
+    {
+        return $this->hasMany(Tag::class, 'berita_id');
     }
 }

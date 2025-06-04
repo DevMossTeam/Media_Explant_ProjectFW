@@ -256,4 +256,3 @@ class AdminController extends Controller
         return $pdf->download('laporan_analitik_konten_' . $period . '.pdf');
     }
 }
-
