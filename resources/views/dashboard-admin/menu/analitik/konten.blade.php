@@ -69,8 +69,8 @@
         <h1 class="text-xl font-semibold text-gray-800">Total Reaksi Dari Konten</h1>
         <select id="timeFilter" class="border rounded-xl pr-10 py-1 text-gray-600">
             <option value="7_hari" {{ $period == '7_hari' ? 'selected' : '' }}>7 hari ini</option>
-            <option value="bulan" {{ $period == 'bulan' ? 'selected' : '' }}>Bulan ini</option>
-            <option value="tahun" {{ $period == 'tahun' ? 'selected' : '' }}>Tahun ini</option>
+            <option value="bulan" {{ $period == 'bulan' ? 'selected' : '' }}>Bulan</option>
+            <option value="tahun" {{ $period == 'tahun' ? 'selected' : '' }}>Tahun</option>
         </select>
     </div>
     

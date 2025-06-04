@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Author\Berita;
+use App\Models\API\Berita;
 use App\Models\Author\Tag;
 use App\Models\API\Karya;
 use App\Models\API\Produk;

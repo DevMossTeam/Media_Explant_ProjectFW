@@ -323,7 +323,7 @@
 
     function showChangeRoleModal(uid) {
         Swal.fire({
-            title: 'Pilih Role',
+            title: 'Ubah Role',
             html: `
                 <div class="mt-4">
                     <label for="role" class="block mb-2 text-sm font-medium text-gray-700">Pilih Role:</label>

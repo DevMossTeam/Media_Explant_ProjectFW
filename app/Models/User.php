@@ -7,6 +7,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\API\Bookmark;
+use App\Models\API\Komentar;
+use App\Models\API\Reaksi;
 
 class User extends Authenticatable
 {
@@ -30,4 +33,19 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    public function bookmarks()
+    {
+        return $this->hasMany(Bookmark::class, 'user_id', 'uid');
+    }
+
+    public function reaksi()
+    {
+        return $this->hasMany(Reaksi::class, 'user_id', 'uid');
+    }
+
+    public function komentar()
+    {
+        return $this->hasMany(Komentar::class, 'user_id', 'uid');
+    }
 }

@@ -7,42 +7,50 @@ use Illuminate\Http\Request;
 use App\Models\API\Pesan;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
 class KotakMasukController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = Pesan::with('user');
-    
-        if ($request->has('filter')) {
-            $filter = $request->input('filter');
-            if ($filter === 'masukan') {
-                $query->where('status', 'masukan');
-            } elseif ($filter === 'laporan') {
-                $query->where('status', 'laporan');
-            } elseif ($filter === 'showAll') {
-                $query = Pesan::with('user');
-            } elseif ($filter === 'starred') {
-                $query->where('star', 'iya');
-            } elseif ($filter === 'terbaru') {
-                $query->whereDate('created_at', now());
-            }
-        }
-    
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('pesan', 'like', "%$search%")
-                  ->orWhereHas('user', function ($user) use ($search) {
-                      $user->where('name', 'like', "%$search%");
-                  });
-            });
-        }
-    
-        $perPage = $request->input('perPage', 150);
-        $pesans = $query->paginate($perPage);
-    
-        return view('dashboard-admin.menu.kotak_masuk', compact('pesans'));
+{
+    $searchTerm = $request->input('search', '');
+    $perPage = $request->input('perPage', 150);
+    $filter = $request->input('filter');
+
+    $query = Pesan::with('user');
+
+    // 🔍 Apply filter
+    if ($filter) {
+        match ($filter) {
+            'masukan' => $query->where('status', 'masukan'),
+            'laporan' => $query->where('status', 'laporan'),
+            'showAll' => $query = Pesan::with('user'),
+            'starred' => $query->where('star', 'iya'),
+            'terbaru' => $query->whereDate('created_at', now()),
+            default => null,
+        };
     }
+
+    // 🔍 Apply search
+    if ($searchTerm) {
+        $query->where(function ($q) use ($searchTerm) {
+            $q->where('pesan', 'like', "%$searchTerm%")
+              ->orWhere('detail_pesan', 'like', "%$searchTerm%")
+              ->orWhere('nama', 'like', "%$searchTerm%")
+              ->orWhereHas('user', function ($userQuery) use ($searchTerm) {
+                  $userQuery->where('nama_pengguna', 'like', "%$searchTerm%");
+              });
+        });
+    }
+
+    // 📄 Paginate with filters
+    $pesans = $query->paginate($perPage)->appends([
+        'search' => $searchTerm,
+        'filter' => $filter
+    ]);
+
+    return view('dashboard-admin.menu.kotak_masuk', compact('pesans'));
+}
 
     // Detail pesan
     public function show($id)
@@ -56,14 +64,12 @@ class KotakMasukController extends Controller
     // Hapus pesan secara bulk
     public function destroy(Request $request)
     {
-        // Get the message IDs directly as an array
         $ids = $request->input('message_ids');
 
         if (!is_array($ids) || empty($ids)) {
             return back()->with('error', 'Tidak ada pesan yang dipilih.');
         }
 
-        // Delete selected messages
         Pesan::whereIn('id', $ids)->delete();
 
         return back()->with('success', 'Pesan berhasil dihapus.');
