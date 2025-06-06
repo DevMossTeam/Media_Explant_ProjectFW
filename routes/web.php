@@ -162,6 +162,16 @@ Route::middleware(['checkRole:Penulis'])->group(function () {
         return view('kategori.news-detail', compact('id'));
     })->name('news.detail');
 
+    // Route edit untuk berita, produk & karya
+    Route::get('/authors/edit/create-edit/{id}', [PublishedController::class, 'editNews'])->name('edit.news');
+    Route::get('/authors/edit/createProduct-edit/{id}', [PublishedController::class, 'editProduct'])->name('edit.product');
+    Route::get('/authors/edit/creation-edit/{id}', [PublishedController::class, 'editKarya'])->name('edit.karya');
+
+    Route::put('/authors/update-berita/{id}', [BeritaController::class, 'update'])->name('berita.update');
+    Route::put('/authors/update-product/{id}', [ProdukController::class, 'update'])->name('produk.update');
+    Route::put('/authors/update-karya/{id}', [KaryaController::class, 'update'])->name('karya.update');
+
+    Route::get('/produk/{id}/media-preview', [ProdukController::class, 'mediaPreview'])->name('produk.media-preview');
 
     // Route untuk menyimpan berita
     Route::post('/author/berita/store', [BeritaController::class, 'store'])->name('author.berita.store');
