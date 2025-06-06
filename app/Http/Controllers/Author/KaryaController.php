@@ -36,8 +36,8 @@ class KaryaController extends Controller
         $plainDesc = trim(strip_tags($request->deskripsi));
         if ($plainDesc === '' || $request->deskripsi === '<p><br></p>') {
             return redirect()->back()
-                             ->withInput()
-                             ->with('error', 'Deskripsi tidak boleh kosong.');
+                ->withInput()
+                ->with('error', 'Deskripsi tidak boleh kosong.');
         }
 
         // 3. Validasi konten wajib jika kategori adalah puisi, pantun, atau syair
@@ -45,8 +45,8 @@ class KaryaController extends Controller
         if (in_array($request->kategori, $kategoriTeks)) {
             if (trim($request->konten) === '') {
                 return redirect()->back()
-                                 ->withInput()
-                                 ->with('error', 'Konten tidak boleh kosong untuk kategori teks.');
+                    ->withInput()
+                    ->with('error', 'Konten tidak boleh kosong untuk kategori teks.');
             }
         }
 
@@ -119,5 +119,36 @@ class KaryaController extends Controller
             ->back()
             ->with('success', 'Karya berhasil dipublikasikan!')
             ->with('notificationResult', $notificationResult);
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Validasi input (bisa sesuaikan seperti di method store)
+        $request->validate([
+            'penulis'     => 'required|string|max:100',
+            'judul'       => 'required|string|max:150',
+            'deskripsi'   => 'required_unless:kategori,fotografi,desain_grafis|string',
+            'konten'      => 'nullable|string',
+            'kategori'    => 'required|string',
+            'visibilitas' => 'required|in:public,private',
+        ]);
+
+        // Cek apakah Karya dengan ID tersebut ada
+        $karya = Karya::findOrFail($id);
+
+        // Update data
+        $karya->update([
+            'creator'     => $request->penulis,
+            'judul'       => $request->judul,
+            'deskripsi'   => $request->deskripsi ?? '',
+            'konten'      => $request->konten ?? '',
+            'kategori'    => $request->kategori,
+            'visibilitas' => $request->visibilitas,
+        ]);
+
+        // Redirect
+        return redirect()
+            ->back()
+            ->with('success', 'Karya berhasil diperbarui.');
     }
 }

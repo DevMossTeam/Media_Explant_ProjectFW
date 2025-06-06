@@ -107,4 +107,33 @@ class BeritaController extends Controller
             ->with('success', 'Berita berhasil dipublikasikan.')
             ->with('notificationResult', $notificationResult);
     }
+
+    public function update(Request $request, $id)
+    {
+        $berita = Berita::findOrFail($id);
+
+        $berita->judul = $request->judul;
+        $berita->konten_berita = $request->konten_berita;
+        $berita->kategori = $request->kategori;
+        $berita->visibilitas = $request->visibilitas;
+
+        $berita->save();
+
+        // Simpan tag (jika kamu ingin update tag juga)
+        if ($request->filled('tags')) {
+            $tags = explode(',', $request->tags);
+
+            // Hapus tag lama
+            $berita->tags()->delete();
+
+            // Tambahkan tag baru
+            foreach ($tags as $tag) {
+                $berita->tags()->create([
+                    'nama_tag' => trim($tag),
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Berita berhasil diperbarui.');
+    }
 }

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\API\DeviceToken;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\Author\Produk;
 
 class ProdukController extends Controller
 {
@@ -122,5 +123,43 @@ class ProdukController extends Controller
             ->back()
             ->with('success', 'Produk berhasil disimpan.')
             ->with('notificationResult', $notificationResult);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'judul'       => 'required|string|max:255',
+            'deskripsi'   => 'required|string',
+            'kategori'    => 'required|in:Buletin,Majalah',
+            'media'       => 'nullable|file|mimes:pdf|max:10240',
+            'cover'       => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
+            'visibilitas' => 'required|in:public,private',
+        ]);
+
+        $data = [
+            'judul'       => $request->judul,
+            'deskripsi'   => $request->deskripsi,
+            'kategori'    => $request->kategori,
+            'visibilitas' => $request->visibilitas,
+        ];
+
+        if ($request->hasFile('media')) {
+            $data['media'] = file_get_contents($request->file('media')->getRealPath());
+        }
+
+        if ($request->hasFile('cover')) {
+            $coverContent = file_get_contents($request->file('cover')->getRealPath());
+            $data['cover'] = 'data:' . $request->file('cover')->getMimeType() . ';base64,' . base64_encode($coverContent);
+        }
+
+        DB::table('produk')->where('id', $id)->update($data);
+
+        return redirect()->back()->with('success', 'Produk berhasil diperbarui.');
+    }
+
+    public function mediaPreview($id)
+    {
+        $produk = Produk::findOrFail($id);
+        return response($produk->media)->header('Content-Type', 'application/pdf');
     }
 }
