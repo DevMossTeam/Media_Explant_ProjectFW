@@ -129,17 +129,15 @@
                     e.preventDefault();
                     const type = this.dataset.type;
 
-                    let targetUrl = '';
-
                     switch (type) {
                         case 'berita':
-                            targetUrl = '{{ route('create-news') }}';
+                            targetUrl = `/authors/edit/create-edit/${this.dataset.id}`;
                             break;
                         case 'produk':
-                            targetUrl = '{{ route('create-product') }}';
+                            targetUrl = `/authors/edit/createProduct-edit/${this.dataset.id}`;
                             break;
                         case 'karya':
-                            targetUrl = '{{ route('creation') }}';
+                            targetUrl = `/authors/edit/creation-edit/${this.dataset.id}`;
                             break;
                         default:
                             alert('Tipe tidak dikenali.');

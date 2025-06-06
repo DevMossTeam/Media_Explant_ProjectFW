@@ -169,11 +169,25 @@ class PublishedController extends Controller
         }
     }
 
-    public function edit($id)
+    public function editNews($id)
     {
         $user = session('user');
         $berita = Published::where('id', $id)->where('user_id', $user->uid)->firstOrFail();
-        return view('authors.edit', compact('berita'));
+        return view('authors.edit.create-edit', compact('berita'));
+    }
+
+    public function editProduct($id)
+    {
+        $user = session('user');
+        $produk = Produk::where('id', $id)->where('user_id', $user->uid)->firstOrFail();
+        return view('authors.edit.createProduct-edit', compact('produk'));
+    }
+
+    public function editKarya($id)
+    {
+        $user = session('user');
+        $karya = Karya::where('id', $id)->where('user_id', $user->uid)->firstOrFail();
+        return view('authors.edit.creation-edit', compact('karya'));
     }
 
     public function destroy($id, Request $request)
